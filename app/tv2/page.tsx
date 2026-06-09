@@ -63,8 +63,24 @@ function ItemCard({ title, accent, items, hiIdx, preset }: {
         <div className={styles.mediaSide}>
           <div className={styles.mediaFrame}>
             <div className={styles.mediaViewport}>
-              {prevImg && <img src={prevImg} alt="" className={`${styles.budImg} ${styles.budImgFadeOut}`} referrerPolicy="no-referrer" />}
-              {fadeImg && <img key={fadeImg} src={fadeImg} alt={hi?.name||""} className={`${styles.budImg} ${styles.budImgFadeIn}`} referrerPolicy="no-referrer" />}
+              {prevImg && <img src={prevImg} alt="" className={`${styles.budImg} ${styles.budImgFadeOut}`} referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />}
+              {fadeImg && <img key={fadeImg} src={fadeImg} alt={hi?.name||""} className={`${styles.budImg} ${styles.budImgFadeIn}`} referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />}
             </div>
           </div>
           <div className={styles.detailCard}>

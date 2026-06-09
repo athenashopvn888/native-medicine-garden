@@ -84,6 +84,14 @@ export default function FlowerCard({
             alt={flower.name}
             loading="lazy"
             className={styles.img}
+          
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
           />
           {/* THC badge */}
           <span className={styles.thcBadge}>THC {flower.thc}</span>

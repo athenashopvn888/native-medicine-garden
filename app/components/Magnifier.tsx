@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import styles from "./magnifier.module.css";
 
 interface MagnifierProps {
@@ -16,6 +16,19 @@ export default function Magnifier({ src, alt, className }: MagnifierProps) {
 
   const LENS_SIZE = 160; // diameter of the lens
   const ZOOM = 2.5;      // zoom factor
+
+  const [currentSrc, setCurrentSrc] = useState(src);
+  
+  useEffect(() => {
+    setCurrentSrc(src);
+  }, [src]);
+
+  const handleImageError = () => {
+    if (currentSrc && (currentSrc.indexOf('r2.dev') !== -1 || currentSrc.indexOf('images.torontodispensaryhub.com') !== -1)) {
+      const filename = currentSrc.split('/').pop();
+      setCurrentSrc(`https://athena-cannabis-images.vercel.app/products/${filename}`);
+    }
+  };
 
   function handleMouseMove(e: React.MouseEvent) {
     if (!imgRef.current) return;
@@ -46,7 +59,8 @@ export default function Magnifier({ src, alt, className }: MagnifierProps) {
     >
       <img
         ref={imgRef}
-        src={src}
+        src={currentSrc}
+        onError={handleImageError}
         alt={alt}
         className={className}
       />
@@ -60,7 +74,7 @@ export default function Magnifier({ src, alt, className }: MagnifierProps) {
             height: LENS_SIZE,
             left: pos.x - LENS_SIZE / 2,
             top: pos.y - LENS_SIZE / 2,
-            backgroundImage: `url(${src})`,
+            backgroundImage: `url(${currentSrc})`,
             backgroundSize: `${(imgRef.current?.offsetWidth || 400) * ZOOM}px ${(imgRef.current?.offsetHeight || 400) * ZOOM}px`,
             backgroundPosition: `-${bgX}px -${bgY}px`,
           }}

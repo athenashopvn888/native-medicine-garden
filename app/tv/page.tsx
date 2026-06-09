@@ -266,12 +266,28 @@ function FlowerCard({
               {hi?.thc && <div className={styles.imgThcBadge}>{fmtTHC(hi.thc)}</div>}
               {prevImg && (
                 <img src={prevImg} alt="" className={`${styles.budImg} ${styles.budImgFadeOut}`}
-                  referrerPolicy="no-referrer" />
+                  referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />
               )}
               {fadeImg && (
                 <img key={fadeImg} src={fadeImg} alt={hi?.name||""}
                   className={`${styles.budImg} ${styles.budImgFadeIn}`}
-                  referrerPolicy="no-referrer" />
+                  referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />
               )}
               {hi?.type && (
                 <div className={styles.imgTypeBadge}>
@@ -488,8 +504,24 @@ function OZCard({ flowers, hiIdx }: { flowers: Flower[]; hiIdx: number }) {
           <div className={styles.ozImgWrap}>
             <div className={styles.mediaViewport}>
               {hi?.isHot && <div className={styles.topPickBadge}>TOP PICK</div>}
-              {prevImg && <img src={prevImg} alt="" className={`${styles.budImg} ${styles.budImgFadeOut}`} referrerPolicy="no-referrer" />}
-              {fadeImg && <img key={fadeImg} src={fadeImg} alt={hi?.name||""} className={`${styles.budImg} ${styles.budImgFadeIn}`} referrerPolicy="no-referrer" />}
+              {prevImg && <img src={prevImg} alt="" className={`${styles.budImg} ${styles.budImgFadeOut}`} referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />}
+              {fadeImg && <img key={fadeImg} src={fadeImg} alt={hi?.name||""} className={`${styles.budImg} ${styles.budImgFadeIn}`} referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />}
               {hi?.type && (
                 <div className={styles.imgTypeBadge}>
                   <span className={`${styles.imgType} ${hi.type==="sativa"?styles.imgTypeSat:styles.imgTypeInd}`}>{hi.type.toUpperCase()}</span>
@@ -580,8 +612,24 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
         <div className={styles.addonsHero}>
           <div className={styles.addonsHeroImg}>
             <div className={styles.mediaViewport}>
-              {prevImg && <img src={prevImg} alt="" className={`${styles.budImg} ${styles.budImgFadeOut}`} referrerPolicy="no-referrer" />}
-              {fadeImg && <img key={fadeImg} src={fadeImg} alt={hi?.name||""} className={`${styles.budImg} ${styles.budImgFadeIn}`} referrerPolicy="no-referrer" />}
+              {prevImg && <img src={prevImg} alt="" className={`${styles.budImg} ${styles.budImgFadeOut}`} referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />}
+              {fadeImg && <img key={fadeImg} src={fadeImg} alt={hi?.name||""} className={`${styles.budImg} ${styles.budImgFadeIn}`} referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />}
             </div>
           </div>
           <div className={styles.addonsDetailCard}>
@@ -598,7 +646,15 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
           {items.map((it,i) => (
             <div key={it.sku+i} className={`${styles.addonRow} ${i===hiIdx?styles.addonRowHi:""}`}
               style={i===hiIdx ? {borderColor:"rgba(34,197,94,.55)", boxShadow:"0 0 0 2px rgba(34,197,94,.35), 0 6px 16px rgba(2,6,23,.15)"} : undefined}>
-              {it.image && <img src={it.image} alt={it.name} className={styles.addonImg} referrerPolicy="no-referrer" />}
+              {it.image && <img src={it.image} alt={it.name} className={styles.addonImg} referrerPolicy="no-referrer" 
+            onError={(e) => {
+              const t = e.currentTarget;
+              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
+                const filename = t.src.split('/').pop();
+                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
+              }
+            }}
+          />}
               <div className={styles.addonInfo}>
                 <div className={styles.addonName}>{it.name}</div>
                 <div className={styles.addonPrice}>{(it.price||'').replace(/\[object.*\]/,'')}</div>
