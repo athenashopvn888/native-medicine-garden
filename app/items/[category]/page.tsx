@@ -144,14 +144,15 @@ function ItemCard({ item, catColor }: { item: ItemProduct; catColor: string }) {
     <Link href={`/item/${item.slug}`} className={styles.card} style={{ "--cat-color": catColor } as React.CSSProperties}>
       <div className={styles.cardMedia}>
         {item.image ? (
-          <img src={item.image} alt={item.name} loading="lazy" className={styles.cardImg} 
-            onError={(e) => {
-              const t = e.currentTarget;
-              if (t.src.indexOf('r2.dev') !== -1 || t.src.indexOf('images.torontodispensaryhub.com') !== -1) {
-                const filename = t.src.split('/').pop();
-                t.src = 'https://athena-cannabis-images.vercel.app/products/' + filename;
-              }
-            }}
+          <img 
+            src={
+              item.image.includes('r2.dev') || item.image.includes('images.torontodispensaryhub.com')
+                ? 'https://athena-cannabis-images.vercel.app/products/' + item.image.split('/').pop()
+                : item.image
+            } 
+            alt={item.name} 
+            loading="lazy" 
+            className={styles.cardImg} 
           />
         ) : (
           <div className={styles.cardPlaceholder}>
