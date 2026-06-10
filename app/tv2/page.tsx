@@ -134,12 +134,12 @@ function ItemCard({ title, accent, items, hiIdx, preset }: {
 
 /* -- TICKER -- */
 const TICKER_SLIDES = [
-  "🔥 Native Medicine Garden — 76 Gerrard St W, Toronto",
+  "🔥 {{STORE_NAME}} — {{STREET_ADDRESS}}, {{CITY}}",
   "200+ Strains In Stock",
   "Open 24 Hours",
   "Pre-Rolls · Edibles · Vapes · Concentrates",
   "ALL SALES ARE FINAL",
-  "🎮 Play Games at nativemedicinecannabis.com/games",
+  "🎮 Play Games at {{DOMAIN_NAME}}/games",
 ];
 
 function VerticalTicker() {
@@ -227,10 +227,7 @@ export default function TV2Page() {
   return (
     <div className={styles.tvPage}>
       <div className={styles.wrap} ref={wrapRef}>
-        {/* TV BANNER */}
-        <div style={{margin:"-40px -40px 30px -40px", width:"calc(100% + 80px)"}}>
-          <img src="/banners/ItemTv.webp" alt="Native Medicine Garden Items TV Menu" style={{width:"100%",display:"block"}} />
-        </div>
+        
         {/* GRID */}
         <div className={styles.stage}>
           <div className={styles.grid}>
@@ -262,7 +259,7 @@ export default function TV2Page() {
             })}
           </div>
         </div>
-        <VerticalTicker />
+        
       </div>
       <div className={styles.lastUpdated}>Updated: {lastUpdate}</div>
     </div>

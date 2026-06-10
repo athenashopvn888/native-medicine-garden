@@ -26,7 +26,7 @@ const TIER_CROWN: Record<string,string> = {
   EXOTIC:"👑", PREMIUM:"👑", "AAA+":"👑", AA:"🏅", BUDGET:"💰", OZ:"🎯"
 };
 const TIER_UNIT: Record<string,string> = {
-  EXOTIC:"$10-$12/g", PREMIUM:"$7-$10/g", "AAA+":"$5-$6/g", AA:"$4/g", BUDGET:"$3/g"
+  EXOTIC:"{{TIER_UNIT_EXOTIC}}", PREMIUM:"{{TIER_UNIT_PREMIUM}}", "AAA+":"{{TIER_UNIT_AAA}}", AA:"{{TIER_UNIT_AA}}", BUDGET:"{{TIER_UNIT_BUDGET}}"
 };
 const TIER_DEAL: Record<string,string> = {
   EXOTIC:"Buy 3g Get 3 FREE", PREMIUM:"Buy 3g Get 3 FREE",
@@ -671,11 +671,11 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
    VERTICAL TICKER
    ============================================================ */
 const TICKER_SLIDES = [
-  "🔥 Native Medicine Garden — 76 Gerrard St W, Toronto",
+  "🔥 {{STORE_NAME}} — {{STREET_ADDRESS}}, {{CITY}}",
   "200+ Strains In Stock",
   "Open 24 Hours",
   "ALL SALES ARE FINAL",
-  "🎮 Play Games at nativemedicinecannabis.com/games",
+  "🎮 Play Games at {{DOMAIN_NAME}}/games",
 ];
 
 function VerticalTicker() {
@@ -841,10 +841,7 @@ export default function TVMenuPage() {
       </div>
       <div className={styles.wrap} ref={wrapRef}>
 
-        {/* TV BANNER */}
-        <div style={{ margin: "-40px -40px 30px -40px", width: "calc(100% + 80px)" }}>
-          <img src="/banners/FlowerTvBanner.webp" alt="Native Medicine Garden TV Menu" style={{ width: "100%", display: "block" }} />
-        </div>
+        
 
         {/* GRID */}
         <div className={styles.stage}>
@@ -865,8 +862,7 @@ export default function TVMenuPage() {
           </div>
         </div>
 
-        {/* TICKER */}
-        <VerticalTicker />
+        
       </div>
       <div className={styles.lastUpdated}>Updated: {lastUpdate}</div>
     </div>
