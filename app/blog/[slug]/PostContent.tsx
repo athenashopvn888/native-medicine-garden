@@ -128,7 +128,7 @@ export default function PostContent() {
 
         <div className={styles.cta}>
           <p>
-            <strong>Native Medicine Garden</strong> — 76 Gerrard St W, Toronto · Open 24 Hours · (416) 000-0000
+            <strong>Native Medicine Garden</strong> — 76 Gerrard St W, Toronto · Open 24 Hours · (437) 339-4466
           </p>
           <Link href="/exotic" className={styles.ctaBtn}>Browse Our Menu</Link>
         </div>

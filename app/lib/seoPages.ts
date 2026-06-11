@@ -44,7 +44,7 @@ export const SEO_PAGES: SeoPageData[] = [
       },
       {
         heading: "Serving Toronto, Toronto & Mississauga",
-        body: "Native Medicine Garden proudly serves customers from across the Greater Toronto Area. Whether you're coming from Weston, Mount Dennis, North Toronto, Etobicoke, Mississauga, Brampton, or downtown Toronto, we welcome you. Our 24-hour operation means you can visit on your own schedule. Call us at (416) 000-0000 or visit us at 76 Gerrard St W, Toronto, ON M5G 1J5.",
+        body: "Native Medicine Garden proudly serves customers from across the Greater Toronto Area. Whether you're coming from Weston, Mount Dennis, North Toronto, Etobicoke, Mississauga, Brampton, or downtown Toronto, we welcome you. Our 24-hour operation means you can visit on your own schedule. Call us at (437) 339-4466 or visit us at 76 Gerrard St W, Toronto, ON M5G 1J5.",
       },
     ],
     faqs: [

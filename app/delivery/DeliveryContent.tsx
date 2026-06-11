@@ -101,7 +101,7 @@ export default function DeliveryContent() {
         <div className={styles.ctaSection}>
           <p className={styles.ctaText}>
             Can&apos;t wait? Visit us in-store at <strong>76 Gerrard St W, Toronto</strong> —
-            open <strong>24 hours</strong>. Call <strong>(416) 000-0000</strong>.
+            open <strong>24 hours</strong>. Call <strong>(437) 339-4466</strong>.
           </p>
         </div>
       </div>
