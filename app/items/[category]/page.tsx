@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import SafeImage from "../../components/SafeImage";
 import Footer from "../../components/Footer";
 import {
   getItemsByCategory,
@@ -144,12 +145,8 @@ function ItemCard({ item, catColor }: { item: ItemProduct; catColor: string }) {
     <Link href={`/item/${item.slug}`} className={styles.card} style={{ "--cat-color": catColor } as React.CSSProperties}>
       <div className={styles.cardMedia}>
         {item.image ? (
-          <img 
-            src={
-              item.image.includes('r2.dev') || item.image.includes('images.torontodispensaryhub.com')
-                ? 'https://athena-cannabis-images.vercel.app/products/' + item.image.split('/').pop()
-                : item.image
-            } 
+          <SafeImage 
+            src={item.image} 
             alt={item.name} 
             loading="lazy" 
             className={styles.cardImg} 
