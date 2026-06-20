@@ -24,8 +24,8 @@ export const gbpLocation = {
     "Accessories"
   ],
   menuUrl: "/",
-  directionsUrl: "https://maps.google.com/?q=76+Gerrard+St+W,+Toronto,+ON+M5G+1J5",
-  mapEmbedUrl: "https://maps.google.com/maps?q=Native%20Medicine%20Garden%2076%20Gerrard%20St%20W%2C%20Toronto%2C%20ON%20M5G%201J5&t=&z=15&ie=UTF8&iwloc=&output=embed",
+  directionsUrl: "",
+  mapEmbedUrl: "",
   latitude: "43.6586",
   longitude: "-79.3854",
   hours: ["Open 24 Hours"],

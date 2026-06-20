@@ -101,20 +101,9 @@ const jsonLd = {
       closes: "23:59",
     },
   ],
-  sameAs: [
-    "https://maps.google.com/?q=76+Gerrard+St+W,+Toronto,+ON+M5G+1J5",
-    "https://maps.google.com/?q=76+Gerrard+St+W,+Toronto,+ON+M5G+1J5",
-  ],
-  hasMap: "https://maps.google.com/?q=76+Gerrard+St+W,+Toronto,+ON+M5G+1J5",
   areaServed: {
     "@type": "City",
     name: "Toronto",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "5.0",
-    reviewCount: "15",
-    bestRating: "5",
   },
 };
 

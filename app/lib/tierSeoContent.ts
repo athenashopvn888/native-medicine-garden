@@ -98,7 +98,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
 
   BUDGET: {
     seoTitle: "Budget Cannabis Toronto — Cheap Weed From $3/g",
-    seoIntro: "Cheap weed in Toronto starting at $3/g. Native Medicine Garden Budget tier features shreds and value ounces for cost-conscious smokers. Open daily on Toronto St.",
+    seoIntro: "Cheap weed in Toronto starting at $3/g. Native Medicine Garden Budget tier features shreds and value ounces for cost-conscious smokers. Check current store hours before visiting Native Medicine Garden.",
     sections: [
       {
         heading: "Affordable Cannabis Without Compromise",
