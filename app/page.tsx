@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import FlowerCard from "./components/FlowerCard";
 import { allFlowers } from "./lib/products";
 
-/* ── Bento Mosaic Config ── */
+/* â”€â”€ Bento Mosaic Config â”€â”€ */
 const BENTO_TIERS = [
   {
     name: "EXOTICS",
@@ -46,7 +46,7 @@ const BENTO_TIERS = [
     className: styles.bentoTile,
   },
   {
-    name: "EDIBLES • PREROLLS • MORE",
+    name: "EDIBLES â€¢ PREROLLS â€¢ MORE",
     slug: "items/edibles",
     price: "Shop Tiers",
     banner: "/banners/edibles_prerolls_more_banner.webp",
@@ -54,23 +54,23 @@ const BENTO_TIERS = [
   },
 ];
 
-/* ── Explore Categories Config (New Banners) ── */
+/* â”€â”€ Explore Categories Config (New Banners) â”€â”€ */
 const EXPLORE_CATEGORIES = [
-  { name: "Vape Pens", slug: "items/vapes", banner: "/banners/01_Vape_Pens.webp", icon: "💨" },
-  { name: "Nic Vape", slug: "items/vape-disposables", banner: "/banners/02_Vape_Disposable.webp", icon: "💨" },
-  { name: "Concentrates", slug: "items/concentrates", banner: "/banners/03_Concentrates.webp", icon: "💎" },
-  { name: "Pre-Rolls", slug: "items/prerolls", banner: "/banners/04_Pre_Rolls.webp", icon: "🚬" },
-  { name: "Accessories", slug: "items/add-ons", banner: "/banners/05_Accessories.webp", icon: "➕" },
-  { name: "Cigarettes", slug: "items/cigarettes", banner: "/banners/06_Cigarettes.webp", icon: "🏷️" },
-  { name: "Magic Stuff", slug: "items/magic", banner: "/banners/09_Magic_Stuff.webp", icon: "🍄" },
-  { name: "Games Arcade", slug: "games", banner: "/banners/10_Games.webp", icon: "🎮" },
+  { name: "Vape Pens", slug: "items/vapes", banner: "/banners/01_Vape_Pens.webp", icon: "ðŸ’¨" },
+  { name: "Nic Vape", slug: "items/vape-disposables", banner: "/banners/02_Vape_Disposable.webp", icon: "ðŸ’¨" },
+  { name: "Concentrates", slug: "items/concentrates", banner: "/banners/03_Concentrates.webp", icon: "ðŸ’Ž" },
+  { name: "Pre-Rolls", slug: "items/prerolls", banner: "/banners/04_Pre_Rolls.webp", icon: "ðŸš¬" },
+  { name: "Accessories", slug: "items/add-ons", banner: "/banners/05_Accessories.webp", icon: "âž•" },
+  { name: "Cigarettes", slug: "items/cigarettes", banner: "/banners/06_Cigarettes.webp", icon: "ðŸ·ï¸" },
+  { name: "Magic Stuff", slug: "items/magic", banner: "/banners/09_Magic_Stuff.webp", icon: "ðŸ„" },
+  { name: "Games Arcade", slug: "games", banner: "/banners/10_Games.webp", icon: "ðŸŽ®" },
 ];
 
-/* ── Local FAQs for Jane St ── */
+/* â”€â”€ Local FAQs for Jane St â”€â”€ */
 const LOCAL_FAQS = [
   {
     q: "What are the hours for Native Medicine Garden?",
-    a: "Native Medicine Garden at 76 Gerrard St W, Toronto is Open 24 Hours a day, 7 days a week. Walk in anytime — no appointment needed.",
+    a: "Native Medicine Garden at 76 Gerrard St W, Toronto is Open 24 Hours a day, 7 days a week. Walk in anytime â€” no appointment needed.",
   },
   {
     q: "What cannabis products do you carry?",
@@ -92,13 +92,18 @@ interface Review {
   date: string;
 }
 
+interface ReviewStats {
+  total: number;
+  avg: number;
+}
+
 export default function HomePage() {
   const [featuredStrains, setFeaturedStrains] = useState<any[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewsStats, setReviewsStats] = useState({ total: 14, avg: 5.0 });
+  const [reviewsStats, setReviewsStats] = useState<ReviewStats | null>(null);
   const [reviewsLoading, setReviewsLoading] = useState(true);
 
-  /* ── 1. Fetch Client-Side Google Reviews ── */
+  /* â”€â”€ 1. Fetch Client-Side Google Reviews â”€â”€ */
   useEffect(() => {
     const STORE_KEY = "NMG01";
     const SHEET_ID = "1-KeuyKFKprbU-Vl_qVQiZkEKMX_i5CmdScTToNTdkUY";
@@ -126,8 +131,8 @@ export default function HomePage() {
         const dtIdx = colMap["CreateTime"] !== undefined ? colMap["CreateTime"] : 3;
 
         const reviewsPool: Review[] = [];
-        let totalVal = 14;
-        let avgVal = 5.0;
+        let totalVal: number | null = null;
+        let avgVal: number | null = null;
         let hasStats = false;
 
         rows.forEach((row: any) => {
@@ -137,9 +142,13 @@ export default function HomePage() {
 
           const rn = row.c[rnIdx] ? row.c[rnIdx].v || "" : "";
           if (rn === "__STATS__") {
-            totalVal = parseInt(row.c[cmIdx] ? row.c[cmIdx].v : 14) || 14;
-            avgVal = parseFloat(row.c[dtIdx] ? row.c[dtIdx].v : 5.0) || 5.0;
-            hasStats = true;
+            const parsedTotal = parseInt(row.c[cmIdx] ? row.c[cmIdx].v : "", 10);
+            const parsedAvg = parseFloat(row.c[dtIdx] ? row.c[dtIdx].v : "");
+            if (Number.isFinite(parsedTotal) && Number.isFinite(parsedAvg)) {
+              totalVal = parsedTotal;
+              avgVal = parsedAvg;
+              hasStats = true;
+            }
             return;
           }
 
@@ -151,7 +160,9 @@ export default function HomePage() {
         });
 
         setReviews(reviewsPool.slice(0, 6));
-        if (hasStats) setReviewsStats({ total: totalVal, avg: avgVal });
+        if (hasStats && totalVal !== null && avgVal !== null) {
+          setReviewsStats({ total: totalVal, avg: avgVal });
+        }
         setReviewsLoading(false);
       })
       .catch((err) => {
@@ -160,7 +171,7 @@ export default function HomePage() {
       });
   }, []);
 
-  /* ── 2. Build Featured Strains ── */
+  /* â”€â”€ 2. Build Featured Strains â”€â”€ */
   useEffect(() => {
     const pool = [...allFlowers].filter((f) => f.image);
     // Shuffle pool securely
@@ -186,21 +197,21 @@ export default function HomePage() {
 
   return (
     <main className={styles.main}>
-      {/* ── NAVBAR ── */}
+      {/* â”€â”€ NAVBAR â”€â”€ */}
       <Navbar />
 
-      {/* ── WELCOME BANNER ── */}
+      {/* â”€â”€ WELCOME BANNER â”€â”€ */}
       <section className={styles.welcomeBannerSection}>
         <div className={styles.welcomeBannerContainer}>
           <img
             src="/banners/welcome_banner.webp"
-            alt="Welcome to Native Medicine Garden — Premium Toronto Cannabis Dispensary"
+            alt="Welcome to Native Medicine Garden â€” Premium Toronto Cannabis Dispensary"
             className={styles.welcomeBannerImg}
           />
         </div>
       </section>
 
-      {/* ── BENTO MOSAIC HERO ── */}
+      {/* â”€â”€ BENTO MOSAIC HERO â”€â”€ */}
       <section className={styles.hero}>
         <div className={styles.heroBg} />
         <div className={styles.heroOverlay} />
@@ -238,7 +249,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── EXPLORE CATEGORIES ── */}
+      {/* â”€â”€ EXPLORE CATEGORIES â”€â”€ */}
       <section className={styles.categoriesSection} id="menu">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
@@ -262,7 +273,7 @@ export default function HomePage() {
                 <div className={styles.categoryCardOverlay} />
                 <div className={styles.categoryCardContent}>
                   <h3 className={styles.categoryCardName}>
-                    {cat.icon} {cat.name} <span className={styles.categoryCardArrow}>→</span>
+                    {cat.icon} {cat.name} <span className={styles.categoryCardArrow}>â†’</span>
                   </h3>
                 </div>
               </Link>
@@ -271,7 +282,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FEATURED PRODUCTS ── */}
+      {/* â”€â”€ FEATURED PRODUCTS â”€â”€ */}
       <section className={styles.featuredSection}>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
@@ -291,46 +302,48 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── SEO PANEL WRITE-UP ── */}
+      {/* â”€â”€ SEO PANEL WRITE-UP â”€â”€ */}
       <section className={styles.seoSection}>
         <div className={styles.container}>
           <div className={styles.seoPanel}>
-            <h2 className={styles.seoPanelTitle}>Gerrard St W & Bay St's Premier Cannabis Dispensary — Open 24 Hours</h2>
+            <h2 className={styles.seoPanelTitle}>Gerrard St W & Bay St's Premier Cannabis Dispensary â€” Open 24 Hours</h2>
             <p className={styles.seoPanelText}>
-              Welcome to <strong>Native Medicine Garden</strong>, Toronto's premier 24-hour cannabis destination at 76 Gerrard St W. We carry an electrifying selection of top-shelf strains around the clock — from ultra-rare exotics to solid everyday budget picks.
+              Welcome to <strong>Native Medicine Garden</strong>, Toronto's premier 24-hour cannabis destination at 76 Gerrard St W. We carry an electrifying selection of top-shelf strains around the clock â€” from ultra-rare exotics to solid everyday budget picks.
             </p>
             <p className={styles.seoPanelText}>
-              Open 24 hours, 7 days a week — Native Medicine Garden never closes. Our live menu is constantly refreshed with the freshest drops, premium prerolls, artisan edibles, and everything in between. Whether you're winding down after a late shift or stocking up for the weekend, our knowledgeable staff can help during listed store hours.
+              Open 24 hours, 7 days a week â€” Native Medicine Garden never closes. Our live menu is constantly refreshed with the freshest drops, premium prerolls, artisan edibles, and everything in between. Whether you're winding down after a late shift or stocking up for the weekend, our knowledgeable staff can help during listed store hours.
             </p>
             <p className={styles.seoPanelText}>
-              Searching for a cannabis dispensary in Toronto or the surrounding area? Native Medicine Garden is your 24-hour destination for premium flower, potent prerolls, and artisan edibles. Our six-tier pricing system means quality cannabis at every budget level — starting from just $3/g.
+              Searching for a cannabis dispensary in Toronto or the surrounding area? Native Medicine Garden is your 24-hour destination for premium flower, potent prerolls, and artisan edibles. Our six-tier pricing system means quality cannabis at every budget level â€” starting from just $3/g.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ── CLIENT-SIDE GOOGLE REVIEWS SHOWCASE ── */}
+      {/* â”€â”€ CLIENT-SIDE GOOGLE REVIEWS SHOWCASE â”€â”€ */}
       <section className={styles.reviewsSection}>
         <div className={styles.container}>
           <div className={styles.reviewsHeader}>
-            <h2 className={styles.sectionTitle}>What Our Customers Say</h2>
-            <div className={styles.reviewsStarsSummary}>
-              <span className={styles.reviewsStars}>★★★★★</span>
-              <span className={styles.reviewsAvg}>
-                {reviewsStats.avg.toFixed(1)}
-              </span>
-              <span className={styles.reviewsCount}>
-                ({reviewsStats.total} reviews on Google)
-              </span>
-            </div>
+            <h2 className={styles.sectionTitle}>Customer Feedback</h2>
+            {reviewsStats && (
+              <div className={styles.reviewsStarsSummary}>
+                <span className={styles.reviewsStars}>{"\u2605\u2605\u2605\u2605\u2605"}</span>
+                <span className={styles.reviewsAvg}>
+                  {reviewsStats.avg.toFixed(1)}
+                </span>
+                <span className={styles.reviewsCount}>
+                  ({reviewsStats.total} reviews)
+                </span>
+              </div>
+            )}
           </div>
 
           <div className={styles.reviewsGrid}>
             {reviewsLoading ? (
-              <div className={styles.reviewsLoading}>Loading reviews...</div>
+              <div className={styles.reviewsLoading}>Loading customer feedback...</div>
             ) : reviews.length === 0 ? (
               <div className={styles.reviewsLoading}>
-                Rated {reviewsStats.avg.toFixed(1)}/5 across {reviewsStats.total} Google reviews
+                Customer feedback is unavailable right now.
               </div>
             ) : (
               reviews.map((rv, idx) => (
@@ -350,7 +363,7 @@ export default function HomePage() {
                         </span>
                       )}
                     </div>
-                    <span className={styles.rvStars}>★★★★★</span>
+                    <span className={styles.rvStars}>â˜…â˜…â˜…â˜…â˜…</span>
                   </div>
                   <p className={styles.rvText}>
                     {rv.comment.length > 180 ? `${rv.comment.substring(0, 177)}...` : rv.comment}
@@ -365,7 +378,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FAQS SECTION ── */}
+      {/* â”€â”€ FAQS SECTION â”€â”€ */}
       <section className={styles.faqSection}>
         <div className={styles.faqContainer}>
           <h2 className={styles.sectionTitle} style={{ textAlign: "center", marginBottom: "32px" }}>
@@ -380,12 +393,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── STORE LOCATION GRID ── */}
+      {/* â”€â”€ STORE LOCATION GRID â”€â”€ */}
       <section className={styles.storeSection} id="contact">
         <div className={styles.container}>
           <div className={styles.storeGrid}>
             <div className={styles.storeCard}>
-              <span className={styles.storeIcon}>📍</span>
+              <span className={styles.storeIcon}>ðŸ“</span>
               <h3 className={styles.storeCardTitle}>Location</h3>
               <p className={styles.storeCardText}>
                 76 Gerrard St W
@@ -395,7 +408,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className={styles.storeCard}>
-              <span className={styles.storeIcon}>🕒</span>
+              <span className={styles.storeIcon}>ðŸ•’</span>
               <h3 className={styles.storeCardTitle}>Hours</h3>
               <p className={styles.storeCardText}>
                 Open 7 Days a Week
@@ -404,7 +417,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className={styles.storeCard}>
-              <span className={styles.storeIcon}>🔥</span>
+              <span className={styles.storeIcon}>ðŸ”¥</span>
               <h3 className={styles.storeCardTitle}>Walk In</h3>
               <p className={styles.storeCardText}>
                 No appointment needed
@@ -420,7 +433,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
+      {/* â”€â”€ FOOTER â”€â”€ */}
       <Footer />
     </main>
   );
