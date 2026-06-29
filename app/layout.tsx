@@ -5,11 +5,11 @@ import AgeGate from "./components/AgeGate";
 export const metadata: Metadata = {
   metadataBase: new URL("https://nativemedicinecannabis.com"),
   title: {
-    default: "Native Medicine Garden — Premium Cannabis Dispensary, Toronto",
+    default: "Native Medicine Garden | Toronto Dispensary",
     template: "%s | Native Medicine Garden",
   },
   description:
-    "Shop 200+ premium cannabis strains at Native Medicine Garden. Exotic, Premium, AAA+, AA & Budget flower from $3/g. Toronto's uplifting dispensary at 76 Gerrard St W. Open 24 Hours.",
+    "Native Medicine Garden is a Toronto cannabis dispensary on Gerrard St W with adult 19+ store info and category browsing for flower, pre-rolls, vapes, edibles, concentrates, and accessories. Open 24 Hours.",
   keywords: [
     "cannabis dispensary Toronto",
     "weed store Toronto",
