@@ -25,7 +25,7 @@ export const STORE_BLOG_CONFIG = {
   storeCode: "NMG01",
   storeName: "Native Medicine Garden",
   city: "Toronto",
-  domain: "nativemedicinecannabis.com",
+  domain: "www.nativemedicinecannabis.com",
   storePath: "/weed-dispensary-toronto",
 };
 
