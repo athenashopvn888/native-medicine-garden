@@ -39,7 +39,7 @@ export const STATIC_POSTS: StaticBlogPost[] = [
     meta_description: "Adult 19+ guide to Native Medicine Garden around Downtown Toronto / Bay Street, with local store-page checks, menu-category context, and safe visit planning.",
     h1: "Native Medicine Garden Local Store Guide for Adults 19+",
     excerpt: "Native Medicine Garden guide for adults 19+ reviewing store information around Downtown Toronto / Bay Street.",
-    author: "Athena SEO Team",
+    author: "The Native Medicine Garden Team",
     date: "2026-07-02",
     category: "Store Guide",
     readTime: "4 min",
