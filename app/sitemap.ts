@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { TIER_CONFIG, CATEGORY_CONFIG, allFlowers, allItems } from "./lib/products";
 import { SEO_PAGES } from "./lib/seoPages";
+import { RESOURCE_PAGES } from "./resources/resourceData";
 
 const BASE = "https://www.nativemedicinecannabis.com";
 
@@ -55,8 +56,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));
+  const resourcePages: MetadataRoute.Sitemap = RESOURCE_PAGES.map((page) => ({
+    url: page.slug ? `${BASE}/resources/${page.slug}` : `${BASE}/resources`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: page.slug ? 0.65 : 0.75,
+  }));
 
-
-  return [...staticPages, ...tierPages, ...itemPages, ...flowerPages, ...itemDetailPages, ...seoPages];
+  return [...staticPages, ...tierPages, ...itemPages, ...flowerPages, ...itemDetailPages, ...seoPages, ...resourcePages];
 }
 
