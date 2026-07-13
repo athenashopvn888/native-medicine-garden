@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "vapes",
     "pre-rolls",
     "native cigarettes Toronto",
-    "weed store Mississauga",
+    "weed store Gerrard and Bay",
   ],
   openGraph: {
     type: "website",
@@ -39,15 +39,18 @@ export const metadata: Metadata = {
         url: "https://nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
         width: 1200,
         height: 630,
-        alt: "Native Medicine Garden — Premium Cannabis Dispensary Toronto",
+        alt: "Native Medicine Garden — Native Medicine Garden Toronto",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Native Medicine Garden — Toronto's Uplifting Dispensary",
-    description: "200+ strains from $3/g. Open 24 Hours at 76 Gerrard St W, Toronto.",
-    images: ["https://nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg"],
+    description:
+      "200+ strains from $3/g. Open 24 Hours at 76 Gerrard St W, Toronto.",
+    images: [
+      "https://nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
+    ],
   },
   robots: {
     index: true,
@@ -68,17 +71,19 @@ export const metadata: Metadata = {
   },
 };
 
-/* ── JSON-LD Structured Data ── */
+/* JSON-LD Structured Data */
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Store",
   additionalType: "https://schema.org/Store",
   "@id": "https://nativemedicinecannabis.com",
   name: "Native Medicine Garden",
-  description: "Cannabis dispensary at 76 Gerrard St W in Toronto, ON. Shop exotic, premium, AAA+, AA, and budget flower tiers plus edibles, prerolls, and vapes. Open 24 Hours.",
+  description:
+    "Cannabis dispensary at 76 Gerrard St W in Toronto, ON. Shop exotic, premium, AAA+, AA, and budget flower tiers plus edibles, prerolls, and vapes. Open 24 Hours.",
   url: "https://nativemedicinecannabis.com",
   telephone: "+14373394466",
-  image: "https://nativemedicinecannabis.com/wp-content/uploads/2026/04/7Clmh.jpg",
+  image:
+    "https://nativemedicinecannabis.com/wp-content/uploads/2026/04/7Clmh.jpg",
   priceRange: "$3 - $12/g",
   address: {
     "@type": "PostalAddress",
@@ -96,7 +101,15 @@ const jsonLd = {
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      dayOfWeek: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
       opens: "00:00",
       closes: "23:59",
     },
@@ -129,7 +142,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-R9L5VFEGH8"></script>
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-R9L5VFEGH8"
+        ></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -137,7 +153,7 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-R9L5VFEGH8');
-            `
+            `,
           }}
         />
       </head>
