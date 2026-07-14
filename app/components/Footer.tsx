@@ -13,14 +13,11 @@ export default function Footer() {
             </div>
             <p className={styles.desc}>
               Your Local Cannabis Dispensary At 76 Gerrard St W, Toronto. Visit
-              Native Medicine Garden For Premium Flower, Edibles, Vapes &amp; More.
-              Open 24 Hours.
+              Native Medicine Garden For Premium Flower, Edibles, Vapes &amp;
+              More. Open 24 Hours.
             </p>
             <div className={styles.buttons}>
-              <a
-                href="tel:+14373394466"
-                className={styles.btnPrimary}
-              >
+              <a href="tel:+14373394466" className={styles.btnPrimary}>
                 Call Now
               </a>
             </div>
@@ -37,7 +34,11 @@ export default function Footer() {
             </div>
             <div className={styles.infoBlock}>
               <span className={styles.infoLabel}>Phone:</span>
-              <span><a href="tel:+14373394466" style={{color: "inherit"}}>(437) 339-4466</a></span>
+              <span>
+                <a href="tel:+14373394466" style={{ color: "inherit" }}>
+                  (437) 339-4466
+                </a>
+              </span>
             </div>
             <div className={styles.infoBlock}>
               <span className={styles.infoLabel}>Hours:</span>
@@ -61,21 +62,31 @@ export default function Footer() {
               <Link href="/faq">FAQ</Link>
               <Link href="/delivery">Delivery (Coming Soon)</Link>
               <Link href="/games">Games Arcade</Link>
-              <Link href="/info/york-weed-dispensary">Toronto Dispensary</Link>
-              <Link href="/info/cheap-weed-york">Cheap Weed Toronto</Link>
-              <Link href="/info/native-cigarettes-york">Native Cigarettes</Link>
-              <Link href="/info/weed-store-near-mississauga">Weed Store Near Mississauga</Link>
-              <Link href="/weed-dispensary-toronto/">Native Medicine Garden Weed Dispensary in Toronto</Link>
+              <Link href="/info/gerrard-bay-weed-dispensary">
+                Gerrard and Bay Dispensary
+              </Link>
+              <Link href="/info/cheap-weed-gerrard-bay">
+                Cheap Weed Gerrard and Bay
+              </Link>
+              <Link href="/info/native-cigarettes-gerrard-bay">
+                Native Cigarettes
+              </Link>
+              <Link href="/info/weed-store-near-downtown-toronto">
+                Weed Store Near Gerrard and Bay
+              </Link>
+              <Link href="/weed-dispensary-toronto/">
+                Native Medicine Garden Weed Dispensary in Toronto
+              </Link>
               <Link href="/contact">Contact Us</Link>
-                          <Link href="/resources">Resources</Link>
+              <Link href="/resources">Resources</Link>
             </nav>
           </div>
         </div>
 
         <div className={styles.bottom}>
           <p>
-            © {new Date().getFullYear()} Native Medicine Garden. Must be 19+ to
-            enter. Please consume responsibly.
+            (c) {new Date().getFullYear()} Native Medicine Garden. Must be 19+
+            to enter. Please consume responsibly.
           </p>
         </div>
       </div>
