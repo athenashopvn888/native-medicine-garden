@@ -55,7 +55,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Do you sell edibles and vapes?",
-        a: "Yes, the site has category paths for edibles, vape pens, disposable vapes, and related menu items when listed.",
+        a: "Yes, the site has category guides for edibles, vape pens, disposable vapes, and related menu items when listed.",
       },
       {
         q: "Do you list cigarette information?",

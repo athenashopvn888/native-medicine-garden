@@ -26,10 +26,10 @@ export const SEO_PAGES: SeoPageData[] = [
       {
         heading:
           "A Local Cannabis Stop Near Gerrard Street West and Bay Street",
-        body: "Native Medicine Garden is located at 76 Gerrard St W, Toronto, ON M5G 1J5. This page is built for shoppers around Gerrard Street West, Bay Street, Yonge Street, College Park, Toronto Metropolitan University, University Avenue, Downtown Toronto who want clear store information and simple menu paths before visiting.",
+        body: "Native Medicine Garden is located at 76 Gerrard St W, Toronto, ON M5G 1J5. This page helps shoppers around Gerrard Street West, Bay Street, Yonge Street, College Park, Toronto Metropolitan University, University Avenue, Downtown Toronto confirm store information and compare categories before visiting.",
       },
       {
-        heading: "Flower Tiers And Menu Paths",
+        heading: "Flower Tiers And Category Choices",
         body: "Native Medicine Garden organizes flower into clear tiers, from Exotic and Premium to AAA+, AA, and Budget. You can also browse edibles, vapes, concentrates, pre-rolls, cigarettes, and accessories through the live menu before stopping in.",
       },
       {
@@ -132,7 +132,7 @@ export const SEO_PAGES: SeoPageData[] = [
       },
       {
         q: "Can I browse cannabis and cigarettes together?",
-        a: "Yes. The site has category paths for cannabis products, cigarettes, and accessories.",
+        a: "Yes. The site has category guides for cannabis products, cigarettes, and accessories.",
       },
       { q: "Where is the store?", a: "76 Gerrard St W, Toronto, ON M5G 1J5." },
     ],
@@ -155,7 +155,7 @@ export const SEO_PAGES: SeoPageData[] = [
       },
       {
         heading: "Why Start With The Menu",
-        body: "The menu helps you compare flower tiers and category paths before visiting. It is a cleaner next step than a generic city page.",
+        body: "The menu helps you compare flower tiers and category guides before visiting. It is a cleaner next step than a generic city page.",
       },
       {
         heading: "Directions Context",

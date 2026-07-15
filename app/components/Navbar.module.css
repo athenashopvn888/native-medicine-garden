@@ -163,3 +163,18 @@
   background: rgba(45, 106, 79, 0.95);
   border-color: #40916C;
 }
+
+
+.pillHiring {
+  color: #07111f;
+  background: #fbbf24;
+  border-color: #fbbf24;
+  font-weight: 900;
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.24);
+}
+
+.pillHiring:hover {
+  color: #07111f;
+  background: #facc15;
+  border-color: #facc15;
+}

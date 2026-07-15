@@ -212,7 +212,20 @@ export default function HomePage() {
       </section>
 
       {/* -- BENTO MOSAIC HERO -- */}
-      <section className={styles.hero}>
+
+
+      <section className={styles.hiringCallout} aria-label="Hiring at Native Medicine Garden">
+        <div className={styles.hiringCalloutInner}>
+          <div>
+            <span className={styles.hiringEyebrow}>Budtenders / Managers Wanted</span>
+            <h2>Join Native Medicine</h2>
+            <p>Native Medicine is taking online applications for budtender and manager roles. We are looking for motivated, reliable people with calm customer service and strong follow-through. Online applications only. Please do not call the store about hiring.</p>
+          </div>
+          <Link href="/careers/budtender" className={styles.hiringButton}>Apply Online</Link>
+        </div>
+      </section>
+
+<section className={styles.hero}>
         <div className={styles.heroBg} />
         <div className={styles.heroOverlay} />
         <div className={styles.heroStars} />

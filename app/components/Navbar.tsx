@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
 
-const ALL_LINKS = [
+const ALL_LINKS: { href: string; label: string; featured?: boolean }[] = [
   { href: "/exotic", label: "Exotic" },
   { href: "/premium", label: "Premium" },
   { href: "/aaa", label: "AAA+" },
@@ -19,6 +19,8 @@ const ALL_LINKS = [
   { href: "/items/cigarettes", label: "Cigarettes" },
   { href: "/items/add-ons", label: "Accessories" },
   { href: "/delivery", label: "🚗 Delivery" },
+    { href: "/careers/budtender", label: "Join Team", featured: true },
+
   { href: "/faq", label: "FAQ" },
   { href: "/games", label: "🎮" },
   { href: "/resources", label: "Resources" },
@@ -64,7 +66,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`${styles.pill} ${isActive ? styles.pillActive : ""}`}
+                className={`${styles.pill} ${link.featured ? styles.pillHiring : ""} ${isActive ? styles.pillActive : ""}`}
               >
                 {link.label}
               </Link>
