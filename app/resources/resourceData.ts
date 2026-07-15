@@ -123,7 +123,7 @@ export const RESOURCE_PAGES: ResourcePage[] = [
       },
       {
         heading: "Budget And AA Keep It Simple",
-        body: "For cheap weed and budget weed searches, Budget at $3/g and AA at $4/g are the simplest lanes to compare. The final product name, strain note, and availability should still be checked on the current tier page."
+        body: "For cheap weed and budget weed searches, Budget at $3/g and AA at $4/g are the simplest lanes to compare. Check the current tier page for listed product names, prices, and item notes."
       }
     ],
   },

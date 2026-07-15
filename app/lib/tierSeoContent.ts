@@ -9,15 +9,15 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   EXOTIC: {
     seoTitle: "Exotic Cannabis Flower Toronto | Native Medicine Garden",
     seoIntro:
-      "Browse top-tier flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and availability before visiting.",
+      "Browse the Exotic flower category at Native Medicine Garden near Gerrard Street West and Bay Street. Check the current menu for listed names, prices, and package details before visiting.",
     sections: [
       {
         heading: "Exotic Flower At Native Medicine Garden",
-        body: "Native Medicine Garden lists Exotic flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain availability, THC details, and package pricing.",
+        body: "Native Medicine Garden lists Exotic flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain listings, THC details, and package pricing.",
       },
       {
         heading: "Pricing Context From $20/g",
-        body: "The Exotic tier is presented with clear menu pricing and deal context where available. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
+        body: "The Exotic tier is presented with clear menu pricing and deal context where listed. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
       },
       {
         heading: "Local Store Context",
@@ -31,7 +31,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
       },
       {
         q: "Does this page guarantee current Exotic stock?",
-        a: "No. Use the current menu or ask in store for exact availability.",
+        a: "No. Use the current menu or ask in store for exact listings.",
       },
       { q: "Where is the store?", a: "76 Gerrard St W, Toronto, ON M5G 1J5" },
     ],
@@ -40,15 +40,15 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   PREMIUM: {
     seoTitle: "Premium Cannabis Flower Toronto | Native Medicine Garden",
     seoIntro:
-      "Browse premium flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and availability before visiting.",
+      "Browse premium flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and listings before visiting.",
     sections: [
       {
         heading: "Premium Flower At Native Medicine Garden",
-        body: "Native Medicine Garden lists Premium flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain availability, THC details, and package pricing.",
+        body: "Native Medicine Garden lists Premium flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain listings, THC details, and package pricing.",
       },
       {
         heading: "Pricing Context From $15/g",
-        body: "The Premium tier is presented with clear menu pricing and deal context where available. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
+        body: "The Premium tier is presented with clear menu pricing and deal context where listed. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
       },
       {
         heading: "Local Store Context",
@@ -62,7 +62,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
       },
       {
         q: "Does this page guarantee current Premium stock?",
-        a: "No. Use the current menu or ask in store for exact availability.",
+        a: "No. Use the current menu or ask in store for exact listings.",
       },
       { q: "Where is the store?", a: "76 Gerrard St W, Toronto, ON M5G 1J5" },
     ],
@@ -75,11 +75,11 @@ export const TIER_SEO: Record<string, TierSeoData> = {
     sections: [
       {
         heading: "AAA+ Flower At Native Medicine Garden",
-        body: "Native Medicine Garden lists AAA+ flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain availability, THC details, and package pricing.",
+        body: "Native Medicine Garden lists AAA+ flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain listings, THC details, and package pricing.",
       },
       {
         heading: "Pricing Context From $10/g",
-        body: "The AAA+ tier is presented with clear menu pricing and deal context where available. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
+        body: "The AAA+ tier is presented with clear menu pricing and deal context where listed. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
       },
       {
         heading: "Local Store Context",
@@ -93,7 +93,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
       },
       {
         q: "Does this page guarantee current AAA+ stock?",
-        a: "No. Use the current menu or ask in store for exact availability.",
+        a: "No. Use the current menu or ask in store for exact listings.",
       },
       { q: "Where is the store?", a: "76 Gerrard St W, Toronto, ON M5G 1J5" },
     ],
@@ -102,15 +102,15 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   AA: {
     seoTitle: "AA Cannabis Flower Toronto | Native Medicine Garden",
     seoIntro:
-      "Browse daily-driver flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and availability before visiting.",
+      "Browse daily-driver flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and listings before visiting.",
     sections: [
       {
         heading: "AA Flower At Native Medicine Garden",
-        body: "Native Medicine Garden lists AA flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain availability, THC details, and package pricing.",
+        body: "Native Medicine Garden lists AA flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain listings, THC details, and package pricing.",
       },
       {
         heading: "Pricing Context From $4/g",
-        body: "The AA tier is presented with clear menu pricing and deal context where available. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
+        body: "The AA tier is presented with clear menu pricing and deal context where listed. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
       },
       {
         heading: "Local Store Context",
@@ -124,7 +124,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
       },
       {
         q: "Does this page guarantee current AA stock?",
-        a: "No. Use the current menu or ask in store for exact availability.",
+        a: "No. Use the current menu or ask in store for exact listings.",
       },
       { q: "Where is the store?", a: "76 Gerrard St W, Toronto, ON M5G 1J5" },
     ],
@@ -133,15 +133,15 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   BUDGET: {
     seoTitle: "Budget Cannabis Toronto | Native Medicine Garden",
     seoIntro:
-      "Browse value flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and availability before visiting.",
+      "Browse value flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and listings before visiting.",
     sections: [
       {
         heading: "Budget Flower At Native Medicine Garden",
-        body: "Native Medicine Garden lists Budget flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain availability, THC details, and package pricing.",
+        body: "Native Medicine Garden lists Budget flower as part of its tiered cannabis menu. Use this page for category context, then check the current menu for exact strain listings, THC details, and package pricing.",
       },
       {
         heading: "Pricing Context From $3/g",
-        body: "The Budget tier is presented with clear menu pricing and deal context where available. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
+        body: "The Budget tier is presented with clear menu pricing and deal context where listed. Prices and stock can change, so confirm the current menu or ask in store before purchase.",
       },
       {
         heading: "Local Store Context",
@@ -155,7 +155,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
       },
       {
         q: "Does this page guarantee current Budget stock?",
-        a: "No. Use the current menu or ask in store for exact availability.",
+        a: "No. Use the current menu or ask in store for exact listings.",
       },
       { q: "Where is the store?", a: "76 Gerrard St W, Toronto, ON M5G 1J5" },
     ],

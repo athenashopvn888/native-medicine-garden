@@ -213,7 +213,7 @@ export default async function ItemPage({
                 </div>
               </div>
 
-              {/* Effects */}
+              {/* Product details */}
               <div className={styles.effectsRow}>
                 {itemData.effects.map((e) => (
                   <span key={e.label} className={styles.effectPill}>

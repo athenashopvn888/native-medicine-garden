@@ -182,7 +182,7 @@ export function GBPLandingPage() {
               />
             ) : (
               <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>
-                Map preview not available.
+                Map preview not listed.
               </div>
             )}
           </div>
@@ -207,7 +207,7 @@ export function GBPLandingPage() {
       <section className={styles.section}>
         <h2 className={styles.h2}>Compare Menu Categories Before You Visit</h2>
         <p className={styles.infoText}>
-          These category links help adults 19+ browse general menu sections before visiting. Product selection can change, so use the live menu for current details rather than assuming availability from this guide.
+          These category links help adults 19+ browse general menu sections before visiting. Use the current menu for listed product names, prices, and package details.
         </p>
         <div className={styles.productGrid}>
           {categoryGuideLinks.map((category) => (

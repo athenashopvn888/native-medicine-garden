@@ -196,14 +196,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse edibles category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review edibles category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review edibles category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What edibles information can shoppers review?",
         a: "Customers can review edibles category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],
@@ -219,14 +219,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse thc vape category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review thc vape category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review thc vape category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What thc vape information can shoppers review?",
         a: "Customers can review thc vape category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],
@@ -242,14 +242,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse nic vape category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review nic vape category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review nic vape category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What nic vape information can shoppers review?",
         a: "Customers can review nic vape category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],
@@ -265,14 +265,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse concentrates category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review concentrates category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review concentrates category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What concentrates information can shoppers review?",
         a: "Customers can review concentrates category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],
@@ -288,14 +288,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse pre-rolls category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review pre-rolls category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review pre-rolls category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What pre-rolls information can shoppers review?",
         a: "Customers can review pre-rolls category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],
@@ -311,14 +311,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse accessories category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review accessories category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review accessories category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What accessories information can shoppers review?",
         a: "Customers can review accessories category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],
@@ -333,14 +333,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse magic stuff category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review magic stuff category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review magic stuff category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What magic stuff information can shoppers review?",
         a: "Customers can review magic stuff category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],
@@ -356,14 +356,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro:
       "Browse cigarettes category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
     seoDescription:
-      "Review cigarettes category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product availability.",
+      "Review cigarettes category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
     faqs: [
       {
         q: "What cigarettes information can shoppers review?",
         a: "Customers can review cigarettes category information and confirm current menu details before visiting Native Medicine Garden.",
       },
       {
-        q: "Does this page guarantee current availability?",
+        q: "Does this page guarantee current listings?",
         a: "No. Category details can change, so customers should confirm the current menu before visiting.",
       },
     ],

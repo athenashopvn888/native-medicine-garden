@@ -52,7 +52,7 @@ export const SEO_PAGES: SeoPageData[] = [
       },
       {
         q: "Is this page claiming live inventory?",
-        a: "No. Use the current menu or ask in store for today's exact availability.",
+        a: "No. Use the current menu or ask in store for today's exact listings.",
       },
       {
         q: "What areas does this store naturally serve?",
@@ -92,7 +92,7 @@ export const SEO_PAGES: SeoPageData[] = [
       },
       {
         q: "Does this page guarantee current prices?",
-        a: "No. Prices and menu availability should be confirmed on the current menu or in store.",
+        a: "No. Prices and menu listings should be confirmed on the current menu or in store.",
       },
       {
         q: "Which flower tiers should value shoppers compare?",

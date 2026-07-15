@@ -47,7 +47,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Does the online page guarantee current inventory?",
-        a: "No. Category pages support browsing. Confirm current product availability on the live menu or in store.",
+        a: "No. Category pages support browsing. Confirm current product listings on the live menu or in store.",
       },
       {
         q: "What are the flower tiers?",
@@ -59,7 +59,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Do you list cigarette information?",
-        a: "Yes. Cigarette category information is available, but current brands and pricing should be confirmed in store.",
+        a: "Yes. Cigarette category information is listed, but current brands and pricing should be confirmed in store.",
       },
     ],
   },

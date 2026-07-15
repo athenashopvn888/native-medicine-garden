@@ -235,7 +235,7 @@ export default async function FlowerPage({
                 </div>
               </div>
 
-              {/* Effects */}
+              {/* Product details */}
               <div className={styles.effectsRow}>
                 {strainData.effects.map((e) => (
                   <span key={e.label} className={styles.effectPill}>
