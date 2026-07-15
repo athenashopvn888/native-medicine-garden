@@ -51,8 +51,8 @@ export const SEO_PAGES: SeoPageData[] = [
         a: "You can browse flower, pre-rolls, edibles, vapes, concentrates, cigarettes, and accessories before visiting.",
       },
       {
-        q: "Is this page claiming live inventory?",
-        a: "No. Use the current menu or ask in store for today's exact listings.",
+        q: "How do I check current menu listings?",
+        a: "Use the current menu or ask in store for today's exact listings.",
       },
       {
         q: "What areas does this store naturally serve?",
