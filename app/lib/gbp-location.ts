@@ -1,7 +1,6 @@
-// Auto-generated Google Business Profile Local SEO Location Configuration
 export const gbpLocation = {
   storeName: "Native Medicine Garden",
-  domain: "nativemedicinecannabis.com",
+  domain: "www.nativemedicinecannabis.com",
   city: "Toronto",
   province: "ON",
   country: "CA",

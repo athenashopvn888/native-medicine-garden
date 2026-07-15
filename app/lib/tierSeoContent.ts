@@ -27,7 +27,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
     faqs: [
       {
         q: "What is Exotic flower?",
-        a: "Exotic is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category, value, and potency context before visiting.",
+        a: "Exotic is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category and price context before visiting.",
       },
       {
         q: "Does this page guarantee current Exotic stock?",
@@ -58,7 +58,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
     faqs: [
       {
         q: "What is Premium flower?",
-        a: "Premium is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category, value, and potency context before visiting.",
+        a: "Premium is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category and price context before visiting.",
       },
       {
         q: "Does this page guarantee current Premium stock?",
@@ -71,7 +71,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   "AAA+": {
     seoTitle: "AAA+ Cannabis Flower Toronto | Native Medicine Garden",
     seoIntro:
-      "Browse high-potency value category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and availability before visiting.",
+      "Browse the AAA+ flower tier at Native Medicine Garden near Gerrard Street West and Bay Street. Check current menu items and prices before visiting.",
     sections: [
       {
         heading: "AAA+ Flower At Native Medicine Garden",
@@ -89,7 +89,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
     faqs: [
       {
         q: "What is AAA+ flower?",
-        a: "AAA+ is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category, value, and potency context before visiting.",
+        a: "AAA+ is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category and price context before visiting.",
       },
       {
         q: "Does this page guarantee current AAA+ stock?",
@@ -120,7 +120,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
     faqs: [
       {
         q: "What is AA flower?",
-        a: "AA is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category, value, and potency context before visiting.",
+        a: "AA is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category and price context before visiting.",
       },
       {
         q: "Does this page guarantee current AA stock?",
@@ -151,7 +151,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
     faqs: [
       {
         q: "What is Budget flower?",
-        a: "Budget is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category, value, and potency context before visiting.",
+        a: "Budget is one of the flower tiers shown on the Native Medicine Garden menu. It helps shoppers compare category and price context before visiting.",
       },
       {
         q: "Does this page guarantee current Budget stock?",

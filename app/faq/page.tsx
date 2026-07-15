@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "Frequently asked questions about Native Medicine Garden at 76 Gerrard St W, Toronto, ON M5G 1J5. Hours, location, products, category browsing, and visit planning.",
   alternates: {
-    canonical: "https://nativemedicinecannabis.com/faq",
+    canonical: "https://www.nativemedicinecannabis.com/faq",
   },
 };
 

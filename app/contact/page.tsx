@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "Visit Native Medicine Garden at 76 Gerrard St W, Toronto, ON M5G 1J5. Open 24 hours, 7 days a week. Walk-ins welcome.",
   alternates: {
-    canonical: "https://nativemedicinecannabis.com/contact",
+    canonical: "https://www.nativemedicinecannabis.com/contact",
   },
   openGraph: {
     title: "Contact Native Medicine Garden — Toronto Dispensary",
@@ -95,16 +95,16 @@ export default function ContactPage() {
                 <br />
                 Just walk in and our staff will
                 <br />
-                help you find the perfect strain.
+                help you compare current menu options.
               </p>
               <div className={styles.featureList}>
                 <div className={styles.featureItem}>
                   <span className={styles.featureCheck}>✓</span>
-                  200+ strains in stock
+                  Browse the current flower menu
                 </div>
                 <div className={styles.featureItem}>
                   <span className={styles.featureCheck}>✓</span>
-                  Lab-tested &amp; safe
+                  Ask staff about product labels
                 </div>
                 <div className={styles.featureItem}>
                   <span className={styles.featureCheck}>✓</span>

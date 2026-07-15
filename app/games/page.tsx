@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Cannabis Arcade Games — Native Medicine Garden | Toronto",
   description: "Play free online cannabis-themed games like Flappy Bud and Snake Munchies while you wait at Native Medicine Garden.",
   alternates: {
-    canonical: "https://nativemedicinecannabis.com/games",
+    canonical: "https://www.nativemedicinecannabis.com/games",
   },
 };
 

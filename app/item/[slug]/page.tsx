@@ -29,7 +29,7 @@ export async function generateMetadata({
     title: `${item.name} | ${item.category} | Native Medicine Garden Toronto`,
     description: itemData.metaDescription,
     alternates: {
-      canonical: `https://nativemedicinecannabis.com/item/${slug}`,
+      canonical: `https://www.nativemedicinecannabis.com/item/${slug}`,
     },
     openGraph: {
       title: `${item.name} | Native Medicine Garden`,
@@ -54,9 +54,8 @@ function getJsonLd(item: ItemProduct) {
 
   const offers: any = {
     "@type": "Offer",
-    url: `https://nativemedicinecannabis.com/item/${item.slug}`,
+    url: `https://www.nativemedicinecannabis.com/item/${item.slug}`,
     priceCurrency: "CAD",
-    availability: "https://schema.org/InStock",
     itemCondition: "https://schema.org/NewCondition",
     seller: { "@type": "Organization", name: "Native Medicine Garden" },
     hasMerchantReturnPolicy: {
@@ -74,7 +73,7 @@ function getJsonLd(item: ItemProduct) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: item.name,
-    image: item.image ? [item.image.startsWith('http') ? item.image : `https://nativemedicinecannabis.com${item.image.startsWith('/') ? '' : '/'}${item.image}`] : undefined,
+    image: item.image ? [item.image.startsWith('http') ? item.image : `https://www.nativemedicinecannabis.com${item.image.startsWith('/') ? '' : '/'}${item.image}`] : undefined,
     description: itemData.description,
     brand: { "@type": "Brand", name: "Native Medicine Garden" },
     sku: cleanSku(item.sku || item.slug),
@@ -93,19 +92,19 @@ function getBreadcrumbJsonLd(item: ItemProduct) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://nativemedicinecannabis.com"
+        "item": "https://www.nativemedicinecannabis.com"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": item.category,
-        "item": `https://nativemedicinecannabis.com/items/${catSlug}`
+        "item": `https://www.nativemedicinecannabis.com/items/${catSlug}`
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": item.name,
-        "item": `https://nativemedicinecannabis.com/item/${item.slug}`
+        "item": `https://www.nativemedicinecannabis.com/item/${item.slug}`
       }
     ]
   };
@@ -247,14 +246,14 @@ export default async function ItemPage({
                 <p className={styles.descText}>{itemData.description}</p>
               </div>
 
-              {/* -- How to consume -- */}
+              {/* -- Item details -- */}
               <div className={styles.descSection} style={{ marginTop: '24px' }}>
-                <h2 className={styles.descTitle}>How to Consume</h2>
+                <h2 className={styles.descTitle}>Item Details</h2>
                 <p className={styles.descText}>{itemData.consume}</p>
               </div>
 
               <div className={styles.visitCta}>
-                <p>Available in-store &middot; Walk-in welcome &middot; No appointment needed</p>
+                <p>Check the current menu &middot; Walk-in welcome &middot; No appointment needed</p>
               </div>
             </div>
           </div>

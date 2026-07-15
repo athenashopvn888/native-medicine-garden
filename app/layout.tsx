@@ -3,7 +3,7 @@ import "./globals.css";
 import AgeGate from "./components/AgeGate";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://nativemedicinecannabis.com"),
+  metadataBase: new URL("https://www.nativemedicinecannabis.com"),
   title: {
     default: "Native Medicine Garden | Toronto Dispensary",
     template: "%s | Native Medicine Garden",
@@ -29,14 +29,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_CA",
-    url: "https://nativemedicinecannabis.com",
+    url: "https://www.nativemedicinecannabis.com",
     siteName: "Native Medicine Garden",
     title: "Native Medicine Garden — Premium Toronto Cannabis Dispensary",
     description:
-      "200+ strains from $3/g. Exotic to Budget. Toronto's uplifting dispensary at 76 Gerrard St W. Open 24 Hours.",
+      "Browse flower tiers and menu categories at 76 Gerrard St W. Open 24 Hours.",
     images: [
       {
-        url: "https://nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
+        url: "https://www.nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
         width: 1200,
         height: 630,
         alt: "Native Medicine Garden — Native Medicine Garden Toronto",
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Native Medicine Garden — Toronto's Uplifting Dispensary",
     description:
-      "200+ strains from $3/g. Open 24 Hours at 76 Gerrard St W, Toronto.",
+      "Browse current menu categories. Open 24 Hours at 76 Gerrard St W, Toronto.",
     images: [
-      "https://nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
+      "https://www.nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
     ],
   },
   robots: {
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://nativemedicinecannabis.com",
+    canonical: "https://www.nativemedicinecannabis.com",
   },
   verification: {
     // google: "your-google-verification-code",
@@ -76,14 +76,14 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Store",
   additionalType: "https://schema.org/Store",
-  "@id": "https://nativemedicinecannabis.com",
+  "@id": "https://www.nativemedicinecannabis.com",
   name: "Native Medicine Garden",
   description:
     "Cannabis dispensary at 76 Gerrard St W in Toronto, ON. Shop exotic, premium, AAA+, AA, and budget flower tiers plus edibles, prerolls, and vapes. Open 24 Hours.",
-  url: "https://nativemedicinecannabis.com",
+  url: "https://www.nativemedicinecannabis.com",
   telephone: "+14373394466",
   image:
-    "https://nativemedicinecannabis.com/wp-content/uploads/2026/04/7Clmh.jpg",
+    "https://www.nativemedicinecannabis.com/wp-content/uploads/2026/04/7Clmh.jpg",
   priceRange: "$3 - $12/g",
   address: {
     "@type": "PostalAddress",

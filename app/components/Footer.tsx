@@ -86,7 +86,7 @@ export default function Footer() {
         <div className={styles.bottom}>
           <p>
             (c) {new Date().getFullYear()} Native Medicine Garden. Must be 19+
-            to enter. Please consume responsibly.
+            to enter. Please follow applicable laws and product labels.
           </p>
         </div>
       </div>

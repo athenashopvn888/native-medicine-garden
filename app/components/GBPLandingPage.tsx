@@ -1,4 +1,3 @@
-// Auto-generated Google Business Profile Local SEO Landing Page Component
 import Link from "next/link";
 import styles from "./GBPLandingPage.module.css";
 import { gbpLocation } from "../lib/gbp-location";
@@ -101,7 +100,7 @@ export function GBPLandingPage() {
 
       {/* Intro Section */}
       <section className={styles.section}>
-        <h2 className={styles.h2}>Your Trusted Local Weed Dispensary</h2>
+        <h2 className={styles.h2}>A Local Weed Dispensary</h2>
         <p className={styles.introText}>{gbpLocation.introVariant}</p>
       </section>
 
