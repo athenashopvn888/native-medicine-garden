@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import styles from "./Navbar.module.css";
@@ -28,14 +29,19 @@ const ALL_LINKS: { href: string; label: string; featured?: boolean }[] = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const scrollBarRef = useRef<HTMLDivElement>(null);
+  const [canAdvance, setCanAdvance] = useState(false);
+  const updateScrollState = useCallback(() => { const scrollBar = scrollBarRef.current; if (!scrollBar) return; setCanAdvance(scrollBar.scrollWidth - scrollBar.clientWidth - scrollBar.scrollLeft > 2); }, []);
+  useEffect(() => { const scrollBar = scrollBarRef.current; if (!scrollBar) return; updateScrollState(); scrollBar.addEventListener("scroll", updateScrollState, { passive: true }); window.addEventListener("resize", updateScrollState); const resizeObserver = new ResizeObserver(updateScrollState); resizeObserver.observe(scrollBar); if (scrollBar.firstElementChild) resizeObserver.observe(scrollBar.firstElementChild); return () => { scrollBar.removeEventListener("scroll", updateScrollState); window.removeEventListener("resize", updateScrollState); resizeObserver.disconnect(); }; }, [pathname, updateScrollState]);
+  const advanceScrollBar = () => { const scrollBar = scrollBarRef.current; if (!scrollBar) return; const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches; scrollBar.scrollBy({ left: Math.max(180, scrollBar.clientWidth * 0.75), behavior: reduceMotion ? "auto" : "smooth" }); };
 
   return (
     <nav className={styles.navbar} id="main-nav">
       {/* Top bar — logo + open now */}
       <div className={styles.topBar}>
-        <Link href="/" className={styles.logo} style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
+        <Link href="/" className={styles.logo} aria-label="NATIVE MEDICINE GARDEN CANNABIS DISPENSARY" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
           <img src="/storeFavicon.webp" alt="Native Medicine Garden Logo" style={{ height: "30px", width: "30px", objectFit: "contain", borderRadius: "4px" }} />
-          <span style={{
+          <span className={styles.brandName} style={{
             fontFamily: "var(--font-display)",
             fontWeight: 900,
             fontSize: "18px",
@@ -58,8 +64,9 @@ export default function Navbar() {
       </div>
 
       {/* Scrollable link bar */}
-      <div className={styles.scrollBar}>
-        <div className={styles.scrollInner}>
+      <div className={styles.scrollShell}>
+        <div ref={scrollBarRef} id="store-menu-scrollbar" className={styles.scrollBar}>
+          <div className={styles.scrollInner}>
           {ALL_LINKS.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -72,7 +79,9 @@ export default function Navbar() {
               </Link>
             );
           })}
+          </div>
         </div>
+        {canAdvance && <button type="button" className={styles.scrollAdvance} aria-label="Show more navigation links" aria-controls="store-menu-scrollbar" onClick={advanceScrollBar}><span aria-hidden="true">›</span></button>}
       </div>
     </nav>
   );
