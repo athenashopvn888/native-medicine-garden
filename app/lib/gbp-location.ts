@@ -34,6 +34,6 @@ export const gbpLocation = {
   introVariant: "If you are searching for a reliable weed dispensary in Toronto, Native Medicine Garden at 76 Gerrard St W is your go-to destination. We serve adults 19+ with a vast selection of weed products including cannabis flower, pre-rolls, edibles, THC vapes, shatter, and CBD oils. Serving customers near Downtown Toronto / Bay Street and surrounding communities like Bay St, our cannabis store and weed shop is focused on quality and convenience.",
   neighborhoodDescription: "Located in the vibrant Downtown Toronto / Bay Street district, our cannabis store fits right into this active and historic community, surrounded by local retail shops and convenient transit links.",
   parkingNote: "Paid parking is available in local garages and street meters",
-  transitNote: "Steps from major TTC transit routes and college/dunder subway stations.",
+  transitNote: "Steps from major TTC transit routes and College/Dundas subway stations.",
   sectionTitle: "Serving Customers Near Downtown Toronto"
 };
