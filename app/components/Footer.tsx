@@ -74,7 +74,7 @@ export default function Footer() {
               <Link href="/info/weed-store-near-downtown-toronto">
                 Weed Store Near Gerrard and Bay
               </Link>
-              <Link href="/weed-dispensary-toronto/">
+              <Link href="/weed-dispensary-toronto">
                 Native Medicine Garden Weed Dispensary in Toronto
               </Link>
               <Link href="/contact">Contact Us</Link>

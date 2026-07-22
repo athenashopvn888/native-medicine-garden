@@ -76,7 +76,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Store",
   additionalType: "https://schema.org/Store",
-  "@id": "https://www.nativemedicinecannabis.com",
+  "@id": "https://www.nativemedicinecannabis.com/#store",
   name: "Native Medicine Garden",
   description:
     "Cannabis dispensary at 76 Gerrard St W in Toronto, ON. Shop exotic, premium, AAA+, AA, and budget flower tiers plus edibles, prerolls, and vapes. Open 24 Hours.",
