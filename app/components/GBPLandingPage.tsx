@@ -13,26 +13,15 @@ const categoryLinks: { [key: string]: string } = {
   "CBD oils": "/items/concentrates",
   "Accessories": "/items/add-ons"
 };
-type StoreSchemaMarkup = {
+type WebPageSchemaMarkup = {
   "@context": string;
   "@type": string;
+  "@id": string;
   name: string;
   url: string;
-  telephone: string;
-  address: {
-    "@type": string;
-    streetAddress: string;
-    addressLocality: string;
-    addressRegion: string;
-    postalCode: string;
-    addressCountry: string;
-  };
-  priceRange: string;
-  openingHours?: string[];
-  geo?: {
-    "@type": string;
-    latitude: number;
-    longitude: number;
+  description: string;
+  about: {
+    "@id": string;
   };
 };
 
@@ -43,36 +32,19 @@ export function GBPLandingPage() {
     label: product,
     href: categoryLinks[product] || "/"
   }));
-  // Generate schema.org markup dynamically
-  const schemaMarkup: StoreSchemaMarkup = {
+  const canonicalUrl = `https://${gbpLocation.domain}/${gbpLocation.slug}`;
+  // Describe this landing page without defining a second, competing Store entity.
+  const schemaMarkup: WebPageSchemaMarkup = {
     "@context": "https://schema.org",
-    "@type": "Store",
-    "name": gbpLocation.storeName,
-    "url": `https://${gbpLocation.domain}/${gbpLocation.slug}/`,
-    "telephone": gbpLocation.phone,
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": gbpLocation.streetAddress,
-      "addressLocality": gbpLocation.city,
-      "addressRegion": gbpLocation.province,
-      "postalCode": gbpLocation.postalCode,
-      "addressCountry": gbpLocation.country
-    },
-    "priceRange": "$$"
+    "@type": "WebPage",
+    "@id": `${canonicalUrl}#webpage`,
+    "name": gbpLocation.seoTitle,
+    "url": canonicalUrl,
+    "description": gbpLocation.metaDescription,
+    "about": {
+      "@id": `https://${gbpLocation.domain}/#store`
+    }
   };
-
-  // Inject real opening hours and coordinates if they exist
-  if (gbpLocation.hours && gbpLocation.hours.length > 0) {
-    schemaMarkup.openingHours = gbpLocation.hours;
-  }
-
-  if (gbpLocation.latitude && gbpLocation.longitude) {
-    schemaMarkup.geo = {
-      "@type": "GeoCoordinates",
-      "latitude": Number(gbpLocation.latitude),
-      "longitude": Number(gbpLocation.longitude)
-    };
-  }
 
   return (
     <div className={styles.container}>
@@ -100,15 +72,15 @@ export function GBPLandingPage() {
 
       {/* Intro Section */}
       <section className={styles.section}>
-        <h2 className={styles.h2}>A Local Weed Dispensary</h2>
+        <h2 className={styles.h2}>Local Store Information</h2>
         <p className={styles.introText}>{gbpLocation.introVariant}</p>
       </section>
 
       {/* Product Section */}
       <section className={styles.section}>
-        <h2 className={styles.h2}>Weed and Cannabis Products Available</h2>
+        <h2 className={styles.h2}>Browse Menu Categories</h2>
         <p className={styles.infoText}>
-          At {gbpLocation.storeName}, we offer a curated selection of weed and cannabis products for adults 19+ in {gbpLocation.city}. Enjoy some of Ontario&apos;s finest quality and value in the following categories:
+          Adults 19+ can use these links to browse the store&apos;s menu categories. Check the current menu for specific products, prices, and availability before visiting:
         </p>
         <div className={styles.productGrid}>
           {gbpLocation.products.map((p) => {
@@ -173,17 +145,33 @@ export function GBPLandingPage() {
           </div>
           <div className={styles.mapWrapper}>
             {gbpLocation.mapEmbedUrl ? (
-              <iframe
-                title={`Map of ${gbpLocation.storeName}`}
-                src={gbpLocation.mapEmbedUrl}
-                className={styles.mapIframe}
-                allowFullScreen={true}
-                loading="lazy"
-              />
+              <>
+                <iframe
+                  title={`Map of ${gbpLocation.storeName}`}
+                  src={gbpLocation.mapEmbedUrl}
+                  className={styles.mapIframe}
+                  allowFullScreen={true}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                <a
+                  href={gbpLocation.directionsUrl}
+                  className={styles.mapDirections}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Get directions in Google Maps
+                </a>
+              </>
             ) : (
-              <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>
-                Map preview not listed.
-              </div>
+              <a
+                href={gbpLocation.directionsUrl}
+                className={styles.mapDirections}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Get directions in Google Maps
+              </a>
             )}
           </div>
         </div>
@@ -193,7 +181,7 @@ export function GBPLandingPage() {
       <section className={styles.section}>
         <h2 className={styles.h2}>{gbpLocation.sectionTitle}</h2>
         <p className={styles.infoText}>
-          {gbpLocation.neighborhoodDescription} {gbpLocation.transitNote}. We proudly welcome customers from:
+          {gbpLocation.neighborhoodDescription} {gbpLocation.transitNote}. Nearby reference points include:
         </p>
         <div className={styles.areaList}>
           {gbpLocation.nearbyAreas.map((area) => (
@@ -241,13 +229,13 @@ export function GBPLandingPage() {
           <div className={styles.faqItem}>
             <h3 className={styles.faqQuestion}>Is {gbpLocation.storeName} a weed dispensary in {gbpLocation.city}?</h3>
             <p className={styles.faqAnswer}>
-              Yes, {gbpLocation.storeName} is a fully licensed local weed dispensary in {gbpLocation.city} serving cannabis customers aged 19 and older with valid identification.
+              {gbpLocation.storeName} is a cannabis store at {gbpLocation.address}. Customers must be at least 19 years old and present valid government-issued photo identification.
             </p>
           </div>
           <div className={styles.faqItem}>
             <h3 className={styles.faqQuestion}>What products does {gbpLocation.storeName} carry?</h3>
             <p className={styles.faqAnswer}>
-              We carry a complete line of weed products including premium flower, pre-rolls, THC edibles, concentrates, shatter, THC vape cartridges, CBD oils, and accessories.
+              The menu is organized into categories such as flower, pre-rolls, edibles, concentrates, vapes, CBD oils, and accessories. Check the current menu for specific products and availability.
             </p>
           </div>
           <div className={styles.faqItem}>
