@@ -14,6 +14,11 @@ import {
 import { dailyPin, verifyDailyPin } from "../app/lib/staffPhotoPin.ts";
 import { signStaffSession, validateStaffSession } from "../app/lib/staffPhotoSessionToken.ts";
 import { mutationRetryDelay, normalizeStaffName } from "../app/lib/staffPhotoIdentity.ts";
+import {
+  SIGNED_MEDIA_MAX_AGE_SECONDS,
+  signStaffMedia,
+  verifyStaffMediaSignature,
+} from "../app/lib/staffPhotoSignedMedia.ts";
 
 const secret = "test-secret-that-is-at-least-thirty-two-characters-long";
 
@@ -139,6 +144,31 @@ test("state conflict retries use bounded exponential backoff", () => {
   assert.equal(mutationRetryDelay(1, 0), 70);
   assert.equal(mutationRetryDelay(5, 0), 1000);
   assert.equal(mutationRetryDelay(9, 1), 1250);
+});
+
+test("signed public media URLs are UUID-bound and expire within ten minutes", () => {
+  const id = "123e4567-e89b-12d3-a456-426614174000";
+  const nowSeconds = 1_785_000_000;
+  const exp = String(nowSeconds + SIGNED_MEDIA_MAX_AGE_SECONDS);
+  const signature = signStaffMedia(id, exp, secret);
+  const tamperedSignature = `${signature.slice(0, -1)}${signature.endsWith("0") ? "1" : "0"}`;
+  assert.equal(verifyStaffMediaSignature({ id, exp, signature, secret, nowSeconds }), true);
+  assert.equal(verifyStaffMediaSignature({ id, exp, signature: tamperedSignature, secret, nowSeconds }), false);
+  assert.equal(verifyStaffMediaSignature({ id: "not-a-uuid", exp, signature, secret, nowSeconds }), false);
+  assert.equal(verifyStaffMediaSignature({ id, exp: String(nowSeconds), signature, secret, nowSeconds }), false);
+  const tooFar = String(nowSeconds + SIGNED_MEDIA_MAX_AGE_SECONDS + 1);
+  assert.equal(verifyStaffMediaSignature({ id, exp: tooFar, signature: signStaffMedia(id, tooFar, secret), secret, nowSeconds }), false);
+});
+
+test("public media route is read-only, unlisted and streams the stored MIME type", () => {
+  const route = readFileSync(new URL("../app/api/staff-photo/collector/public-media/[id]/route.ts", import.meta.url), "utf8");
+  assert.match(route, /verifyStaffMediaSignature/);
+  assert.match(route, /readStaffState/);
+  assert.match(route, /getStaffMedia/);
+  assert.match(route, /"content-type": submission\.mime_type/);
+  assert.match(route, /"cache-control": "private, no-store"/);
+  assert.match(route, /"x-robots-tag": "noindex, nofollow, noarchive"/);
+  assert.doesNotMatch(route, /mutateStaffState|status\s*=/);
 });
 
 test("client source does not contain server secret names or PIN formula", () => {
