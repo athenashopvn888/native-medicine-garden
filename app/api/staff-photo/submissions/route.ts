@@ -1,5 +1,6 @@
 import { hasStaffSession, isSameOrigin } from "@/app/lib/staffPhotoAuth";
 import { deleteStaffMedia, mutateStaffState, publicError, uploadStaffMedia } from "@/app/lib/staffPhotoStore";
+import { normalizeStaffName } from "@/app/lib/staffPhotoIdentity";
 import { expiryFor, operationalDayKey, SHOT_PROMPTS, torontoWeekKey } from "@/app/lib/staffPhotoCore";
 import { inspectImage } from "@/app/lib/staffPhotoUpload";
 
@@ -10,6 +11,8 @@ export async function POST(request: Request) {
   if (!(await hasStaffSession())) return Response.json({ ok: false, error: "Please sign in again." }, { status: 401 });
   try {
     const form = await request.formData();
+    const staffName = normalizeStaffName(form.get("staffName"));
+    if (!staffName) return Response.json({ ok: false, error: "Enter your name before submitting." }, { status: 400 });
     const promptKey = String(form.get("promptKey") || "");
     if (!SHOT_PROMPTS.some((prompt) => prompt.key === promptKey)) return Response.json({ ok: false, error: "Choose a valid shot type." }, { status: 400 });
     const image = await inspectImage(form.get("photo"), "daily");
@@ -34,6 +37,7 @@ export async function POST(request: Request) {
           object_path: objectPath, original_name: image.originalName, mime_type: image.mime,
           byte_size: image.size, status: "pending", created_at: now, expires_at: expiryFor().toISOString(),
           retrieved_at: null, posted_at: null, validation_note: null,
+          staff_name: staffName,
         });
         return nextSlot;
       });

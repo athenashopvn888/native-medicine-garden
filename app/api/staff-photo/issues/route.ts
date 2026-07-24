@@ -1,5 +1,6 @@
 import { hasStaffSession, isSameOrigin } from "@/app/lib/staffPhotoAuth";
 import { deleteStaffMedia, mutateStaffState, publicError, uploadStaffMedia } from "@/app/lib/staffPhotoStore";
+import { normalizeStaffName } from "@/app/lib/staffPhotoIdentity";
 import { expiryFor, ISSUE_CATEGORIES, operationalDayKey } from "@/app/lib/staffPhotoCore";
 import { inspectImage } from "@/app/lib/staffPhotoUpload";
 import { randomUUID } from "node:crypto";
@@ -11,6 +12,8 @@ export async function POST(request: Request) {
   if (!(await hasStaffSession())) return Response.json({ ok: false, error: "Please sign in again." }, { status: 401 });
   try {
     const form = await request.formData();
+    const staffName = normalizeStaffName(form.get("staffName"));
+    if (!staffName) return Response.json({ ok: false, error: "Enter your name before reporting an issue." }, { status: 400 });
     const category = String(form.get("category") || "");
     const note = String(form.get("note") || "").trim().slice(0, 500);
     if (!ISSUE_CATEGORIES.includes(category as (typeof ISSUE_CATEGORIES)[number])) return Response.json({ ok: false, error: "Choose an issue category." }, { status: 400 });
@@ -31,6 +34,7 @@ export async function POST(request: Request) {
           attachment_bytes: image && !("error" in image) ? image.size : null,
           attachment_expires_at: image && !("error" in image) ? expiryFor().toISOString() : null,
           created_at: new Date().toISOString(), retrieved_at: null,
+          staff_name: staffName,
         });
       });
     } catch (error) {

@@ -13,6 +13,7 @@ import {
 } from "../app/lib/staffPhotoCore.ts";
 import { dailyPin, verifyDailyPin } from "../app/lib/staffPhotoPin.ts";
 import { signStaffSession, validateStaffSession } from "../app/lib/staffPhotoSessionToken.ts";
+import { mutationRetryDelay, normalizeStaffName } from "../app/lib/staffPhotoIdentity.ts";
 
 const secret = "test-secret-that-is-at-least-thirty-two-characters-long";
 
@@ -125,6 +126,21 @@ test("rate limit blocks the seventh failed attempt in a 15 minute window", () =>
   assert.equal(loginAllowed(6), false);
 });
 
+test("staff names are normalized and unsafe values are rejected", () => {
+  assert.equal(normalizeStaffName("  Tri   Smith  "), "Tri Smith");
+  assert.equal(normalizeStaffName("T"), null);
+  assert.equal(normalizeStaffName("<script>"), null);
+  assert.equal(normalizeStaffName(null), null);
+  assert.equal(normalizeStaffName("A".repeat(70)), "A".repeat(60));
+});
+
+test("state conflict retries use bounded exponential backoff", () => {
+  assert.equal(mutationRetryDelay(0, 0), 35);
+  assert.equal(mutationRetryDelay(1, 0), 70);
+  assert.equal(mutationRetryDelay(5, 0), 1000);
+  assert.equal(mutationRetryDelay(9, 1), 1250);
+});
+
 test("client source does not contain server secret names or PIN formula", () => {
   const client = readFileSync(new URL("../app/staff-photo/StaffPhotoApp.tsx", import.meta.url), "utf8");
   assert.equal(client.includes("NMG_STAFF_"), false);
@@ -152,6 +168,8 @@ test("private Vercel Blob state uses fresh reads and optimistic concurrency", ()
   assert.match(store, /useCache: false/);
   assert.match(store, /BlobPreconditionFailedError/);
   assert.match(store, /ifMatch: etag/);
+  assert.match(store, /waitForMutationRetry/);
+  assert.match(store, /cacheControlMaxAge: 0/);
   assert.doesNotMatch(store, /NEXT_PUBLIC_/);
 });
 

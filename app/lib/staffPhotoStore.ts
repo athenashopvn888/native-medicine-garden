@@ -6,6 +6,7 @@ import {
   get,
   put,
 } from "@vercel/blob";
+import { mutationRetryDelay } from "./staffPhotoIdentity";
 
 export const STAFF_STATE_PATH = "staff-photo/state/v1.json";
 export const STAFF_MEDIA_PREFIX = "staff-photo/media/";
@@ -29,6 +30,7 @@ export interface StaffSubmission {
   retrieved_at: string | null;
   posted_at: string | null;
   validation_note: string | null;
+  staff_name?: string | null;
 }
 
 export interface StaffIssue {
@@ -43,6 +45,7 @@ export interface StaffIssue {
   created_at: string;
   attachment_expires_at: string | null;
   retrieved_at: string | null;
+  staff_name?: string | null;
 }
 
 export interface StaffRandomCheck {
@@ -52,6 +55,7 @@ export interface StaffRandomCheck {
   result: "ok" | "issue";
   issue_id: string | null;
   completed_at: string;
+  staff_name?: string | null;
 }
 
 export interface StaffPhotoState {
@@ -69,6 +73,10 @@ function ensureBlobConfigured() {
   const hasToken = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
   const hasOidc = Boolean(process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID);
   if (!hasToken && !hasOidc) throw new Error("Private staff photo Blob storage is not configured.");
+}
+
+async function waitForMutationRetry(attempt: number) {
+  await new Promise((resolve) => setTimeout(resolve, mutationRetryDelay(attempt)));
 }
 
 export function defaultStaffState(now = new Date()): StaffPhotoState {
@@ -111,7 +119,7 @@ async function readStateVersion() {
       const created = await put(STAFF_STATE_PATH, JSON.stringify(state), {
         access: "private",
         contentType: "application/json",
-        cacheControlMaxAge: 60,
+        cacheControlMaxAge: 0,
         allowOverwrite: false,
       });
       return { state, etag: created.etag };
@@ -133,7 +141,7 @@ export async function readStaffState() {
 }
 
 export async function mutateStaffState<T>(mutator: (draft: StaffPhotoState) => T | Promise<T>) {
-  for (let attempt = 0; attempt < 8; attempt += 1) {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
     const { state, etag } = await readStateVersion();
     const draft = structuredClone(state);
     const result = await mutator(draft);
@@ -142,13 +150,16 @@ export async function mutateStaffState<T>(mutator: (draft: StaffPhotoState) => T
       await put(STAFF_STATE_PATH, JSON.stringify(draft), {
         access: "private",
         contentType: "application/json",
-        cacheControlMaxAge: 60,
+        cacheControlMaxAge: 0,
         allowOverwrite: etag !== null,
         ...(etag ? { ifMatch: etag } : {}),
       });
       return result;
     } catch (error) {
-      if (error instanceof BlobPreconditionFailedError) continue;
+      if (error instanceof BlobPreconditionFailedError) {
+        await waitForMutationRetry(attempt);
+        continue;
+      }
       throw error;
     }
   }
