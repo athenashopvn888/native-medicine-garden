@@ -4,6 +4,7 @@ import {
   BlobPreconditionFailedError,
   del,
   get,
+  head,
   put,
 } from "@vercel/blob";
 import { mutationRetryDelay } from "./staffPhotoIdentity";
@@ -119,7 +120,7 @@ async function readStateVersion() {
       const created = await put(STAFF_STATE_PATH, JSON.stringify(state), {
         access: "private",
         contentType: "application/json",
-        cacheControlMaxAge: 0,
+        cacheControlMaxAge: 60,
         allowOverwrite: false,
       });
       return { state, etag: created.etag };
@@ -133,7 +134,8 @@ async function readStateVersion() {
   }
   if (result.statusCode !== 200 || !result.stream) throw new Error("Staff photo state could not be read.");
   const text = await new Response(result.stream).text();
-  return { state: parseState(JSON.parse(text)), etag: result.blob.etag };
+  const metadata = await head(STAFF_STATE_PATH);
+  return { state: parseState(JSON.parse(text)), etag: metadata.etag };
 }
 
 export async function readStaffState() {
@@ -150,7 +152,7 @@ export async function mutateStaffState<T>(mutator: (draft: StaffPhotoState) => T
       await put(STAFF_STATE_PATH, JSON.stringify(draft), {
         access: "private",
         contentType: "application/json",
-        cacheControlMaxAge: 0,
+        cacheControlMaxAge: 60,
         allowOverwrite: etag !== null,
         ...(etag ? { ifMatch: etag } : {}),
       });

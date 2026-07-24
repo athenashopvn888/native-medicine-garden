@@ -167,9 +167,9 @@ test("private Vercel Blob state uses fresh reads and optimistic concurrency", ()
   assert.match(store, /access: "private"/);
   assert.match(store, /useCache: false/);
   assert.match(store, /BlobPreconditionFailedError/);
+  assert.match(store, /head\(STAFF_STATE_PATH\)/);
   assert.match(store, /ifMatch: etag/);
   assert.match(store, /waitForMutationRetry/);
-  assert.match(store, /cacheControlMaxAge: 0/);
   assert.doesNotMatch(store, /NEXT_PUBLIC_/);
 });
 
