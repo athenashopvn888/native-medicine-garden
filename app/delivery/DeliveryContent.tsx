@@ -113,7 +113,7 @@ export default function DeliveryContent() {
           <p className={styles.ctaText}>
             Can&apos;t wait? Visit us in-store at{" "}
             <strong>76 Gerrard St W, Toronto</strong>. We are{" "}
-            <strong>Open 24 Hours</strong>. Call <strong>(437) 339-4466</strong>
+            <strong>Open 24 Hours</strong>. Call <strong>+1 (437) 374-4544</strong>
             .
           </p>
         </div>

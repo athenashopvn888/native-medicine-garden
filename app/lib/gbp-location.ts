@@ -8,8 +8,8 @@ export const gbpLocation = {
   address: "76 Gerrard St W, Toronto, ON M5G 1J5",
   streetAddress: "76 Gerrard St W",
   postalCode: "M5G 1J5",
-  phone: "(437) 339-4466",
-  phoneIntl: "+14373394466",
+  phone: "+1 (437) 374-4544",
+  phoneIntl: "+14373744544",
   neighborhood: "Downtown Toronto / Bay Street",
   nearbyAreas: ["Gerrard St W", "Bay St", "Yonge St", "Eaton Centre", "Dundas Station", "TTC", "College Street"],
   products: [

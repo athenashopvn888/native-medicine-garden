@@ -81,7 +81,7 @@ const jsonLd = {
   description:
     "Cannabis dispensary at 76 Gerrard St W in Toronto, ON. Shop exotic, premium, AAA+, AA, and budget flower tiers plus edibles, prerolls, and vapes. Open 24 Hours.",
   url: "https://www.nativemedicinecannabis.com",
-  telephone: "+14373394466",
+  telephone: "+14373744544",
   image:
     "https://www.nativemedicinecannabis.com/wp-content/uploads/2026/04/7Clmh.jpg",
   priceRange: "$3 - $12/g",
