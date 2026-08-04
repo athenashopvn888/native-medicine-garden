@@ -79,7 +79,7 @@ const LOCAL_FAQS = [
   },
   {
     q: "Where is Native Medicine Garden located?",
-    a: "We are located at 76 Gerrard St W, Toronto, ON M5G 1J5. Visit us in person or call us at (437) 339-4466. Free evening street parking is available.",
+    a: "We are located at 76 Gerrard St W, Toronto, ON M5G 1J5. Visit us in person or call us at +1 (437) 374-4544. Free evening street parking is available.",
   },
   {
     q: "What is the cheapest weed at Native Medicine Garden?",

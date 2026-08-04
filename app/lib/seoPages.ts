@@ -38,7 +38,7 @@ export const SEO_PAGES: SeoPageData[] = [
       },
       {
         heading: "Open 24 Hours Near Gerrard and Bay",
-        body: "Native Medicine Garden is open 24 hours. Walk in when the shop is open, check the menu first, or call (437) 339-4466 if you need current in-store details.",
+        body: "Native Medicine Garden is open 24 hours. Walk in when the shop is open, check the menu first, or call +1 (437) 374-4544 if you need current in-store details.",
       },
     ],
     faqs: [

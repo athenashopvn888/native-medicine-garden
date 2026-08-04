@@ -22,7 +22,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "What are your hours?",
-        a: "Native Medicine Garden is open 24 hours. Check the site or call (437) 339-4466 if you need current visit details.",
+        a: "Native Medicine Garden is open 24 hours. Check the site or call +1 (437) 374-4544 if you need current visit details.",
       },
       {
         q: "Is there parking nearby?",
@@ -147,7 +147,7 @@ export default function FAQPage() {
           <div className={styles.ctaSection}>
             <h2 className={styles.ctaTitle}>Still have questions?</h2>
             <p className={styles.ctaText}>
-              Call us at <strong>(437) 339-4466</strong> or visit us at 76
+              Call us at <strong>+1 (437) 374-4544</strong> or visit us at 76
               Gerrard St W, Toronto.
             </p>
           </div>
