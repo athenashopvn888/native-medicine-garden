@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./tv.module.css";
 import { TV_BUNDLE_LABELS } from "./tvPricing";
+import { getFlowerEffects } from "./flowerEffects";
 
 /* -- Types -- */
 interface PricePoint { regular: number; sale: number | null; }
@@ -48,7 +49,7 @@ function PriceCell({ pp, color }: { pp: PricePoint|null; color?: string }) {
   if (pp.sale !== null && pp.sale !== pp.regular) {
     return (
       <span>
-        <span className={styles.oldPrice}>${pp.regular}</span>
+        <del className={styles.oldPrice}>${pp.regular}</del>
         <b className={`${styles.salePrice} ${color || ''}`}>${pp.sale}</b>
       </span>
     );
@@ -66,17 +67,11 @@ function TypeTag({ type }: { type: string }) {
 }
 
 /* -- Vibe card -- */
-const VIBE_MAP: Record<string, [string,string][]> = {
-  indica: [["🌿","Indica"],["📦","Package Details"],["📋","Current Menu"]],
-  sativa: [["🌿","Sativa"],["📦","Package Details"],["📋","Current Menu"]],
-  hybrid: [["🌿","Hybrid"],["📦","Package Details"],["📋","Current Menu"]],
-};
 function VibeCard({ type }: { type: string }) {
-  const t = type?.toLowerCase();
-  const vibes = VIBE_MAP[t] || VIBE_MAP.hybrid;
+  const vibes = getFlowerEffects(type);
   return (
     <div className={styles.vibeSection}>
-      <div className={styles.vibeHead}>PRODUCT DETAILS</div>
+      <div className={styles.vibeHead}>EFFECTS</div>
       <div className={styles.vibePills}>
         {vibes.map(([emoji, label]) => (
           <span key={label} className={styles.vibePill}>
@@ -636,7 +631,7 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
           <div className={styles.addonsDetailCard}>
             <div className={styles.addonsDetailName}>{hi?.name||""}</div>
             <div className={styles.addonsDetailPrice}>PRICE {(hi?.price||'').replace(/\[object.*\]/,'')}</div>
-            <div className={styles.effectIcons}>🌿 ✨ 💚</div>
+            <div className={styles.effectIcons}>CURRENT MENU ITEM</div>
           </div>
         </div>
 
@@ -853,7 +848,10 @@ export default function TVMenuPage() {
       </div>
       <div className={styles.wrap} ref={wrapRef}>
 
-        
+        {/* TV BANNER */}
+        <div style={{ margin: "-40px -40px 30px -40px", width: "calc(100% + 80px)" }}>
+          <img src="/banners/FlowerTvBanner.webp" alt="Native Medicine Garden Flower TV Menu" style={{ width: "100%", display: "block" }} />
+        </div>
 
         {/* GRID */}
         <div className={styles.stage}>
@@ -874,7 +872,8 @@ export default function TVMenuPage() {
           </div>
         </div>
 
-        
+        {/* TICKER */}
+        <VerticalTicker />
       </div>
       <div className={styles.lastUpdated}>Updated: {lastUpdate}</div>
     </div>

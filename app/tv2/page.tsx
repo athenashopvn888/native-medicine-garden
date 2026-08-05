@@ -1,6 +1,19 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import styles from "./tv2.module.css";
+import {
+  TV2_HIRING_INTERVAL_MS,
+  TV2_HIRING_REDUCED_MOTION_MESSAGE,
+  TV2_HIRING_SLIDES,
+  getNextTv2HiringSlide,
+} from "./tv2Hiring";
+import { getTv2DaytimePromo, isTv2Daytime } from "./tv2Promos";
 
 /* -- TYPES -- */
 interface Item {
@@ -17,8 +30,6 @@ const CARD_CONFIG = [
   { id:"CIGARETTES",      title:"🚬 CIGARETTES",         accent:"#78350f", filter:(it:Item)=>it.category==="CIGARETTES", preset:"" },
   { id:"MAGIC",           title:"🍄 MAGIC & OTHERS",     accent:"#9333ea", filter:(it:Item)=>it.category==="MAGIC & OTHERS", preset:"🍫 START SMALL · WAIT 45 MIN · THEN MORE" },
 ];
-
-function isDaytime() { const h = new Date().getHours(); return h >= 10 && h < 17; }
 
 /* -- HELPERS -- */
 const fmtPrice = (v?:string) => { const s=String(v||"").trim(); if(!s)return""; return /^\$/.test(s)?s:"$"+s; };
@@ -135,11 +146,10 @@ function ItemCard({ title, accent, items, hiIdx, preset }: {
 /* -- TICKER -- */
 const TICKER_SLIDES = [
   "🔥 Native Medicine Garden — 76 Gerrard St W, Toronto",
-  "Browse Current Flower Menu",
+  "Menu Categories and Current Items",
   "Open 24 Hours",
   "Pre-Rolls · Edibles · Vapes · Concentrates",
   "ALL SALES ARE FINAL",
-  "🎮 Play Games at nativemedicinecannabis.com/games",
 ];
 
 function VerticalTicker() {
@@ -167,6 +177,61 @@ function VerticalTicker() {
   );
 }
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeToReducedMotion(onChange: () => void) {
+  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
+
+function getReducedMotionSnapshot() {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
+
+function HiringRibbon() {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const reducedMotion = useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    () => false,
+  );
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    const interval = window.setInterval(() => {
+      setActiveSlide((current) => getNextTv2HiringSlide(current));
+    }, TV2_HIRING_INTERVAL_MS);
+    return () => window.clearInterval(interval);
+  }, [reducedMotion]);
+
+  return (
+    <div
+      className={styles.hiringRibbon}
+      data-testid="tv2-hiring-ribbon"
+      aria-label="Native Medicine Garden hiring notice"
+    >
+      {reducedMotion ? (
+        <span className={styles.hiringStatic}>
+          {TV2_HIRING_REDUCED_MOTION_MESSAGE}
+        </span>
+      ) : (
+        TV2_HIRING_SLIDES.map((message, index) => (
+          <span
+            key={message}
+            className={`${styles.hiringMessage} ${
+              index === activeSlide ? styles.hiringMessageActive : ""
+            }`}
+            aria-hidden={index !== activeSlide}
+          >
+            {message}
+          </span>
+        ))
+      )}
+    </div>
+  );
+}
+
 /* -- MAIN TV2 PAGE -- */
 export default function TV2Page() {
   const [bgUrl, setBgUrl] = useState("");
@@ -184,12 +249,11 @@ export default function TV2Page() {
   const [items, setItems] = useState<Item[]>([]);
   const [highlights, setHighlights] = useState<Record<string,number>>({});
   const [lastUpdate, setLastUpdate] = useState("");
-  const [daytime, setDaytime] = useState(false);
+  const [daytime, setDaytime] = useState(() => isTv2Daytime());
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setDaytime(isDaytime());
-    const iv = setInterval(() => setDaytime(isDaytime()), 60_000);
+    const iv = setInterval(() => setDaytime(isTv2Daytime()), 60_000);
     return () => clearInterval(iv);
   }, []);
 
@@ -215,10 +279,15 @@ export default function TV2Page() {
   }, []);
 
   useEffect(() => {
-    loadData(); fitToScreen();
+    fitToScreen();
+    const initialLoad = window.setTimeout(loadData, 0);
     window.addEventListener("resize", fitToScreen);
     const refresh = setInterval(loadData, 5*60*1000);
-    return () => { window.removeEventListener("resize", fitToScreen); clearInterval(refresh); };
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.removeEventListener("resize", fitToScreen);
+      clearInterval(refresh);
+    };
   }, [loadData, fitToScreen]);
 
   useEffect(() => {
@@ -239,23 +308,34 @@ export default function TV2Page() {
   return (
     <div className={styles.tvPage} style={bgUrl ? { backgroundImage: `url(${bgUrl})`, backgroundSize: "cover" } : undefined}>
       <div className={styles.wrap} ref={wrapRef}>
-        
+        {/* TV BANNER */}
+        <div style={{margin:"-40px -40px 30px -40px", width:"calc(100% + 80px)"}}>
+          <img src="/banners/ItemTv.webp" alt="Native Medicine Garden Items TV Menu" style={{width:"100%",display:"block"}} />
+        </div>
+        <HiringRibbon />
+
         {/* GRID */}
         <div className={styles.stage}>
           <div className={styles.grid}>
             {CARD_CONFIG.map(card => {
               const filtered = items.filter(card.filter);
+              const promo = getTv2DaytimePromo(card.id, daytime);
 
-              if (card.id === "CIGARETTES" && daytime) {
+              if (promo) {
                 return (
-                  <div key={card.id} className={styles.card} style={{"--accent":card.accent} as React.CSSProperties}>
+                  <div
+                    key={card.id}
+                    className={styles.card}
+                    data-promo-card={card.id}
+                    style={{"--accent":card.accent} as React.CSSProperties}
+                  >
                     <div className={styles.cardHeader}>PROMO</div>
                     <div className={styles.promoMain}>
                       <div className={styles.promoViewport}>
                         <img
                           className={`${styles.promoImg} ${styles.promoActive}`}
-                          src="/banners/cig-poster-1.png"
-                          alt="Cigarettes Promo"
+                          src={promo.src}
+                          alt={promo.alt}
                           referrerPolicy="no-referrer"
                         />
                       </div>
@@ -271,7 +351,7 @@ export default function TV2Page() {
             })}
           </div>
         </div>
-        
+        <VerticalTicker />
       </div>
       <div className={styles.lastUpdated}>Updated: {lastUpdate}</div>
     </div>
