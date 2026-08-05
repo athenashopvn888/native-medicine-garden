@@ -9,6 +9,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import styles from "./tv2.module.css";
+import { TV_TICKER_SLIDES } from "../tvTicker";
 import {
   TV2_HIRING_REDUCED_MOTION_MESSAGE,
   TV2_HIRING_SLIDES,
@@ -156,21 +157,13 @@ function ItemCard({ title, accent, items, hiIdx, preset }: {
 }
 
 /* -- TICKER -- */
-const TICKER_SLIDES = [
-  "🔥 Native Medicine Garden — 76 Gerrard St W, Toronto",
-  "Menu Categories and Current Items",
-  "Open 24 Hours",
-  "Pre-Rolls · Edibles · Vapes · Concentrates",
-  "ALL SALES ARE FINAL",
-];
-
 function VerticalTicker() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [exitIdx, setExitIdx] = useState(-1);
   useEffect(() => {
     const iv = setInterval(() => {
       setExitIdx(activeIdx);
-      setActiveIdx(prev => (prev + 1) % TICKER_SLIDES.length);
+      setActiveIdx(prev => (prev + 1) % TV_TICKER_SLIDES.length);
     }, TV2_TICKER_INTERVAL_MS);
     return () => clearInterval(iv);
   }, [activeIdx]);
@@ -178,7 +171,7 @@ function VerticalTicker() {
   return (
     <div className={styles.ticker}>
       <div className={styles.tickerInner}>
-        {TICKER_SLIDES.map((text, i) => (
+        {TV_TICKER_SLIDES.map((text, i) => (
           <div key={i} className={`${styles.tickerSlide} ${i===activeIdx?styles.tickerActive:""} ${i===exitIdx?styles.tickerExit:""}`}>
             {text}
           </div>

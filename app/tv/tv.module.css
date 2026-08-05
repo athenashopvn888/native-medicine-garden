@@ -158,20 +158,6 @@
   position: relative;
 }
 
-.menuBanner {
-  flex: 0 0 auto;
-  width: calc(100% + 80px);
-  margin: -40px -40px 30px;
-  overflow: hidden;
-  line-height: 0;
-}
-
-.menuBannerImage {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
 .stage::before {
   content: "";
   position: absolute;

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./tv.module.css";
+import { TV_TICKER_INTERVAL_MS, TV_TICKER_SLIDES } from "../tvTicker";
 import { TV_BUNDLE_LABELS } from "./tvPricing";
 import { getFlowerEffects } from "./flowerEffects";
 
@@ -666,13 +667,6 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
 /* ============================================================
    VERTICAL TICKER
    ============================================================ */
-const TICKER_SLIDES = [
-  "🔥 Native Medicine Garden — 76 Gerrard St W, Toronto",
-  "Browse Current Flower Menu",
-  "Open 24 Hours",
-  "ALL SALES ARE FINAL",
-];
-
 function VerticalTicker() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [exitIdx, setExitIdx] = useState(-1);
@@ -680,16 +674,15 @@ function VerticalTicker() {
   useEffect(() => {
     const iv = setInterval(() => {
       setExitIdx(activeIdx);
-      setActiveIdx(prev => (prev + 1) % TICKER_SLIDES.length);
-    }, 3000);
+      setActiveIdx(prev => (prev + 1) % TV_TICKER_SLIDES.length);
+    }, TV_TICKER_INTERVAL_MS);
     return () => clearInterval(iv);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIdx]);
 
   return (
     <div className={styles.ticker}>
       <div className={styles.tickerInner}>
-        {TICKER_SLIDES.map((text, i) => (
+        {TV_TICKER_SLIDES.map((text, i) => (
           <div key={i} className={`${styles.tickerSlide} ${i === activeIdx ? styles.tickerActive : ""} ${i === exitIdx ? styles.tickerExit : ""}`}>
             {text}
           </div>
@@ -847,15 +840,6 @@ export default function TVMenuPage() {
         ))}
       </div>
       <div className={styles.wrap} ref={wrapRef}>
-
-        {/* TV BANNER */}
-        <div className={styles.menuBanner}>
-          <img
-            className={styles.menuBannerImage}
-            src="/banners/FlowerTvBanner.webp"
-            alt="Native Medicine Garden Flower TV Menu"
-          />
-        </div>
 
         {/* GRID */}
         <div className={styles.stage}>
