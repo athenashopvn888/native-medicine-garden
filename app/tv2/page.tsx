@@ -309,8 +309,12 @@ export default function TV2Page() {
     <div className={styles.tvPage} style={bgUrl ? { backgroundImage: `url(${bgUrl})`, backgroundSize: "cover" } : undefined}>
       <div className={styles.wrap} ref={wrapRef}>
         {/* TV BANNER */}
-        <div style={{margin:"-40px -40px 30px -40px", width:"calc(100% + 80px)"}}>
-          <img src="/banners/ItemTv.webp" alt="Native Medicine Garden Items TV Menu" style={{width:"100%",display:"block"}} />
+        <div className={styles.menuBanner}>
+          <img
+            className={styles.menuBannerImage}
+            src="/banners/ItemTv.webp"
+            alt="Native Medicine Garden Items TV Menu"
+          />
         </div>
         <HiringRibbon />
 

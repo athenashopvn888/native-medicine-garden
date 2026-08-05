@@ -849,8 +849,12 @@ export default function TVMenuPage() {
       <div className={styles.wrap} ref={wrapRef}>
 
         {/* TV BANNER */}
-        <div style={{ margin: "-40px -40px 30px -40px", width: "calc(100% + 80px)" }}>
-          <img src="/banners/FlowerTvBanner.webp" alt="Native Medicine Garden Flower TV Menu" style={{ width: "100%", display: "block" }} />
+        <div className={styles.menuBanner}>
+          <img
+            className={styles.menuBannerImage}
+            src="/banners/FlowerTvBanner.webp"
+            alt="Native Medicine Garden Flower TV Menu"
+          />
         </div>
 
         {/* GRID */}
