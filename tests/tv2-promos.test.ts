@@ -79,3 +79,14 @@ test("NMG TV2 uses the exact approved display timers", () => {
   assert.match(tv2Page, /TV2_TICKER_INTERVAL_MS/);
   assert.match(tv2Page, /TV2_PROMO_INTERVAL_MS/);
 });
+
+test("NMG TV2 refits against the visual viewport without showing an unscaled canvas", () => {
+  assert.match(tv2Page, /useLayoutEffect/);
+  assert.match(tv2Page, /window\.visualViewport/);
+  assert.match(tv2Page, /new ResizeObserver\(scheduleFit\)/);
+  assert.match(tv2Page, /visualViewport\?\.addEventListener\("resize", scheduleFit\)/);
+  assert.match(tv2Page, /visualViewport\?\.addEventListener\("scroll", scheduleFit\)/);
+  assert.match(tv2Page, /document\.addEventListener\("visibilitychange", scheduleFit\)/);
+  assert.match(tv2Page, /for \(const delay of \[100, 500, 1500\]\)/);
+  assert.match(tv2Page, /dataset\.fitted = "true"/);
+});

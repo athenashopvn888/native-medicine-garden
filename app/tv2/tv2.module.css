@@ -41,6 +41,12 @@
   gap: 14px;
   padding: 18px;
   box-sizing: border-box;
+  visibility: hidden;
+  will-change: transform;
+}
+
+.wrap[data-fitted="true"] {
+  visibility: visible;
 }
 
 /* ── STAGE ── */
