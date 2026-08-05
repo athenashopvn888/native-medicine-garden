@@ -775,19 +775,11 @@
 .salePrice {
   font-weight: 900;
 }
-/* Rainbow shimmer on sale price */
+/* High-contrast sale price treatment; intentionally no rainbow cycling. */
 .rowSale .salePrice {
-  background: linear-gradient(90deg,#ff2d2d,#ffd200,#00e5ff,#ab47bc,#ff2d2d);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent;
-  animation: saleHue 1.6s linear infinite;
-}
-@keyframes saleHue {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
+  color: #b91c1c !important;
+  -webkit-text-fill-color: currentColor;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
 }
 
 /* ── Deal price layout (2 stacked rows) ── */
