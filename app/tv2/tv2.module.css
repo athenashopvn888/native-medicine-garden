@@ -60,21 +60,7 @@
   position: relative;
 }
 
-.menuBanner {
-  flex: 0 0 auto;
-  width: calc(100% + 80px);
-  margin: -40px -40px 30px;
-  overflow: hidden;
-  line-height: 0;
-}
-
-.menuBannerImage {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* Display-only hiring notice between the NMG banner and menu grid. */
+/* Display-only hiring notice above the menu grid. */
 .hiringRibbon {
   flex: 0 0 92px;
   min-height: 92px;

@@ -1,4 +1,4 @@
-export const TV2_HIRING_INTERVAL_MS = 3_000;
+export { TV2_HIRING_INTERVAL_MS } from "./tv2Timing.ts";
 
 export const TV2_HIRING_SLIDES = [
   "NOW HIRING BUDTENDERS & MANAGERS",

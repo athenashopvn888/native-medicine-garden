@@ -1,0 +1,3 @@
+export const TV2_HIRING_INTERVAL_MS = 3_000;
+export const TV2_TICKER_INTERVAL_MS = 5_500;
+export const TV2_PROMO_INTERVAL_MS = 9_000;
