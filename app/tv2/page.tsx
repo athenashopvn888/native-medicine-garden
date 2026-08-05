@@ -3,6 +3,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useLayoutEffect,
   useMemo,
   useRef,
   useSyncExternalStore,
@@ -336,24 +337,68 @@ export default function TV2Page() {
 
   const fitToScreen = useCallback(() => {
     if (!wrapRef.current) return;
-    const W = window.innerWidth, H = window.innerHeight;
-    const s = Math.min(W/3840, H/2160);
-    const tx = Math.round((W - 3840*s)/2);
-    const ty = Math.round((H - 2160*s)/2);
-    wrapRef.current.style.transform = `translate(${tx}px,${ty}px) scale(${s})`;
+    const viewport = window.visualViewport;
+    const W = viewport?.width ?? document.documentElement.clientWidth;
+    const H = viewport?.height ?? document.documentElement.clientHeight;
+    const offsetLeft = viewport?.offsetLeft ?? 0;
+    const offsetTop = viewport?.offsetTop ?? 0;
+    const scale = Math.max(0.01, Math.min(W / 3840, H / 2160));
+    const tx = Math.round(offsetLeft + (W - 3840 * scale) / 2);
+    const ty = Math.round(offsetTop + (H - 2160 * scale) / 2);
+    const transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+    if (wrapRef.current.style.transform !== transform) {
+      wrapRef.current.style.transform = transform;
+    }
+    wrapRef.current.dataset.fitted = "true";
   }, []);
 
+  useLayoutEffect(() => {
+    let primaryFrame = 0;
+    let followupFrame = 0;
+    const settleTimers: number[] = [];
+
+    const scheduleFit = () => {
+      window.cancelAnimationFrame(primaryFrame);
+      window.cancelAnimationFrame(followupFrame);
+      primaryFrame = window.requestAnimationFrame(() => {
+        fitToScreen();
+        followupFrame = window.requestAnimationFrame(fitToScreen);
+      });
+    };
+
+    scheduleFit();
+    window.addEventListener("resize", scheduleFit);
+    window.visualViewport?.addEventListener("resize", scheduleFit);
+    window.visualViewport?.addEventListener("scroll", scheduleFit);
+    document.addEventListener("visibilitychange", scheduleFit);
+
+    const resizeObserver = new ResizeObserver(scheduleFit);
+    resizeObserver.observe(document.documentElement);
+
+    for (const delay of [100, 500, 1500]) {
+      settleTimers.push(window.setTimeout(scheduleFit, delay));
+    }
+
+    return () => {
+      window.cancelAnimationFrame(primaryFrame);
+      window.cancelAnimationFrame(followupFrame);
+      settleTimers.forEach((timer) => window.clearTimeout(timer));
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", scheduleFit);
+      window.visualViewport?.removeEventListener("resize", scheduleFit);
+      window.visualViewport?.removeEventListener("scroll", scheduleFit);
+      document.removeEventListener("visibilitychange", scheduleFit);
+    };
+  }, [fitToScreen]);
+
   useEffect(() => {
-    fitToScreen();
     const initialLoad = window.setTimeout(loadData, 0);
-    window.addEventListener("resize", fitToScreen);
     const refresh = setInterval(loadData, 5*60*1000);
     return () => {
       window.clearTimeout(initialLoad);
-      window.removeEventListener("resize", fitToScreen);
       clearInterval(refresh);
     };
-  }, [loadData, fitToScreen]);
+  }, [loadData]);
 
   useEffect(() => {
     if (!items.length) return;
