@@ -20,7 +20,7 @@ test("NMG TV has no banner and uses only the approved shared ticker", () => {
     "utf8",
   );
   assert.deepEqual([...TV_TICKER_SLIDES], [
-    "HOURS OF OPERATION: OPEN 24 HOURS",
+    "OPEN 24 HOURS",
     "ALL SALES ARE FINAL, NO EXCHANGE, NO REFUND",
   ]);
   assert.equal(TV_TICKER_SLIDES.length, 2);

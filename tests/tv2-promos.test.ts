@@ -80,7 +80,7 @@ test("NMG TV2 uses the exact approved display timers", () => {
   assert.match(tv2Page, /TV2_TICKER_INTERVAL_MS/);
   assert.match(tv2Page, /TV2_PROMO_INTERVAL_MS/);
   assert.deepEqual([...TV_TICKER_SLIDES], [
-    "HOURS OF OPERATION: OPEN 24 HOURS",
+    "OPEN 24 HOURS",
     "ALL SALES ARE FINAL, NO EXCHANGE, NO REFUND",
   ]);
   assert.equal(TV_TICKER_SLIDES.length, 2);
