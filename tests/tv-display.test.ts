@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import {
+  TV_TICKER_INTERVAL_MS,
+  TV_TICKER_SLIDES,
+} from "../app/tvTicker.ts";
 import { TV_BUNDLE_LABELS } from "../app/tv/tvPricing.ts";
 
 test("regular and sale rows share the approved NMG bundle labels", () => {
@@ -10,16 +14,21 @@ test("regular and sale rows share the approved NMG bundle labels", () => {
   });
 });
 
-test("NMG TV ticker no longer includes Play Games", () => {
+test("NMG TV has no banner and uses only the approved shared ticker", () => {
   const source = readFileSync(
     new URL("../app/tv/page.tsx", import.meta.url),
     "utf8",
   );
-  assert.doesNotMatch(source, /Play Games/i);
-  assert.doesNotMatch(source, /nativemedicinecannabis\.com\/games/i);
+  assert.deepEqual([...TV_TICKER_SLIDES], [
+    "HOURS OF OPERATION: OPEN 24 HOURS",
+    "ALL SALES ARE FINAL, NO EXCHANGE, NO REFUND",
+  ]);
+  assert.equal(TV_TICKER_SLIDES.length, 2);
+  assert.equal(TV_TICKER_INTERVAL_MS, 5_500);
   assert.match(source, /<VerticalTicker \/>/);
-  assert.match(source, /FlowerTvBanner\.webp/);
-  assert.match(source, /Native Medicine Garden Flower TV Menu/);
+  assert.match(source, /TV_TICKER_SLIDES/);
+  assert.match(source, /TV_TICKER_INTERVAL_MS/);
+  assert.doesNotMatch(source, /FlowerTvBanner\.webp|menuBanner|menuBannerImage/);
 });
 
 test("NMG TV sale prices render regular price first with semantic strike-through", () => {

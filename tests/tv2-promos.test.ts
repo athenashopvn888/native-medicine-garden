@@ -12,6 +12,7 @@ import {
   TV2_PROMO_INTERVAL_MS,
   TV2_TICKER_INTERVAL_MS,
 } from "../app/tv2/tv2Timing.ts";
+import { TV_TICKER_SLIDES } from "../app/tvTicker.ts";
 
 const tv2Page = readFileSync(
   new URL("../app/tv2/page.tsx", import.meta.url),
@@ -78,6 +79,11 @@ test("NMG TV2 uses the exact approved display timers", () => {
   assert.match(tv2Page, /TV2_HIRING_INTERVAL_MS/);
   assert.match(tv2Page, /TV2_TICKER_INTERVAL_MS/);
   assert.match(tv2Page, /TV2_PROMO_INTERVAL_MS/);
+  assert.deepEqual([...TV_TICKER_SLIDES], [
+    "HOURS OF OPERATION: OPEN 24 HOURS",
+    "ALL SALES ARE FINAL, NO EXCHANGE, NO REFUND",
+  ]);
+  assert.equal(TV_TICKER_SLIDES.length, 2);
 });
 
 test("NMG TV2 refits against the visual viewport without showing an unscaled canvas", () => {
