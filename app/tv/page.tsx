@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./tv.module.css";
+import { TV_BUNDLE_LABELS } from "./tvPricing";
 
 /* -- Types -- */
 interface PricePoint { regular: number; sale: number | null; }
@@ -386,13 +387,13 @@ function FlowerCard({
                   <div className={`${styles.mc} ${styles.mcPrice} ${styles.mcPriceDeal}`}>
                     {p3 && (
                       <div className={styles.pLine}>
-                        <span className={styles.pLab}>{f.isSale ? "3G=" : "2G-3G"}</span>
+                        <span className={styles.pLab}>{TV_BUNDLE_LABELS.first}</span>
                         <PriceCell pp={p3} color={styles.priceGreen} />
                       </div>
                     )}
                     {p5 && (
                       <div className={styles.pLine}>
-                        <span className={styles.pLab}>{f.isSale ? "6G=" : "3G-6G"}</span>
+                        <span className={styles.pLab}>{TV_BUNDLE_LABELS.second}</span>
                         <PriceCell pp={p5} color={styles.priceBlue} />
                       </div>
                     )}
@@ -675,7 +676,6 @@ const TICKER_SLIDES = [
   "Browse Current Flower Menu",
   "Open 24 Hours",
   "ALL SALES ARE FINAL",
-  "🎮 Play Games at nativemedicinecannabis.com/games",
 ];
 
 function VerticalTicker() {
