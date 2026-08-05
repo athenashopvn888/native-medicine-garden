@@ -3,17 +3,28 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   useRef,
   useSyncExternalStore,
 } from "react";
 import styles from "./tv2.module.css";
 import {
-  TV2_HIRING_INTERVAL_MS,
   TV2_HIRING_REDUCED_MOTION_MESSAGE,
   TV2_HIRING_SLIDES,
   getNextTv2HiringSlide,
 } from "./tv2Hiring";
-import { getTv2DaytimePromo, isTv2Daytime } from "./tv2Promos";
+import {
+  type Tv2DaytimePromo,
+  getNextTv2PromoIndex,
+  getTv2DaytimePromo,
+  getTv2PromoRotationUrls,
+  isTv2Daytime,
+} from "./tv2Promos";
+import {
+  TV2_HIRING_INTERVAL_MS,
+  TV2_PROMO_INTERVAL_MS,
+  TV2_TICKER_INTERVAL_MS,
+} from "./tv2Timing";
 
 /* -- TYPES -- */
 interface Item {
@@ -159,9 +170,8 @@ function VerticalTicker() {
     const iv = setInterval(() => {
       setExitIdx(activeIdx);
       setActiveIdx(prev => (prev + 1) % TICKER_SLIDES.length);
-    }, 3000);
+    }, TV2_TICKER_INTERVAL_MS);
     return () => clearInterval(iv);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIdx]);
 
   return (
@@ -228,6 +238,61 @@ function HiringRibbon() {
           </span>
         ))
       )}
+    </div>
+  );
+}
+
+function PromoCard({
+  cardId,
+  accent,
+  promo,
+}: {
+  cardId: string;
+  accent: string;
+  promo: Tv2DaytimePromo;
+}) {
+  const imageUrls = useMemo(() => getTv2PromoRotationUrls(promo), [promo]);
+  const [activeImage, setActiveImage] = useState(0);
+
+  useEffect(() => {
+    if (imageUrls.length <= 1) return;
+    const interval = window.setInterval(() => {
+      setActiveImage((current) =>
+        getNextTv2PromoIndex(current, imageUrls.length),
+      );
+    }, TV2_PROMO_INTERVAL_MS);
+    return () => window.clearInterval(interval);
+  }, [imageUrls]);
+
+  const src = imageUrls[activeImage] || promo.fallbackSrc;
+  if (!src) return null;
+
+  return (
+    <div
+      className={styles.card}
+      data-promo-card={cardId}
+      style={{"--accent":accent} as React.CSSProperties}
+    >
+      <div className={styles.cardHeader}>PROMO</div>
+      <div className={styles.promoMain}>
+        <div className={styles.promoViewport}>
+          <img
+            key={src}
+            className={[styles.promoImg, styles.promoActive].join(" ")}
+            src={src}
+            alt={promo.alt}
+            referrerPolicy="no-referrer"
+            onError={(event) => {
+              if (
+                promo.fallbackSrc &&
+                event.currentTarget.getAttribute("src") !== promo.fallbackSrc
+              ) {
+                event.currentTarget.src = promo.fallbackSrc;
+              }
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -308,14 +373,6 @@ export default function TV2Page() {
   return (
     <div className={styles.tvPage} style={bgUrl ? { backgroundImage: `url(${bgUrl})`, backgroundSize: "cover" } : undefined}>
       <div className={styles.wrap} ref={wrapRef}>
-        {/* TV BANNER */}
-        <div className={styles.menuBanner}>
-          <img
-            className={styles.menuBannerImage}
-            src="/banners/ItemTv.webp"
-            alt="Native Medicine Garden Items TV Menu"
-          />
-        </div>
         <HiringRibbon />
 
         {/* GRID */}
@@ -327,24 +384,12 @@ export default function TV2Page() {
 
               if (promo) {
                 return (
-                  <div
+                  <PromoCard
                     key={card.id}
-                    className={styles.card}
-                    data-promo-card={card.id}
-                    style={{"--accent":card.accent} as React.CSSProperties}
-                  >
-                    <div className={styles.cardHeader}>PROMO</div>
-                    <div className={styles.promoMain}>
-                      <div className={styles.promoViewport}>
-                        <img
-                          className={`${styles.promoImg} ${styles.promoActive}`}
-                          src={promo.src}
-                          alt={promo.alt}
-                          referrerPolicy="no-referrer"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                    cardId={card.id}
+                    accent={card.accent}
+                    promo={promo}
+                  />
                 );
               }
 

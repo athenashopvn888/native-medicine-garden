@@ -55,20 +55,18 @@ test("NMG TV banners are tightly cropped with preserved border padding", async (
   }
 });
 
-test("both TV routes use responsive CSS banner containers", () => {
-  for (const route of ["tv", "tv2"]) {
-    const page = readFileSync(
-      new URL(`../app/${route}/page.tsx`, import.meta.url),
-      "utf8",
-    );
-    const styles = readFileSync(
-      new URL(`../app/${route}/${route}.module.css`, import.meta.url),
-      "utf8",
-    );
-    assert.match(page, /className=\{styles\.menuBanner\}/);
-    assert.match(page, /className=\{styles\.menuBannerImage\}/);
-    assert.doesNotMatch(page, /margin:\s*"-40px -40px 30px -40px"/);
-    assert.match(styles, /\.menuBanner\s*\{[^}]*overflow:\s*hidden/s);
-    assert.match(styles, /\.menuBannerImage\s*\{[^}]*height:\s*auto/s);
-  }
+test("TV1 retains its responsive CSS banner container", () => {
+  const page = readFileSync(
+    new URL("../app/tv/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const styles = readFileSync(
+    new URL("../app/tv/tv.module.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(page, /className=\{styles\.menuBanner\}/);
+  assert.match(page, /className=\{styles\.menuBannerImage\}/);
+  assert.doesNotMatch(page, /margin:\s*"-40px -40px 30px -40px"/);
+  assert.match(styles, /\.menuBanner\s*\{[^}]*overflow:\s*hidden/s);
+  assert.match(styles, /\.menuBannerImage\s*\{[^}]*height:\s*auto/s);
 });
