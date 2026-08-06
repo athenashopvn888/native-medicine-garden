@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { selectValidatedLiveItems } from "../app/lib/nmgLiveInventory.ts";
-import { SmartMenuInputError, type CatalogFlower, type CatalogItem, type RawInventory } from "../app/lib/nmgSmartMenu.ts";
+import { SmartMenuInputError, type CatalogItem, type RawInventory } from "../app/lib/nmgSmartMenu.ts";
 
 const inventory: RawInventory = {
   storeCode: "NMG01",
@@ -14,8 +14,8 @@ const inventory: RawInventory = {
     "902": { e: 3 },
   },
 };
-const flowers = [{ sku: "501", name: "Flower", tier: "EXOTIC" }] as CatalogFlower[];
 const items = [
+  { sku: "900", name: "Unavailable", category: "EDIBLES" },
   { sku: "900,901", name: "Grouped item", category: "EDIBLES" },
   { sku: "902", name: "Single item", category: "PREROLLS" },
 ] as CatalogItem[];
@@ -23,56 +23,43 @@ const items = [
 test("live email menu keeps a grouped item when any listed SKU is in stock", () => {
   const selected = selectValidatedLiveItems({
     inventory,
-    catalogFlowers: flowers,
     catalogItems: items,
-    liveMenu: { storeCode: "NMG01", stockDate: inventory.date, flowers, items },
   });
-  assert.deepEqual(selected, items);
+  assert.deepEqual(selected, items.slice(1));
 });
 
 test("distinct display products may intentionally share one grouped SKU set", () => {
   const shared = [
     { sku: "900,901", name: "First display", category: "EDIBLES" },
     { sku: "900,901", name: "Second display", category: "EDIBLES" },
-    items[1],
+    items[2],
   ] as CatalogItem[];
   const selected = selectValidatedLiveItems({
     inventory,
-    catalogFlowers: flowers,
     catalogItems: shared,
-    liveMenu: { storeCode: "NMG01", stockDate: inventory.date, flowers, items: shared },
   });
   assert.equal(selected.length, 3);
 });
 
-test("live item rows must cover all positive catalog item SKUs", () => {
+test("an exact duplicate live display row fails closed", () => {
   assert.throws(() => selectValidatedLiveItems({
     inventory,
-    catalogFlowers: flowers,
-    catalogItems: items,
-    liveMenu: { storeCode: "NMG01", stockDate: inventory.date, flowers, items: items.slice(0, 1) },
-  }), (error) => error instanceof SmartMenuInputError && error.code === "LIVE_ITEM_COVERAGE_MISMATCH");
+    catalogItems: [items[1], items[1], items[2]],
+  }), (error) => error instanceof SmartMenuInputError && error.code === "LIVE_ITEM_INVALID");
 });
 
-test("live item rows cannot include a fully out-of-stock product", () => {
+test("a stock-qualified row with an invalid SKU fails closed", () => {
+  const invalidInventory = structuredClone(inventory);
+  invalidInventory.stock.bad = { e: 1 };
   assert.throws(() => selectValidatedLiveItems({
-    inventory,
-    catalogFlowers: flowers,
-    catalogItems: items,
-    liveMenu: {
-      storeCode: "NMG01",
-      stockDate: inventory.date,
-      flowers,
-      items: [{ sku: "900", name: "Unavailable", category: "EDIBLES" }, ...items],
-    },
-  }), (error) => error instanceof SmartMenuInputError && error.code === "OUT_OF_STOCK_ITEM_INCLUDED");
+    inventory: invalidInventory,
+    catalogItems: [{ sku: "bad", name: "Invalid", category: "EDIBLES" }, ...items],
+  }), (error) => error instanceof SmartMenuInputError && error.code === "LIVE_ITEM_INVALID");
 });
 
-test("combined menu timestamp and flower coverage must match the email inventory", () => {
+test("an item catalog with no live products fails closed", () => {
   assert.throws(() => selectValidatedLiveItems({
     inventory,
-    catalogFlowers: flowers,
-    catalogItems: items,
-    liveMenu: { storeCode: "NMG01", stockDate: "2026-08-05T00:00:00.000Z", flowers: [], items },
-  }), (error) => error instanceof SmartMenuInputError && error.code === "LIVE_MENU_TIMESTAMP_MISMATCH");
+    catalogItems: [items[0]],
+  }), (error) => error instanceof SmartMenuInputError && error.code === "NO_LIVE_ITEMS");
 });
