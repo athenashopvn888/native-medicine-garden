@@ -20,8 +20,10 @@ test("live NMG email inventory and catalog pass the prepublish audit", { skip: !
   const inventory = await stockResponse.json() as RawInventory;
   const catalog = await catalogResponse.json() as { flowers: CatalogFlower[]; items: CatalogItem[] };
   const liveMenu = await liveMenuResponse.json() as NmgLiveMenuFeed;
-  const liveItems = selectValidatedLiveItems({ inventory, catalogFlowers: catalog.flowers, catalogItems: catalog.items, liveMenu });
+  const liveItems = selectValidatedLiveItems({ inventory, catalogItems: catalog.items });
   assert.ok(liveItems.length > 0);
+  assert.equal(liveMenu.stockDate, inventory.date);
+  assert.deepEqual(liveItems, liveMenu.items);
   assert.equal(catalog.flowers.filter((flower) => flower.sku === "373").length, 1);
   const { lineup } = buildSmartLineup({
     inventory,

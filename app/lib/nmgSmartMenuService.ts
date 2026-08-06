@@ -11,7 +11,7 @@ import {
   type SmartMenuState,
 } from "./nmgSmartMenu";
 import { mutateSmartMenuState, readSmartMenuState } from "./nmgSmartMenuStore";
-import { selectValidatedLiveItems, type NmgLiveMenuFeed } from "./nmgLiveInventory";
+import { selectValidatedLiveItems } from "./nmgLiveInventory";
 
 interface CatalogResponse { flowers?: CatalogFlower[]; items?: CatalogItem[] }
 
@@ -50,9 +50,8 @@ async function fetchInputs() {
   // sequential so one store refresh cannot contend with itself.
   const inventory = await fetchJson<RawInventory>(`${base}&stock=1`);
   const catalog = await fetchJson<CatalogResponse>(`${base}&catalog=1`);
-  const liveMenu = await fetchJson<NmgLiveMenuFeed>(base);
   if (!Array.isArray(catalog.flowers) || !Array.isArray(catalog.items)) throw new Error("NMG catalog response is incomplete.");
-  return { inventory, catalog, liveMenu };
+  return { inventory, catalog };
 }
 
 async function cachedInputs(force: boolean) {
@@ -96,12 +95,10 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
   const now = new Date();
   const before = await readSmartMenuState();
   try {
-    const { inventory, catalog, liveMenu } = await cachedInputs(Boolean(options.force));
+    const { inventory, catalog } = await cachedInputs(Boolean(options.force));
     const liveItems = selectValidatedLiveItems({
       inventory,
-      catalogFlowers: catalog.flowers || [],
       catalogItems: catalog.items || [],
-      liveMenu,
     });
     const built = buildOrRetainSmartLineup({
       inventory,

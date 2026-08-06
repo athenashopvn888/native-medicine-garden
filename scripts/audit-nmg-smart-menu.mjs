@@ -18,10 +18,11 @@ const catalog = await readJson(`${base}&catalog=1`);
 const liveMenu = await readJson(base);
 const liveItems = selectValidatedLiveItems({
   inventory,
-  catalogFlowers: catalog.flowers,
   catalogItems: catalog.items,
-  liveMenu,
 });
+if (liveMenu.stockDate !== inventory.date || JSON.stringify(liveItems) !== JSON.stringify(liveMenu.items)) {
+  throw new Error("Derived NMG live items do not exactly match the combined source feed.");
+}
 const sku373Rows = catalog.flowers.filter((flower) => String(flower.sku) === "373").length;
 if (sku373Rows !== 1) throw new Error(`Expected one live SKU 373 catalog row, received ${sku373Rows}.`);
 const { lineup } = buildSmartLineup({

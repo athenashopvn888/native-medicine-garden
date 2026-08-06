@@ -30,7 +30,7 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.match(route, /result\.items/);
   assert.match(route, /x-tv-data-source/);
   assert.match(route, /x-tv-data-as-of/);
-  assert.match(service, /fetchJson<NmgLiveMenuFeed>\(base\)/);
+  assert.doesNotMatch(service, /fetchJson<[^>]*LiveMenu[^>]*>\(base\)/);
   assert.match(service, /selectValidatedLiveItems/);
   assert.match(state, /liveItems: LiveItemsSnapshot \| null/);
 });
