@@ -1,3 +1,5 @@
+import { NMG_REGULAR_WINDOW_MINUTES, regularWindowBucket, selectRegularWindow } from "./nmgSmartMenuWindow.ts";
+
 export const NMG_SMART_TIERS = ["EXOTIC", "PREMIUM", "AAA+", "AA", "BUDGET"] as const;
 export type SmartTier = (typeof NMG_SMART_TIERS)[number];
 export type SmartBadge = "SALE" | "TOP PICK" | "MUST TRY" | "REGULAR";
@@ -10,6 +12,7 @@ export interface SmartMenuConfig {
   safetyStock: Record<SmartTier, number>;
   clearTailMax: Record<SmartTier, number>;
   pageSize: number;
+  regularWindowMinutes: number;
   mustTryStablePeriods: number;
   mustTryCooldownPeriods: number;
   minSnapshotCoverageRatio: number;
@@ -55,14 +58,31 @@ export interface SmartFlower extends Omit<CatalogFlower, "saleRank"> {
   stockTimestamp: string;
 }
 
-export interface SmartPage {
-  id: string;
-  label: string;
-  kind: "sale" | "regular";
-  products: SmartFlower[];
+export interface SmartTierLineup {
+  tier: SmartTier;
+  lockedProducts: SmartFlower[];
+  regularProducts: SmartFlower[];
+  visibleProducts: SmartFlower[];
+  regularCapacity: number;
+  regularWindowBucket: number;
+  regularWindowIndex: number;
+  regularWindowCount: number;
+  regularWindowCycle: number;
 }
 
-export interface SmartTierLineup { tier: SmartTier; pages: SmartPage[] }
+export interface SmartWindowManifest {
+  bucket: number;
+  minutes: number;
+  currentlyVisibleCount: number;
+  currentlyVisibleSkus: string[];
+  byTier: Record<SmartTier, {
+    lockedCount: number;
+    regularCapacity: number;
+    regularWindowIndex: number;
+    regularWindowCount: number;
+    visibleSkus: string[];
+  }>;
+}
 
 export interface SmartAudit {
   accepted: boolean;
@@ -76,6 +96,10 @@ export interface SmartAudit {
   mustTryCount: number;
   regularCount: number;
   pageCount: number;
+  eligibleCycleSkus: string[];
+  currentlyVisibleSkus: string[];
+  currentlyVisibleCount: number;
+  window: SmartWindowManifest;
   missingSkus: string[];
   duplicateSkus: string[];
   wrongCategorySkus: string[];
@@ -93,7 +117,7 @@ export interface SmartManifest extends SmartAudit {
 }
 
 export interface SmartLineup {
-  schemaVersion: 1;
+  schemaVersion: 2;
   storeCode: "NMG01";
   sourceTimestamp: string;
   generatedAt: string;
@@ -215,24 +239,6 @@ function expandItemSkus(items: CatalogItem[]) {
   return skus;
 }
 
-function pageLabel(index: number) {
-  return index < 26 ? `Set ${String.fromCharCode(65 + index)}` : `Set ${index + 1}`;
-}
-
-function chunkPages(tier: SmartTier, kind: "sale" | "regular", products: SmartFlower[], pageSize: number) {
-  const pages: SmartPage[] = [];
-  for (let start = 0; start < products.length; start += pageSize) {
-    const pageIndex = start / pageSize;
-    pages.push({
-      id: `${tier.toLowerCase().replace("+", "plus")}-${kind}-${pageIndex + 1}`,
-      label: kind === "sale" ? `Sale ${pageIndex + 1}` : pageLabel(pageIndex),
-      kind,
-      products: products.slice(start, start + pageSize),
-    });
-  }
-  return pages;
-}
-
 function quantitiesEqual(a: QuantityMap | undefined, b: QuantityMap | undefined) {
   if (!a || !b) return false;
   const aKeys = Object.keys(a).sort();
@@ -256,6 +262,54 @@ function rotate<T>(values: T[], offset: number) {
   return [...values.slice(normalized), ...values.slice(0, normalized)];
 }
 
+function isCurrentLineup(lineup: SmartLineup | null): lineup is SmartLineup {
+  return Boolean(lineup && lineup.schemaVersion === 2 && NMG_SMART_TIERS.every((tier) =>
+    Array.isArray(lineup.tiers?.[tier]?.lockedProducts) && Array.isArray(lineup.tiers?.[tier]?.regularProducts),
+  ));
+}
+
+export function materializeSmartLineup(lineup: SmartLineup, now = new Date()): SmartLineup {
+  if (!isCurrentLineup(lineup)) throw new SmartMenuInputError("INCOMPATIBLE_LINEUP", "Stored NMG smart-menu lineup is incompatible.");
+  const bucket = regularWindowBucket(now.getTime());
+  const tiers = {} as Record<SmartTier, SmartTierLineup>;
+  const byTier = {} as SmartWindowManifest["byTier"];
+
+  for (const tier of NMG_SMART_TIERS) {
+    const source = lineup.tiers[tier];
+    const regularWindow = selectRegularWindow(source.regularProducts, source.regularCapacity, bucket);
+    const visibleProducts = [...source.lockedProducts, ...regularWindow.products];
+    tiers[tier] = {
+      ...source,
+      visibleProducts,
+      regularWindowBucket: bucket,
+      regularWindowIndex: regularWindow.index,
+      regularWindowCount: regularWindow.count,
+      regularWindowCycle: regularWindow.cycle,
+    };
+    byTier[tier] = {
+      lockedCount: source.lockedProducts.length,
+      regularCapacity: source.regularCapacity,
+      regularWindowIndex: regularWindow.index,
+      regularWindowCount: regularWindow.count,
+      visibleSkus: visibleProducts.map((product) => product.sku),
+    };
+  }
+
+  const currentlyVisibleSkus = NMG_SMART_TIERS.flatMap((tier) => tiers[tier].visibleProducts.map((product) => product.sku));
+  const window: SmartWindowManifest = {
+    bucket,
+    minutes: NMG_REGULAR_WINDOW_MINUTES,
+    currentlyVisibleCount: currentlyVisibleSkus.length,
+    currentlyVisibleSkus,
+    byTier,
+  };
+  return {
+    ...lineup,
+    tiers,
+    manifest: { ...lineup.manifest, currentlyVisibleSkus, currentlyVisibleCount: currentlyVisibleSkus.length, window },
+  };
+}
+
 export function buildSmartLineup(args: {
   inventory: RawInventory;
   flowers: CatalogFlower[];
@@ -266,10 +320,13 @@ export function buildSmartLineup(args: {
 }): { lineup: SmartLineup; nextState: SmartMenuState } {
   const now = args.now || new Date();
   const { inventory, flowers, items, config } = args;
+  if (config.regularWindowMinutes !== NMG_REGULAR_WINDOW_MINUTES) {
+    throw new SmartMenuInputError("INVALID_WINDOW_INTERVAL", `Regular windows must use ${NMG_REGULAR_WINDOW_MINUTES} minutes.`);
+  }
   validateInventory(inventory, now, config);
   const period = Math.floor(now.getTime() / (config.periodHours * 3_600_000));
   const signature = stockSignature(inventory.stock);
-  const version = `nmg-${period}-${signature}`;
+  const version = `nmg2-${period}-${signature}`;
   const itemSkus = expandItemSkus(items);
   const catalogGroups = new Map<string, CatalogFlower[]>();
   for (const flower of flowers) {
@@ -386,24 +443,36 @@ export function buildSmartLineup(args: {
     }
     const regular = nonSales.filter((product) => product.sku !== top?.sku && product.sku !== must?.sku).sort(skuSort);
     const rotationOffset = regular.length ? stableHash(`${period}:${tier}`) % regular.length : 0;
-    const regularOrdered = [top, must, ...rotate(regular, rotationOffset)].filter((value): value is SmartFlower => Boolean(value));
+    const regularProducts = rotate(regular, rotationOffset);
+    const lockedProducts = [...sales, top, must].filter((value): value is SmartFlower => Boolean(value));
+    if (lockedProducts.length > config.pageSize) {
+      throw new SmartMenuInputError("LOCKED_CAPACITY_EXCEEDED", `${tier} has ${lockedProducts.length} locked priority rows but only ${config.pageSize} visible rows.`);
+    }
+    const regularCapacity = config.pageSize - lockedProducts.length;
+    if (regularProducts.length && regularCapacity === 0) {
+      throw new SmartMenuInputError("NO_REGULAR_CAPACITY", `${tier} has eligible regular products but no visible regular-row capacity.`);
+    }
     tiers[tier] = {
       tier,
-      pages: [
-        ...chunkPages(tier, "sale", sales, config.pageSize),
-        ...chunkPages(tier, "regular", regularOrdered, config.pageSize),
-      ],
+      lockedProducts,
+      regularProducts,
+      visibleProducts: [],
+      regularCapacity,
+      regularWindowBucket: 0,
+      regularWindowIndex: 0,
+      regularWindowCount: regularProducts.length ? Math.ceil(regularProducts.length / regularCapacity) : 0,
+      regularWindowCycle: 0,
     };
   }
 
-  const allPageProducts = NMG_SMART_TIERS.flatMap((tier) => tiers[tier].pages.flatMap((page) => page.products));
+  const allEligibleProducts = NMG_SMART_TIERS.flatMap((tier) => [...tiers[tier].lockedProducts, ...tiers[tier].regularProducts]);
   const eligibleSkus = candidates.map((product) => product.sku).sort();
   const counts = new Map<string, number>();
-  for (const product of allPageProducts) counts.set(product.sku, (counts.get(product.sku) || 0) + 1);
+  for (const product of allEligibleProducts) counts.set(product.sku, (counts.get(product.sku) || 0) + 1);
   const missingSkus = eligibleSkus.filter((sku) => !counts.has(sku));
   const duplicateSkus = [...counts.entries()].filter(([, count]) => count !== 1).map(([sku]) => sku).concat(duplicateInputSkus).sort();
-  const wrongCategorySkus = NMG_SMART_TIERS.flatMap((tier) => tiers[tier].pages.flatMap((page) => page.products.filter((product) => product.tier !== tier).map((product) => product.sku)));
-  const outOfStockIncludedSkus = allPageProducts.filter((product) => product.totalUnits <= 0).map((product) => product.sku);
+  const wrongCategorySkus = NMG_SMART_TIERS.flatMap((tier) => [...tiers[tier].lockedProducts, ...tiers[tier].regularProducts].filter((product) => product.tier !== tier).map((product) => product.sku));
+  const outOfStockIncludedSkus = allEligibleProducts.filter((product) => product.totalUnits <= 0).map((product) => product.sku);
   const explained = new Set([...excluded.keys(), ...eligibleSkus]);
   const unexplainedExcludedSkus = Object.keys(inventory.stock).filter((sku) => !explained.has(sku));
   const excludedByReason: Record<string, number> = {};
@@ -415,13 +484,32 @@ export function buildSmartLineup(args: {
     inputCatalogFlowers: flowers.length,
     inputStockSkus: Object.keys(inventory.stock).length,
     inputFlowerStockSkus: candidates.length,
-    includedSkus: allPageProducts.length,
+    includedSkus: allEligibleProducts.length,
     excludedByReason,
-    saleCount: allPageProducts.filter((product) => product.smartBadge === "SALE").length,
-    topPickCount: allPageProducts.filter((product) => product.smartBadge === "TOP PICK").length,
-    mustTryCount: allPageProducts.filter((product) => product.smartBadge === "MUST TRY").length,
-    regularCount: allPageProducts.filter((product) => product.smartBadge === "REGULAR").length,
-    pageCount: NMG_SMART_TIERS.reduce((sum, tier) => sum + tiers[tier].pages.length, 0),
+    saleCount: allEligibleProducts.filter((product) => product.smartBadge === "SALE").length,
+    topPickCount: allEligibleProducts.filter((product) => product.smartBadge === "TOP PICK").length,
+    mustTryCount: allEligibleProducts.filter((product) => product.smartBadge === "MUST TRY").length,
+    regularCount: allEligibleProducts.filter((product) => product.smartBadge === "REGULAR").length,
+    pageCount: NMG_SMART_TIERS.reduce((sum, tier) => sum + tiers[tier].regularWindowCount, 0),
+    eligibleCycleSkus: eligibleSkus,
+    currentlyVisibleSkus: [],
+    currentlyVisibleCount: 0,
+    window: {
+      bucket: 0,
+      minutes: config.regularWindowMinutes,
+      currentlyVisibleCount: 0,
+      currentlyVisibleSkus: [],
+      byTier: NMG_SMART_TIERS.reduce((result, tier) => {
+        result[tier] = {
+          lockedCount: tiers[tier].lockedProducts.length,
+          regularCapacity: tiers[tier].regularCapacity,
+          regularWindowIndex: 0,
+          regularWindowCount: tiers[tier].regularWindowCount,
+          visibleSkus: [],
+        };
+        return result;
+      }, {} as SmartWindowManifest["byTier"]),
+    },
     missingSkus,
     duplicateSkus,
     wrongCategorySkus,
@@ -430,7 +518,8 @@ export function buildSmartLineup(args: {
   };
   const generatedAt = now.toISOString();
   const manifest: SmartManifest = { ...audit, storeCode: "NMG01", sourceTimestamp: inventory.date, generatedAt, period, version, stockSignature: signature };
-  const lineup: SmartLineup = { schemaVersion: 1, storeCode: "NMG01", sourceTimestamp: inventory.date, generatedAt, period, version, tiers, manifest };
+  const strategicLineup: SmartLineup = { schemaVersion: 2, storeCode: "NMG01", sourceTimestamp: inventory.date, generatedAt, period, version, tiers, manifest };
+  const lineup = materializeSmartLineup(strategicLineup, now);
   const nextState: SmartMenuState = {
     schemaVersion: 1,
     updatedAt: generatedAt,
@@ -442,7 +531,7 @@ export function buildSmartLineup(args: {
     topCooldownUntil: nextTopCooldown,
     mustCooldownUntil: nextMustCooldown,
     rotationOffset: period,
-    manifest,
+    manifest: lineup.manifest,
   };
   return { lineup, nextState };
 }
@@ -457,9 +546,9 @@ export function buildOrRetainSmartLineup(args: Parameters<typeof buildSmartLineu
     const built = buildSmartLineup(args);
     return { ...built, servedFrom: "fresh", fallbackReason: null };
   } catch (error) {
-    if (!args.state.lastGoodLineup) throw error;
+    if (!args.state.lastGoodLineup || !isCurrentLineup(args.state.lastGoodLineup)) throw error;
     return {
-      lineup: args.state.lastGoodLineup,
+      lineup: materializeSmartLineup(args.state.lastGoodLineup, args.now || new Date()),
       nextState: structuredClone(args.state),
       servedFrom: "last-good",
       fallbackReason: error instanceof SmartMenuInputError ? error.code : "SOURCE_UNAVAILABLE",

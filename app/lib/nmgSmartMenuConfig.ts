@@ -10,6 +10,7 @@ export const NMG_SMART_MENU_CONFIG: SmartMenuConfig = {
   safetyStock: threshold(2),
   clearTailMax: threshold(12),
   pageSize: 10,
+  regularWindowMinutes: 30,
   mustTryStablePeriods: 3,
   mustTryCooldownPeriods: 2,
   minSnapshotCoverageRatio: 0.55,

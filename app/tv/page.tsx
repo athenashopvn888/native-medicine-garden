@@ -5,6 +5,7 @@ import styles from "./tv.module.css";
 import { TV_TICKER_INTERVAL_MS, TV_TICKER_SLIDES } from "../tvTicker";
 import { TV_BUNDLE_LABELS } from "./tvPricing";
 import { getFlowerEffects } from "./flowerEffects";
+import { NMG_REGULAR_WINDOW_MS, regularWindowBucket, selectRegularWindow } from "../lib/nmgSmartMenuWindow.ts";
 
 /* -- Types -- */
 interface PricePoint { regular: number; sale: number | null; }
@@ -15,10 +16,10 @@ interface Flower {
   price14g: PricePoint|null; price28g: PricePoint|null;
   image: string; promoImage?: string|null;
 }
-interface SmartPage { id: string; label: string; kind: "sale"|"regular"; products: Flower[]; }
+interface SmartTierData { lockedProducts: Flower[]; regularProducts: Flower[]; regularCapacity: number; }
 interface SmartLineupResponse {
   kind: "nmg-smart-lineup";
-  lineup: { version: string; sourceTimestamp: string; tiers: Record<string,{ pages: SmartPage[] }> };
+  lineup: { version: string; sourceTimestamp: string; tiers: Record<string,SmartTierData> };
 }
 interface Item {
   sku: string; name: string; category: string; type: string;
@@ -41,7 +42,6 @@ const TIER_DEAL: Record<string,string> = {
   "AAA+":"Buy 3g Get 3 FREE", BUDGET:"$10 / 3g Special"
 };
 const SMART_TIERS = ["EXOTIC","PREMIUM","AAA+","AA","BUDGET"] as const;
-const SMART_PAGE_INTERVAL_MS = 25_000;
 
 /* -- Helpers -- */
 function fmtTHC(v: string): string {
@@ -108,7 +108,7 @@ function cleanName(name: string): string {
     .trim();
 }
 
-/* The server publishes audited pages in SALE > TOP PICK > MUST TRY > REGULAR order. */
+/* The server locks SALE > TOP PICK > MUST TRY and supplies a deterministic regular cycle. */
 const MAX_VIS = 10;
 
 function buildSlotWindow(flowers: Flower[], hiIdx: number): { vis: Flower[]; hiW: number; hi: Flower | undefined } {
@@ -150,7 +150,7 @@ function FlowerCard({
   const isBudget = tier === "BUDGET";
 
   return (
-    <div className={`${styles.card} ${cardCls} ${tierCls}`}>
+    <div data-smart-tier={tier} className={`${styles.card} ${cardCls} ${tierCls}`}>
       {/* HEADER */}
       <div className={`${styles.cardHeader} ${isTop3 ? styles.headerSheen : ""}`}
         style={{ background:`linear-gradient(180deg, ${accent} 0%, color-mix(in srgb, ${accent} 82%, #000 18%) 100%)` }}>
@@ -291,7 +291,7 @@ function FlowerCard({
             if (isTop3) {
               const p3 = f.price3g; const p5 = f.price5g;
               return (
-                <div key={f.sku+i} className={`${styles.row} ${styles.tTop3} ${isHi?styles.rowHi:""}${f.isSale?" "+styles.rowSale:""}`} style={hiStyle}>
+                <div key={f.sku+i} data-flower-sku={f.sku} className={`${styles.row} ${styles.tTop3} ${isHi?styles.rowHi:""}${f.isSale?" "+styles.rowSale:""}`} style={hiStyle}>
                   <div className={`${styles.mc} ${styles.mcStrain}`}>
                     {f.name}
                     {f.isSale && <span className={`${styles.tag} ${styles.tagSale}`}>SALE</span>}
@@ -326,7 +326,7 @@ function FlowerCard({
 
             if (isAA) {
               return (
-                <div key={f.sku+i} className={`${styles.row} ${styles.tAA} ${isHi?styles.rowHi:""}${f.isSale?" "+styles.rowSale:""}`} style={hiStyle}>
+                <div key={f.sku+i} data-flower-sku={f.sku} className={`${styles.row} ${styles.tAA} ${isHi?styles.rowHi:""}${f.isSale?" "+styles.rowSale:""}`} style={hiStyle}>
                   <div className={`${styles.mc} ${styles.mcStrain}`}>
                     {f.name}
                     {f.isSale && <span className={`${styles.tag} ${styles.tagSale}`}>SALE</span>}
@@ -355,7 +355,7 @@ function FlowerCard({
 
             // BUDGET
             return (
-              <div key={f.sku+i} className={`${styles.row} ${styles.tBudget} ${isHi?styles.rowHi:""}${f.isSale?" "+styles.rowSale:""}`} style={hiStyle}>
+              <div key={f.sku+i} data-flower-sku={f.sku} className={`${styles.row} ${styles.tBudget} ${isHi?styles.rowHi:""}${f.isSale?" "+styles.rowSale:""}`} style={hiStyle}>
                 <div className={`${styles.mc} ${styles.mcStrain}`}>
                   {f.name}
                   {f.isSale && <span className={`${styles.tag} ${styles.tagSale}`}>SALE</span>}
@@ -628,8 +628,8 @@ export default function TVMenuPage() {
       })
       .catch(err => console.warn("[BG] Load failed:", err));
   }, []);
-  const [tierPages, setTierPages] = useState<Record<string,SmartPage[]>>({});
-  const [pageIndexes, setPageIndexes] = useState<Record<string,number>>({});
+  const [tierLineups, setTierLineups] = useState<Record<string,SmartTierData>>({});
+  const [regularBucket, setRegularBucket] = useState(() => regularWindowBucket(Date.now()));
   const [addOns, setAddOns] = useState<Item[]>([]);
   const [highlights, setHighlights] = useState<Record<string,number>>({});
   const [lastUpdate, setLastUpdate] = useState("");
@@ -637,9 +637,11 @@ export default function TVMenuPage() {
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const flowers = useMemo(() => Object.fromEntries(SMART_TIERS.map((tier) => {
-    const pages = tierPages[tier] || [];
-    return [tier, pages.length ? pages[(pageIndexes[tier] || 0) % pages.length].products : []];
-  })) as Record<string,Flower[]>, [tierPages, pageIndexes]);
+    const lineup = tierLineups[tier];
+    if (!lineup) return [tier, []];
+    const regular = selectRegularWindow(lineup.regularProducts, lineup.regularCapacity, regularBucket).products;
+    return [tier, [...lineup.lockedProducts, ...regular]];
+  })) as Record<string,Flower[]>, [tierLineups, regularBucket]);
   const ozFlowers = useMemo(() => SMART_TIERS.flatMap((tier) => flowers[tier]).filter((flower, index, values) =>
     Boolean(flower.price28g) && values.findIndex((candidate) => candidate.sku === flower.sku) === index,
   ), [flowers]);
@@ -654,19 +656,23 @@ export default function TVMenuPage() {
       const smartData = await fRes.json() as SmartLineupResponse;
       if (smartData.kind !== "nmg-smart-lineup" || !smartData.lineup?.tiers) throw new Error("Smart flower lineup is invalid");
       const iData: Item[] = iRes.ok ? await iRes.json() : [];
-      const pages: Record<string,SmartPage[]> = {};
+      const lineups: Record<string,SmartTierData> = {};
       for (const tier of SMART_TIERS) {
-        pages[tier] = (smartData.lineup.tiers[tier]?.pages || []).map((page) => ({
-          ...page,
-          products: page.products.map((flower) => ({
+        const source = smartData.lineup.tiers[tier];
+        if (!source || !Array.isArray(source.lockedProducts) || !Array.isArray(source.regularProducts)) throw new Error(`Smart ${tier} lineup is invalid`);
+        const cleanProducts = (products: Flower[]) => products.map((flower) => ({
             ...flower,
             isSale: flower.isSale || hasSalePrice(flower) || hasNameSale(flower.name),
             name: cleanName(flower.name),
-          })),
-        }));
+          }));
+        lineups[tier] = {
+          lockedProducts: cleanProducts(source.lockedProducts),
+          regularProducts: cleanProducts(source.regularProducts),
+          regularCapacity: source.regularCapacity,
+        };
       }
-      setTierPages(pages);
-      setPageIndexes(Object.fromEntries(SMART_TIERS.map((tier) => [tier, 0])));
+      setTierLineups(lineups);
+      setRegularBucket(regularWindowBucket(Date.now()));
 
       setAddOns(iData.filter(it => it.category === "ADD ONS" || it.category === "PREROLLS").slice(0, 14));
 
@@ -708,7 +714,7 @@ export default function TVMenuPage() {
   }, [loadData, fitToScreen]);
 
   useEffect(() => {
-    if (!Object.keys(tierPages).length) return;
+    if (!Object.keys(tierLineups).length) return;
     const interval = setInterval(() => {
       setHighlights(prev => {
         const next = {...prev};
@@ -722,23 +728,32 @@ export default function TVMenuPage() {
       });
     }, 5000);
     return () => clearInterval(interval);
-  }, [tierPages, flowers, ozFlowers.length, addOns.length]);
+  }, [tierLineups, flowers, ozFlowers.length, addOns.length]);
 
   useEffect(() => {
-    if (!Object.keys(tierPages).length) return;
-    const interval = setInterval(() => {
-      setPageIndexes((previous) => {
-        const next = { ...previous };
-        for (const tier of SMART_TIERS) {
-          const count = tierPages[tier]?.length || 1;
-          next[tier] = ((previous[tier] || 0) + 1) % count;
-        }
-        return next;
-      });
-      setHighlights((previous) => ({ ...previous, ...Object.fromEntries(SMART_TIERS.map((tier) => [tier, 0])) }));
-    }, SMART_PAGE_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, [tierPages]);
+    let timer: ReturnType<typeof setTimeout>;
+    const scheduleBoundary = () => {
+      const now = Date.now();
+      const nextBoundary = (regularWindowBucket(now) + 1) * NMG_REGULAR_WINDOW_MS;
+      timer = setTimeout(() => {
+        setRegularBucket(regularWindowBucket(Date.now()));
+        setHighlights((previous) => ({ ...previous, ...Object.fromEntries(SMART_TIERS.map((tier) => [tier, 0])) }));
+        scheduleBoundary();
+      }, Math.max(50, nextBoundary - now + 50));
+    };
+    scheduleBoundary();
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (window.location.hostname !== "127.0.0.1" && window.location.hostname !== "localhost") return;
+    const simulateBoundary = (event: Event) => {
+      const nowMs = Number((event as CustomEvent<number>).detail);
+      if (Number.isFinite(nowMs)) setRegularBucket(regularWindowBucket(nowMs));
+    };
+    window.addEventListener("nmg-smart-menu-qa-time", simulateBoundary);
+    return () => window.removeEventListener("nmg-smart-menu-qa-time", simulateBoundary);
+  }, []);
 
   const CM: Record<string,{c:string;t:string;b:string}> = {
     EXOTIC:{c:styles.cardExotic,t:styles.tierExotic,b:styles.tierBadgeExotic},
