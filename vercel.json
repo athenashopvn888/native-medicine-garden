@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
+      "path": "/api/nmg-smart-menu/refresh",
+      "schedule": "5 */4 * * *"
+    },
+    {
       "path": "/api/staff-photo/maintenance/cleanup?window=edt",
       "schedule": "15 10 * * *"
     },
