@@ -16,7 +16,7 @@ function parseState(value: unknown): SmartMenuState {
   if (state.schemaVersion !== 1 || !Array.isArray(state.snapshots) || !state.previousTopByTier || !state.previousMustByTier || !state.topCooldownUntil || !state.mustCooldownUntil) {
     throw new Error("NMG smart-menu state is invalid.");
   }
-  return state as SmartMenuState;
+  return { ...state, liveItems: state.liveItems || null } as SmartMenuState;
 }
 
 async function readVersion(): Promise<{ state: SmartMenuState; etag: string | null }> {

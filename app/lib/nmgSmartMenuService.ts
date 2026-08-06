@@ -11,16 +11,20 @@ import {
   type SmartMenuState,
 } from "./nmgSmartMenu";
 import { mutateSmartMenuState, readSmartMenuState } from "./nmgSmartMenuStore";
+import { selectValidatedLiveItems, type NmgLiveMenuFeed } from "./nmgLiveInventory";
 
 interface CatalogResponse { flowers?: CatalogFlower[]; items?: CatalogItem[] }
 
 export interface SmartMenuResult {
   lineup: SmartLineup;
+  items: CatalogItem[];
+  itemsSource: "live" | "last-good" | "unavailable";
+  itemsSourceTimestamp: string | null;
   servedFrom: "fresh" | "last-good";
   fallbackReason: string | null;
 }
 
-let inputCache: { expiresAt: number; promise: Promise<{ inventory: RawInventory; catalog: CatalogResponse }> } | null = null;
+let inputCache: { expiresAt: number; promise: ReturnType<typeof fetchInputs> } | null = null;
 
 async function fetchJson<T>(url: string): Promise<T> {
   let lastError: unknown;
@@ -46,8 +50,9 @@ async function fetchInputs() {
   // sequential so one store refresh cannot contend with itself.
   const inventory = await fetchJson<RawInventory>(`${base}&stock=1`);
   const catalog = await fetchJson<CatalogResponse>(`${base}&catalog=1`);
+  const liveMenu = await fetchJson<NmgLiveMenuFeed>(base);
   if (!Array.isArray(catalog.flowers) || !Array.isArray(catalog.items)) throw new Error("NMG catalog response is incomplete.");
-  return { inventory, catalog };
+  return { inventory, catalog, liveMenu };
 }
 
 async function cachedInputs(force: boolean) {
@@ -71,19 +76,33 @@ function copyState(target: SmartMenuState, source: SmartMenuState) {
   target.mustCooldownUntil = source.mustCooldownUntil;
   target.rotationOffset = source.rotationOffset;
   target.manifest = source.manifest;
+  target.liveItems = source.liveItems;
 }
 
 function fallback(state: SmartMenuState, error: unknown, now: Date): SmartMenuResult {
   if (!state.lastGoodLineup) throw error;
   const reason = error instanceof SmartMenuInputError ? error.code : "SOURCE_UNAVAILABLE";
-  return { lineup: materializeSmartLineup(state.lastGoodLineup, now), servedFrom: "last-good", fallbackReason: reason };
+  return {
+    lineup: materializeSmartLineup(state.lastGoodLineup, now),
+    items: state.liveItems?.items || [],
+    itemsSource: state.liveItems ? "last-good" : "unavailable",
+    itemsSourceTimestamp: state.liveItems?.sourceTimestamp || null,
+    servedFrom: "last-good",
+    fallbackReason: reason,
+  };
 }
 
 export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promise<SmartMenuResult> {
   const now = new Date();
   const before = await readSmartMenuState();
   try {
-    const { inventory, catalog } = await cachedInputs(Boolean(options.force));
+    const { inventory, catalog, liveMenu } = await cachedInputs(Boolean(options.force));
+    const liveItems = selectValidatedLiveItems({
+      inventory,
+      catalogFlowers: catalog.flowers || [],
+      catalogItems: catalog.items || [],
+      liveMenu,
+    });
     const built = buildOrRetainSmartLineup({
       inventory,
       flowers: catalog.flowers || [],
@@ -93,13 +112,18 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
       now,
     });
     if (built.servedFrom === "last-good") {
-      return { lineup: built.lineup, servedFrom: built.servedFrom, fallbackReason: built.fallbackReason };
+      return fallback(before, new SmartMenuInputError(built.fallbackReason || "SOURCE_REJECTED", "NMG source input was rejected."), now);
     }
+    const liveItemsSnapshot = { sourceTimestamp: inventory.date, capturedAt: now.toISOString(), items: liveItems };
+    built.nextState.liveItems = liveItemsSnapshot;
     if (before.currentLineup?.schemaVersion === 2 && before.currentLineup.version === built.lineup.version && before.currentLineup.sourceTimestamp === built.lineup.sourceTimestamp) {
-      return { lineup: materializeSmartLineup(before.currentLineup, now), servedFrom: "fresh", fallbackReason: null };
+      if (!before.liveItems || before.liveItems.sourceTimestamp !== inventory.date || JSON.stringify(before.liveItems.items) !== JSON.stringify(liveItems)) {
+        await mutateSmartMenuState((draft) => { draft.liveItems = liveItemsSnapshot; });
+      }
+      return { lineup: materializeSmartLineup(before.currentLineup, now), items: liveItems, itemsSource: "live", itemsSourceTimestamp: inventory.date, servedFrom: "fresh", fallbackReason: null };
     }
     await mutateSmartMenuState((draft) => copyState(draft, built.nextState));
-    return { lineup: built.lineup, servedFrom: "fresh", fallbackReason: null };
+    return { lineup: built.lineup, items: liveItems, itemsSource: "live", itemsSourceTimestamp: inventory.date, servedFrom: "fresh", fallbackReason: null };
   } catch (error) {
     console.warn("[NMG smart menu] rejected source input", error instanceof SmartMenuInputError ? error.code : "SOURCE_UNAVAILABLE");
     return fallback(before, error, now);

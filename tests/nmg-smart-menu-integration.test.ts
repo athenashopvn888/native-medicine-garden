@@ -19,6 +19,20 @@ test("TV2 item behavior is isolated from the NMG flower priority engine", () => 
   const source = read("../app/tv2/page.tsx");
   assert.match(source, /fetch\("\/api\/tv-data\?type=items"\)/);
   assert.doesNotMatch(source, /nmg-smart-lineup|nmgSmartMenu|NMG_REGULAR_WINDOW_MS/);
+  assert.match(source, /5\*60\*1000/);
+});
+
+test("NMG items use the same live email feed and durable last-good state as flowers", () => {
+  const route = read("../app/api/tv-data/route.ts");
+  const service = read("../app/lib/nmgSmartMenuService.ts");
+  const state = read("../app/lib/nmgSmartMenu.ts");
+  assert.doesNotMatch(route, /allItems/);
+  assert.match(route, /result\.items/);
+  assert.match(route, /x-tv-data-source/);
+  assert.match(route, /x-tv-data-as-of/);
+  assert.match(service, /fetchJson<NmgLiveMenuFeed>\(base\)/);
+  assert.match(service, /selectValidatedLiveItems/);
+  assert.match(state, /liveItems: LiveItemsSnapshot \| null/);
 });
 
 test("NMG smart-menu state, manifest, and four-hour refresh stay store-scoped", () => {

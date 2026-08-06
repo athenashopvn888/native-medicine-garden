@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { buildSmartLineup, defaultSmartMenuState, type CatalogFlower, type CatalogItem, type RawInventory } from "../app/lib/nmgSmartMenu.ts";
 import { NMG_SMART_MENU_CONFIG } from "../app/lib/nmgSmartMenuConfig.ts";
+import { selectValidatedLiveItems, type NmgLiveMenuFeed } from "../app/lib/nmgLiveInventory.ts";
 
 const runLive = Boolean(process.env.APPS_SCRIPT_URL);
 
@@ -12,10 +13,15 @@ test("live NMG email inventory and catalog pass the prepublish audit", { skip: !
   const base = `${endpoint}${separator}store=NMG01`;
   const stockResponse = await fetch(`${base}&stock=1`, { signal: AbortSignal.timeout(30_000) });
   const catalogResponse = await fetch(`${base}&catalog=1`, { signal: AbortSignal.timeout(30_000) });
+  const liveMenuResponse = await fetch(base, { signal: AbortSignal.timeout(30_000) });
   assert.equal(stockResponse.ok, true);
   assert.equal(catalogResponse.ok, true);
+  assert.equal(liveMenuResponse.ok, true);
   const inventory = await stockResponse.json() as RawInventory;
   const catalog = await catalogResponse.json() as { flowers: CatalogFlower[]; items: CatalogItem[] };
+  const liveMenu = await liveMenuResponse.json() as NmgLiveMenuFeed;
+  const liveItems = selectValidatedLiveItems({ inventory, catalogFlowers: catalog.flowers, catalogItems: catalog.items, liveMenu });
+  assert.ok(liveItems.length > 0);
   assert.equal(catalog.flowers.filter((flower) => flower.sku === "373").length, 1);
   const { lineup } = buildSmartLineup({
     inventory,
