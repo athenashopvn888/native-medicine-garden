@@ -31,4 +31,14 @@ test("live NMG email inventory and catalog pass the prepublish audit", { skip: !
   assert.equal(lineup.manifest.outOfStockIncludedSkus.length, 0);
   assert.equal(lineup.manifest.unexplainedExcludedSkus.length, 0);
   assert.equal(lineup.manifest.includedSkus, lineup.manifest.inputFlowerStockSkus);
+  assert.equal(lineup.manifest.eligibleCycleSkus.length, lineup.manifest.includedSkus);
+  assert.equal(lineup.manifest.currentlyVisibleCount, lineup.manifest.currentlyVisibleSkus.length);
+  for (const tier of Object.values(lineup.tiers)) {
+    assert.ok(tier.lockedProducts.length <= NMG_SMART_MENU_CONFIG.pageSize, `${tier.tier} locked rows exceed visible capacity`);
+    assert.deepEqual(
+      tier.lockedProducts.map((product) => product.smartBadge),
+      tier.lockedProducts.map((product) => product.smartBadge).sort((a, b) => ["SALE", "TOP PICK", "MUST TRY"].indexOf(a) - ["SALE", "TOP PICK", "MUST TRY"].indexOf(b)),
+    );
+    assert.ok(tier.visibleProducts.length <= NMG_SMART_MENU_CONFIG.pageSize);
+  }
 });

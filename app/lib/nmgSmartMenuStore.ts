@@ -6,6 +6,7 @@ export const NMG_SMART_MENU_STATE_PATH = "nmg-smart-menu/state/v1.json";
 let localState = defaultSmartMenuState();
 
 function blobConfigured() {
+  if (process.env.NMG_SMART_MENU_LOCAL_ONLY === "1") return false;
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
 }
 

@@ -4,19 +4,21 @@ import { readFileSync } from "node:fs";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
-test("NMG TV consumes audited pages and rotates them every 25 seconds", () => {
+test("NMG TV keeps locked rows fixed and changes only deterministic regular windows every 30 minutes", () => {
   const source = read("../app/tv/page.tsx");
-  assert.match(source, /SMART_PAGE_INTERVAL_MS\s*=\s*25_000/);
   assert.match(source, /kind:\s*"nmg-smart-lineup"/);
-  assert.match(source, /smartData\.lineup\.tiers\[tier\]\?\.pages/);
-  assert.match(source, /pages\[\(pageIndexes\[tier\]\s*\|\|\s*0\)\s*%\s*pages\.length\]\.products/);
-  assert.doesNotMatch(source, /CAP_SALE|saleOverflow|Math\.random\(\).*page/i);
+  assert.match(source, /source\.lockedProducts/);
+  assert.match(source, /source\.regularProducts/);
+  assert.match(source, /selectRegularWindow\(lineup\.regularProducts, lineup\.regularCapacity, regularBucket\)/);
+  assert.match(source, /nextBoundary.*NMG_REGULAR_WINDOW_MS/);
+  assert.doesNotMatch(source, /SMART_PAGE_INTERVAL_MS|25_000|pageIndexes|setInterval\([^)]*page/i);
+  assert.doesNotMatch(source, /Math\.random\(\).*window/i);
 });
 
 test("TV2 item behavior is isolated from the NMG flower priority engine", () => {
   const source = read("../app/tv2/page.tsx");
   assert.match(source, /fetch\("\/api\/tv-data\?type=items"\)/);
-  assert.doesNotMatch(source, /nmg-smart-lineup|nmgSmartMenu|SMART_PAGE_INTERVAL_MS/);
+  assert.doesNotMatch(source, /nmg-smart-lineup|nmgSmartMenu|NMG_REGULAR_WINDOW_MS/);
 });
 
 test("NMG smart-menu state, manifest, and four-hour refresh stay store-scoped", () => {

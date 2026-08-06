@@ -4,6 +4,7 @@ import {
   buildOrRetainSmartLineup,
   buildSmartLineup,
   defaultSmartMenuState,
+  materializeSmartLineup,
   NMG_SMART_TIERS,
   SmartMenuInputError,
   type CatalogFlower,
@@ -57,6 +58,7 @@ function config(flowers: CatalogFlower[], overrides: Partial<SmartMenuConfig> = 
     safetyStock: thresholds(2),
     clearTailMax: thresholds(12),
     pageSize: 10,
+    regularWindowMinutes: 30,
     mustTryStablePeriods: 3,
     mustTryCooldownPeriods: 2,
     minSnapshotCoverageRatio: 0.55,
@@ -70,7 +72,7 @@ function build(flowers: CatalogFlower[], state = defaultSmartMenuState(BASE), no
 }
 
 function allProducts(lineup: ReturnType<typeof build>["lineup"]) {
-  return NMG_SMART_TIERS.flatMap((tier) => lineup.tiers[tier].pages.flatMap((page) => page.products));
+  return NMG_SMART_TIERS.flatMap((tier) => [...lineup.tiers[tier].lockedProducts, ...lineup.tiers[tier].regularProducts]);
 }
 
 test("valid inventory preserves per-weight quantities, timestamp, coverage, and one priority badge", () => {
@@ -89,20 +91,25 @@ test("valid inventory preserves per-weight quantities, timestamp, coverage, and 
   }
 });
 
-test("sale pages are unlimited, explicitly ranked, stable, and precede regular pages", () => {
-  const sales = Array.from({ length: 12 }, (_, index) => flower(String(600 + index), "EXOTIC", { sale: true, saleRank: 12 - index }));
-  const flowers = [...sales, flower("699", "EXOTIC"), ...NMG_SMART_TIERS.slice(1).map((tier) => flower(String(tierBases[tier] + 90), tier))];
-  const cfg = config(flowers, { pageSize: 10 });
-  const first = build(flowers, defaultSmartMenuState(BASE), BASE, inventoryFor(flowers, BASE), cfg);
-  const secondNow = new Date(BASE.getTime() + PERIOD_MS);
-  const second = build(flowers, first.nextState, secondNow, inventoryFor(flowers, secondNow), cfg);
-  const pages = first.lineup.tiers.EXOTIC.pages;
-  assert.deepEqual(pages.map((page) => page.kind), ["sale", "sale", "regular"]);
-  const ranks = pages.filter((page) => page.kind === "sale").flatMap((page) => page.products.map((row) => row.saleRank));
-  assert.deepEqual(ranks, [...ranks].sort((a, b) => Number(a) - Number(b)));
-  assert.deepEqual(
-    pages.filter((page) => page.kind === "sale").map((page) => [page.id, page.products.map((row) => row.sku)]),
-    second.lineup.tiers.EXOTIC.pages.filter((page) => page.kind === "sale").map((page) => [page.id, page.products.map((row) => row.sku)]),
+test("locked rows stay fixed as all ranked sales, one TOP PICK, then one MUST TRY", () => {
+  const flowers = fixtureFlowers(8);
+  const built = build(flowers);
+  for (const tier of NMG_SMART_TIERS) {
+    const locked = built.lineup.tiers[tier].lockedProducts;
+    assert.deepEqual(locked.map((row) => row.smartBadge), ["SALE", "TOP PICK"]);
+    assert.deepEqual(locked.filter((row) => row.smartBadge === "SALE").map((row) => row.saleRank), [NMG_SMART_TIERS.indexOf(tier) + 1]);
+    const later = materializeSmartLineup(built.lineup, new Date(BASE.getTime() + 29 * 60_000 + 59_000));
+    assert.deepEqual(later.tiers[tier].lockedProducts.map((row) => row.sku), locked.map((row) => row.sku));
+    assert.deepEqual(later.tiers[tier].visibleProducts.slice(0, locked.length).map((row) => row.sku), locked.map((row) => row.sku));
+  }
+});
+
+test("locked priority overflow rejects instead of hiding or rotating a sale", () => {
+  const sales = Array.from({ length: 11 }, (_, index) => flower(String(600 + index), "EXOTIC", { sale: true, saleRank: index + 1 }));
+  const flowers = [...sales, ...NMG_SMART_TIERS.slice(1).map((tier) => flower(String(tierBases[tier] + 90), tier))];
+  assert.throws(
+    () => build(flowers, defaultSmartMenuState(BASE), BASE, inventoryFor(flowers, BASE), config(flowers)),
+    (error) => error instanceof SmartMenuInputError && error.code === "LOCKED_CAPACITY_EXCEEDED",
   );
 });
 
@@ -147,20 +154,50 @@ test("MUST TRY requires three unchanged consecutive periods, lasts one period, t
   }
 });
 
-test("regular Set A/B/C membership rotates by four-hour version with complete no-repeat coverage", () => {
-  const flowers = fixtureFlowers(12).map((row) => ({ ...row, isSale: false, saleRank: undefined, price3g: { regular: 20, sale: null } }));
-  const cfg = config(flowers, { pageSize: 4, saleRanks: {} });
-  const first = build(flowers, defaultSmartMenuState(BASE), BASE, inventoryFor(flowers, BASE), cfg);
-  const nextNow = new Date(BASE.getTime() + PERIOD_MS);
-  const second = build(flowers, first.nextState, nextNow, inventoryFor(flowers, nextNow), cfg);
+test("regular windows are stable for 30 minutes, advance exactly at the boundary, and cover all before repeat", () => {
+  const flowers = fixtureFlowers(14);
+  const built = build(flowers);
+  const beforeBoundary = materializeSmartLineup(built.lineup, new Date(BASE.getTime() + 29 * 60_000 + 59_999));
+  const atBoundary = materializeSmartLineup(built.lineup, new Date(BASE.getTime() + 30 * 60_000));
+
   for (const tier of NMG_SMART_TIERS) {
-    assert.deepEqual(first.lineup.tiers[tier].pages.map((page) => page.label), ["Set A", "Set B", "Set C"]);
-    const firstSkus = first.lineup.tiers[tier].pages.flatMap((page) => page.products.map((row) => row.sku));
-    const secondSkus = second.lineup.tiers[tier].pages.flatMap((page) => page.products.map((row) => row.sku));
-    assert.equal(new Set(firstSkus).size, firstSkus.length);
-    assert.deepEqual([...firstSkus].sort(), [...secondSkus].sort());
-    assert.notDeepEqual(first.lineup.tiers[tier].pages.map((page) => page.products.map((row) => row.sku)), second.lineup.tiers[tier].pages.map((page) => page.products.map((row) => row.sku)));
+    const initial = built.lineup.tiers[tier];
+    assert.deepEqual(beforeBoundary.tiers[tier].visibleProducts.map((row) => row.sku), initial.visibleProducts.map((row) => row.sku));
+    assert.deepEqual(beforeBoundary.tiers[tier].lockedProducts.map((row) => row.sku), atBoundary.tiers[tier].lockedProducts.map((row) => row.sku));
+    assert.notDeepEqual(
+      beforeBoundary.tiers[tier].visibleProducts.map((row) => row.sku),
+      atBoundary.tiers[tier].visibleProducts.map((row) => row.sku),
+    );
+
+    const seen: string[] = [];
+    const count = initial.regularWindowCount;
+    for (let index = 0; index < count; index += 1) {
+      const view = materializeSmartLineup(built.lineup, new Date(BASE.getTime() + index * 30 * 60_000));
+      const regular = view.tiers[tier].visibleProducts.slice(view.tiers[tier].lockedProducts.length);
+      for (const product of regular) {
+        assert.equal(seen.includes(product.sku), false, `${tier} repeated ${product.sku} before full coverage`);
+        seen.push(product.sku);
+      }
+    }
+    assert.deepEqual([...seen].sort(), initial.regularProducts.map((row) => row.sku).sort());
+
+    const repeatedWindow = materializeSmartLineup(built.lineup, new Date(BASE.getTime() + count * 30 * 60_000));
+    const firstRegular = initial.visibleProducts.slice(initial.lockedProducts.length).map((row) => row.sku);
+    const repeatedRegular = repeatedWindow.tiers[tier].visibleProducts.slice(initial.lockedProducts.length).map((row) => row.sku);
+    assert.deepEqual([...repeatedRegular].sort(), [...firstRegular].sort());
+    if (firstRegular.length > 1) assert.notDeepEqual(repeatedRegular, firstRegular);
   }
+});
+
+test("manifest separates complete eligible-cycle coverage from the current visible window", () => {
+  const flowers = fixtureFlowers(14);
+  const { lineup } = build(flowers);
+  assert.equal(lineup.manifest.includedSkus, flowers.length);
+  assert.equal(lineup.manifest.eligibleCycleSkus.length, flowers.length);
+  assert.equal(lineup.manifest.currentlyVisibleCount, lineup.manifest.currentlyVisibleSkus.length);
+  assert.ok(lineup.manifest.currentlyVisibleCount < lineup.manifest.includedSkus);
+  assert.equal(lineup.manifest.missingSkus.length, 0);
+  for (const sku of lineup.manifest.currentlyVisibleSkus) assert.ok(lineup.manifest.eligibleCycleSkus.includes(sku));
 });
 
 test("malformed, stale, and partial inputs retain the durable last-known-good lineup", () => {
