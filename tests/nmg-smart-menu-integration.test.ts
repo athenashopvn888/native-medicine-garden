@@ -26,6 +26,7 @@ test("NMG items use the same live email feed and durable last-good state as flow
   const route = read("../app/api/tv-data/route.ts");
   const service = read("../app/lib/nmgSmartMenuService.ts");
   const state = read("../app/lib/nmgSmartMenu.ts");
+  const itemStore = read("../app/lib/nmgLiveItemsStore.ts");
   assert.doesNotMatch(route, /allItems/);
   assert.match(route, /result\.items/);
   assert.match(route, /x-tv-data-source/);
@@ -33,6 +34,10 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.doesNotMatch(service, /fetchJson<[^>]*LiveMenu[^>]*>\(base\)/);
   assert.match(service, /selectValidatedLiveItems/);
   assert.match(state, /liveItems: LiveItemsSnapshot \| null/);
+  assert.match(itemStore, /nmg-smart-menu\/items\/v1\.json/);
+  assert.match(service, /writeLiveItemsSnapshot/);
+  assert.match(service, /try\s*\{[\s\S]*await writeLiveItemsSnapshot\(liveItemsSnapshot\);[\s\S]*\}\s*catch/);
+  assert.match(service, /items: liveItems, itemsSource: "live"/);
 });
 
 test("NMG smart-menu state, manifest, and four-hour refresh stay store-scoped", () => {
