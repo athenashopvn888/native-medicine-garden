@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import styles from "./tv.module.css";
 import { TV_TICKER_INTERVAL_MS, TV_TICKER_SLIDES } from "../tvTicker";
 import { TV_BUNDLE_LABELS } from "./tvPricing";
@@ -14,6 +14,11 @@ interface Flower {
   price3g: PricePoint|null; price5g: PricePoint|null;
   price14g: PricePoint|null; price28g: PricePoint|null;
   image: string; promoImage?: string|null;
+}
+interface SmartPage { id: string; label: string; kind: "sale"|"regular"; products: Flower[]; }
+interface SmartLineupResponse {
+  kind: "nmg-smart-lineup";
+  lineup: { version: string; sourceTimestamp: string; tiers: Record<string,{ pages: SmartPage[] }> };
 }
 interface Item {
   sku: string; name: string; category: string; type: string;
@@ -35,6 +40,8 @@ const TIER_DEAL: Record<string,string> = {
   EXOTIC:"Buy 3g Get 3 FREE", PREMIUM:"Buy 3g Get 3 FREE",
   "AAA+":"Buy 3g Get 3 FREE", BUDGET:"$10 / 3g Special"
 };
+const SMART_TIERS = ["EXOTIC","PREMIUM","AAA+","AA","BUDGET"] as const;
+const SMART_PAGE_INTERVAL_MS = 25_000;
 
 /* -- Helpers -- */
 function fmtTHC(v: string): string {
@@ -86,9 +93,6 @@ function VibeCard({ type }: { type: string }) {
 }
 
 /* -- Helpers -- */
-function isShreds(name: string): boolean {
-  return /shred/i.test(name);
-}
 function hasSalePrice(f: Flower): boolean {
   return !!(f.price3g?.sale || f.price5g?.sale || f.price14g?.sale || f.price28g?.sale);
 }
@@ -104,96 +108,12 @@ function cleanName(name: string): string {
     .trim();
 }
 
-/* ============================================================
-   SLOT RESERVATION SYSTEM (matches original TVMenu.html)
-   ============================================================
-   Each tier shows max 10 rows at a time with reserved slots:
-   SALE (max 2) → TOP PICK (max 1) → MUST TRY (max 1) → SATIVA (max 3) → INDICA (fills rest)
-   Products rotate through their bucket windows over time.
-   ============================================================ */
+/* The server publishes audited pages in SALE > TOP PICK > MUST TRY > REGULAR order. */
 const MAX_VIS = 10;
-const CAP_SALE = 2;
-const CAP_TOP  = 1;
-const CAP_MUST = 1;
-const CAP_SAT  = 3;
-const CAP_IND  = 3;
 
-/** Build the visible window for a tier using the slot reservation system */
 function buildSlotWindow(flowers: Flower[], hiIdx: number): { vis: Flower[]; hiW: number; hi: Flower | undefined } {
   if (!flowers.length) return { vis: [], hiW: 0, hi: undefined };
-
-  // 1) Sort into buckets
-  const saleAll: Flower[] = [];
-  const topAll: Flower[] = [];
-  const mustAll: Flower[] = [];
-  const satAll: Flower[] = [];
-  const indAll: Flower[] = [];
-
-  for (const f of flowers) {
-    if (f.isSale) { saleAll.push(f); continue; }
-    if (f.isHot) { topAll.push(f); continue; }
-    if (f.isMustTry) { mustAll.push(f); continue; }
-    if (f.type === "sativa") satAll.push(f);
-    else indAll.push(f);
-  }
-
-  // 2) Only first 1 TOP / 1 MUST — extras fall back to SAT/IND by type
-  const topWin = topAll.slice(0, CAP_TOP);
-  for (const r of topAll.slice(CAP_TOP)) {
-    (r.type === "sativa" ? satAll : indAll).push(r);
-  }
-  const mustWin = mustAll.slice(0, CAP_MUST);
-  for (const r of mustAll.slice(CAP_MUST)) {
-    (r.type === "sativa" ? satAll : indAll).push(r);
-  }
-
-  // 3) Rotate offsets based on hiIdx (batch rotation)
-  const cycle = Math.floor(hiIdx / MAX_VIS);
-
-  // SALE: pick CAP_SALE items to show, overflow the REST into SAT/IND by type
-  const saleOff = saleAll.length > CAP_SALE
-    ? (cycle * CAP_SALE) % saleAll.length
-    : 0;
-  const saleWin: Flower[] = [];
-  const saleOverflow: Flower[] = [];
-  for (let i = 0; i < saleAll.length; i++) {
-    const inWindow = saleAll.length <= CAP_SALE ||
-      (i >= saleOff && i < saleOff + CAP_SALE) ||
-      (saleOff + CAP_SALE > saleAll.length && i < (saleOff + CAP_SALE) % saleAll.length);
-    if (inWindow && saleWin.length < CAP_SALE) {
-      saleWin.push(saleAll[i]);
-    } else {
-      saleOverflow.push(saleAll[i]);
-    }
-  }
-  // Overflow sale items go back to SAT/IND by type
-  for (const r of saleOverflow) {
-    (r.type === "sativa" ? satAll : indAll).push(r);
-  }
-
-  // SAT: rotate through all sativa items, CAP_SAT at a time
-  const satOff = satAll.length > CAP_SAT
-    ? (cycle * CAP_SAT) % satAll.length
-    : 0;
-  const satWin = satAll.length > CAP_SAT
-    ? Array.from({length: CAP_SAT}, (_, i) => satAll[(satOff + i) % satAll.length])
-    : satAll.slice(0, CAP_SAT);
-
-  // IND: fills remaining slots
-  const used = saleWin.length + topWin.length + mustWin.length + satWin.length;
-  const remaining = Math.max(0, MAX_VIS - used);
-  const indCap = Math.max(CAP_IND, remaining);
-  const indOff = indAll.length > indCap
-    ? (cycle * indCap) % indAll.length
-    : 0;
-  const indWin = indAll.length > indCap
-    ? Array.from({length: indCap}, (_, i) => indAll[(indOff + i) % indAll.length])
-    : indAll.slice(0, indCap);
-
-  // 4) Assemble in fixed order: SALE → TOP → MUST → SAT → IND
-  const vis = [...saleWin, ...topWin, ...mustWin, ...satWin, ...indWin].slice(0, MAX_VIS);
-
-  // 5) Highlight within the visible window
+  const vis = flowers.slice(0, MAX_VIS);
   const hiW = vis.length ? hiIdx % vis.length : 0;
   const hi = vis[hiW] || flowers[0];
 
@@ -708,15 +628,21 @@ export default function TVMenuPage() {
       })
       .catch(err => console.warn("[BG] Load failed:", err));
   }, []);
-  const [flowers, setFlowers] = useState<Record<string,Flower[]>>({});
-  const [ozFlowers, setOzFlowers] = useState<Flower[]>([]);
+  const [tierPages, setTierPages] = useState<Record<string,SmartPage[]>>({});
+  const [pageIndexes, setPageIndexes] = useState<Record<string,number>>({});
   const [addOns, setAddOns] = useState<Item[]>([]);
   const [highlights, setHighlights] = useState<Record<string,number>>({});
   const [lastUpdate, setLastUpdate] = useState("");
   const [particles, setParticles] = useState<Array<{size:number;left:string;color:string;shadow:string;dur:string;delay:string}>>([]);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  const TIERS = ["EXOTIC","PREMIUM","AAA+","AA","BUDGET"];
+  const flowers = useMemo(() => Object.fromEntries(SMART_TIERS.map((tier) => {
+    const pages = tierPages[tier] || [];
+    return [tier, pages.length ? pages[(pageIndexes[tier] || 0) % pages.length].products : []];
+  })) as Record<string,Flower[]>, [tierPages, pageIndexes]);
+  const ozFlowers = useMemo(() => SMART_TIERS.flatMap((tier) => flowers[tier]).filter((flower, index, values) =>
+    Boolean(flower.price28g) && values.findIndex((candidate) => candidate.sku === flower.sku) === index,
+  ), [flowers]);
 
   const loadData = useCallback(async () => {
     try {
@@ -724,50 +650,32 @@ export default function TVMenuPage() {
         fetch("/api/tv-data?type=flowers"),
         fetch("/api/tv-data?type=items"),
       ]);
-      const fData: Flower[] = fRes.ok ? await fRes.json() : [];
+      if (!fRes.ok) throw new Error(`Smart flower lineup HTTP ${fRes.status}`);
+      const smartData = await fRes.json() as SmartLineupResponse;
+      if (smartData.kind !== "nmg-smart-lineup" || !smartData.lineup?.tiers) throw new Error("Smart flower lineup is invalid");
       const iData: Item[] = iRes.ok ? await iRes.json() : [];
-
-      for (const f of fData) {
-        if (!f.isSale && (hasSalePrice(f) || hasNameSale(f.name))) f.isSale = true;
-        f.name = cleanName(f.name);
+      const pages: Record<string,SmartPage[]> = {};
+      for (const tier of SMART_TIERS) {
+        pages[tier] = (smartData.lineup.tiers[tier]?.pages || []).map((page) => ({
+          ...page,
+          products: page.products.map((flower) => ({
+            ...flower,
+            isSale: flower.isSale || hasSalePrice(flower) || hasNameSale(flower.name),
+            name: cleanName(flower.name),
+          })),
+        }));
       }
-
-      const grouped: Record<string,Flower[]> = {};
-      for (const f of fData) {
-        const t = String(f.tier||"").toUpperCase();
-        if (!grouped[t]) grouped[t] = [];
-        grouped[t].push(f);
-      }
-
-      // OZ: pull from ALL tiers — any flower with 28g pricing (matches original TVMenu)
-      const oz: Flower[] = [];
-      const ozSeen = new Set<string>();
-      // First add any explicitly OZ-tier items
-      for (const f of (grouped["OZ"] || [])) {
-        if (!ozSeen.has(f.sku)) { oz.push(f); ozSeen.add(f.sku); }
-      }
-      // Then add items from all other tiers that have 28g pricing
-      for (const tier of ["EXOTIC","PREMIUM","AAA+","AA","BUDGET"]) {
-        for (const f of (grouped[tier] || [])) {
-          if (f.price28g && !ozSeen.has(f.sku)) { oz.push(f); ozSeen.add(f.sku); }
-        }
-      }
-      setOzFlowers(oz);
-
-      if (grouped["BUDGET"]) {
-        grouped["BUDGET"] = grouped["BUDGET"].filter(f => !isShreds(f.name));
-      }
-      setFlowers(grouped);
+      setTierPages(pages);
+      setPageIndexes(Object.fromEntries(SMART_TIERS.map((tier) => [tier, 0])));
 
       setAddOns(iData.filter(it => it.category === "ADD ONS" || it.category === "PREROLLS").slice(0, 14));
 
       const hi: Record<string,number> = {};
-      for (const t of TIERS) hi[t] = 0;
+      for (const t of SMART_TIERS) hi[t] = 0;
       hi["OZ"] = 0; hi["ADDONS"] = 0;
       setHighlights(hi);
       setLastUpdate(new Date().toLocaleTimeString());
     } catch (err) { console.warn("[TV] Load failed:", err); }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fitToScreen = useCallback(() => {
@@ -800,13 +708,13 @@ export default function TVMenuPage() {
   }, [loadData, fitToScreen]);
 
   useEffect(() => {
-    if (!Object.keys(flowers).length) return;
+    if (!Object.keys(tierPages).length) return;
     const interval = setInterval(() => {
       setHighlights(prev => {
         const next = {...prev};
-        for (const t of TIERS) {
+        for (const t of SMART_TIERS) {
             const total = flowers[t]?.length || 1;
-            next[t] = ((prev[t]||0)+1) % Math.max(MAX_VIS, total * MAX_VIS);
+            next[t] = ((prev[t]||0)+1) % total;
           }
         next["OZ"] = ((prev["OZ"]||0)+1) % Math.max(1, ozFlowers.length);
         next["ADDONS"] = ((prev["ADDONS"]||0)+1) % Math.max(1, addOns.length);
@@ -814,7 +722,23 @@ export default function TVMenuPage() {
       });
     }, 5000);
     return () => clearInterval(interval);
-  }, [flowers, ozFlowers, addOns]);
+  }, [tierPages, flowers, ozFlowers.length, addOns.length]);
+
+  useEffect(() => {
+    if (!Object.keys(tierPages).length) return;
+    const interval = setInterval(() => {
+      setPageIndexes((previous) => {
+        const next = { ...previous };
+        for (const tier of SMART_TIERS) {
+          const count = tierPages[tier]?.length || 1;
+          next[tier] = ((previous[tier] || 0) + 1) % count;
+        }
+        return next;
+      });
+      setHighlights((previous) => ({ ...previous, ...Object.fromEntries(SMART_TIERS.map((tier) => [tier, 0])) }));
+    }, SMART_PAGE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [tierPages]);
 
   const CM: Record<string,{c:string;t:string;b:string}> = {
     EXOTIC:{c:styles.cardExotic,t:styles.tierExotic,b:styles.tierBadgeExotic},
@@ -845,14 +769,14 @@ export default function TVMenuPage() {
         <div className={styles.stage}>
           <div className={styles.grid}>
             {/* Row 1: EXOTIC, PREMIUM, AAA+ */}
-            {TIERS.slice(0,3).map(tier => (
+            {SMART_TIERS.slice(0,3).map(tier => (
               <FlowerCard key={tier} tier={tier} flowers={flowers[tier]||[]} hiIdx={highlights[tier]||0}
                 cardCls={CM[tier].c} tierCls={CM[tier].t} badgeCls={CM[tier].b} />
             ))}
             {/* ADDONS right rail */}
             <AddOnsCard items={addOns} hiIdx={highlights["ADDONS"]||0} />
             {/* Row 2: AA, BUDGET, OZ */}
-            {TIERS.slice(3).map(tier => (
+            {SMART_TIERS.slice(3).map(tier => (
               <FlowerCard key={tier} tier={tier} flowers={flowers[tier]||[]} hiIdx={highlights[tier]||0}
                 cardCls={CM[tier].c} tierCls={CM[tier].t} badgeCls={CM[tier].b} />
             ))}
