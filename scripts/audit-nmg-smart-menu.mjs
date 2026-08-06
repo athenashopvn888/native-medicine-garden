@@ -1,5 +1,6 @@
 import { buildSmartLineup, defaultSmartMenuState } from "../app/lib/nmgSmartMenu.ts";
 import { NMG_SMART_MENU_CONFIG } from "../app/lib/nmgSmartMenuConfig.ts";
+import { selectValidatedLiveItems } from "../app/lib/nmgLiveInventory.ts";
 
 const endpoint = process.env.APPS_SCRIPT_URL;
 if (!endpoint) throw new Error("APPS_SCRIPT_URL is required.");
@@ -14,6 +15,13 @@ async function readJson(url) {
 
 const inventory = await readJson(`${base}&stock=1`);
 const catalog = await readJson(`${base}&catalog=1`);
+const liveMenu = await readJson(base);
+const liveItems = selectValidatedLiveItems({
+  inventory,
+  catalogFlowers: catalog.flowers,
+  catalogItems: catalog.items,
+  liveMenu,
+});
 const sku373Rows = catalog.flowers.filter((flower) => String(flower.sku) === "373").length;
 if (sku373Rows !== 1) throw new Error(`Expected one live SKU 373 catalog row, received ${sku373Rows}.`);
 const { lineup } = buildSmartLineup({
@@ -23,4 +31,4 @@ const { lineup } = buildSmartLineup({
   state: defaultSmartMenuState(),
   config: NMG_SMART_MENU_CONFIG,
 });
-console.log(JSON.stringify({ sku373Rows, manifest: lineup.manifest }, null, 2));
+console.log(JSON.stringify({ sku373Rows, liveItemRows: liveItems.length, liveItemSourceTimestamp: liveMenu.stockDate, manifest: lineup.manifest }, null, 2));

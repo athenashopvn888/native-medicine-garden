@@ -44,7 +44,18 @@ export interface CatalogFlower {
   promoImage?: string | null;
 }
 
-export interface CatalogItem { sku: string; category?: string }
+export interface CatalogItem {
+  sku: string;
+  name?: string;
+  category?: string;
+  [key: string]: unknown;
+}
+
+export interface LiveItemsSnapshot {
+  sourceTimestamp: string;
+  capturedAt: string;
+  items: CatalogItem[];
+}
 
 export interface SmartFlower extends Omit<CatalogFlower, "saleRank"> {
   tier: SmartTier;
@@ -147,6 +158,7 @@ export interface SmartMenuState {
   mustCooldownUntil: Record<string, number>;
   rotationOffset: number;
   manifest: SmartManifest | null;
+  liveItems: LiveItemsSnapshot | null;
 }
 
 export class SmartMenuInputError extends Error {
@@ -172,6 +184,7 @@ export function defaultSmartMenuState(now = new Date()): SmartMenuState {
     mustCooldownUntil: {},
     rotationOffset: 0,
     manifest: null,
+    liveItems: null,
   };
 }
 
@@ -532,6 +545,7 @@ export function buildSmartLineup(args: {
     mustCooldownUntil: nextMustCooldown,
     rotationOffset: period,
     manifest: lineup.manifest,
+    liveItems: args.state.liveItems || null,
   };
   return { lineup, nextState };
 }
