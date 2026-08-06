@@ -2,7 +2,7 @@ import "server-only";
 import { BlobAccessError, BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import { defaultSmartMenuState, type SmartMenuState } from "./nmgSmartMenu";
 
-export const NMG_SMART_MENU_STATE_PATH = "nmg-smart-menu/state/v1.json";
+export const NMG_SMART_MENU_STATE_PATH = "nmg-smart-menu/state/v2.json";
 let localState = defaultSmartMenuState();
 
 function blobConfigured() {
