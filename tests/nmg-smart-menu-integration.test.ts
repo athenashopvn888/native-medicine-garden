@@ -26,7 +26,7 @@ test("NMG smart-menu state, manifest, and four-hour refresh stay store-scoped", 
   const route = read("../app/api/tv-data/route.ts");
   const refresh = read("../app/api/nmg-smart-menu/refresh/route.ts");
   const vercel = JSON.parse(read("../vercel.json")) as { crons: Array<{ path: string; schedule: string }> };
-  assert.match(store, /nmg-smart-menu\/state\/v1\.json/);
+  assert.match(store, /nmg-smart-menu\/state\/v2\.json/);
   assert.match(route, /type === "smart-manifest"/);
   assert.match(route, /kind: "nmg-smart-lineup"/);
   assert.match(refresh, /CRON_SECRET/);
