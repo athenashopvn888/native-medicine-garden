@@ -38,6 +38,7 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.match(service, /writeLiveItemsSnapshot/);
   assert.match(service, /try\s*\{[\s\S]*await writeLiveItemsSnapshot\(liveItemsSnapshot\);[\s\S]*\}\s*catch/);
   assert.match(service, /items: liveItems, itemsSource: "live"/);
+  assert.match(service, /try\s*\{[\s\S]*await mutateSmartMenuState\([\s\S]*\}\s*catch\s*\{[\s\S]*flower LKG persistence unavailable/);
 });
 
 test("NMG smart-menu state, manifest, and four-hour refresh stay store-scoped", () => {

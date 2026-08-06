@@ -121,7 +121,11 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
     if (before.currentLineup?.schemaVersion === 2 && before.currentLineup.version === built.lineup.version && before.currentLineup.sourceTimestamp === built.lineup.sourceTimestamp) {
       return { lineup: materializeSmartLineup(before.currentLineup, now), items: liveItems, itemsSource: "live", itemsSourceTimestamp: inventory.date, servedFrom: "fresh", fallbackReason: null };
     }
-    await mutateSmartMenuState((draft) => copyState(draft, built.nextState));
+    try {
+      await mutateSmartMenuState((draft) => copyState(draft, built.nextState));
+    } catch {
+      console.warn("[NMG smart menu] flower LKG persistence unavailable");
+    }
     return { lineup: built.lineup, items: liveItems, itemsSource: "live", itemsSourceTimestamp: inventory.date, servedFrom: "fresh", fallbackReason: null };
   } catch (error) {
     console.warn("[NMG smart menu] rejected source input", error instanceof SmartMenuInputError ? error.code : "SOURCE_UNAVAILABLE");
