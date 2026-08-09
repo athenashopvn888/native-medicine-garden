@@ -3,6 +3,7 @@ import { NMG_SMART_MENU_CONFIG } from "./nmgSmartMenuConfig";
 import {
   buildOrRetainSmartLineup,
   materializeSmartLineup,
+  NMG_SMART_TIERS,
   SmartMenuInputError,
   type CatalogFlower,
   type CatalogItem,
@@ -10,6 +11,12 @@ import {
   type SmartLineup,
   type SmartMenuState,
 } from "./nmgSmartMenu";
+import {
+  allFlowers,
+  allItems,
+  type FlowerProduct,
+  type ItemProduct,
+} from "./products";
 import { mutateSmartMenuState, readSmartMenuState } from "./nmgSmartMenuStore";
 import { selectValidatedLiveItems } from "./nmgLiveInventory";
 import { readLiveItemsSnapshot, writeLiveItemsSnapshot } from "./nmgLiveItemsStore";
@@ -23,6 +30,16 @@ export interface SmartMenuResult {
   itemsSourceTimestamp: string | null;
   servedFrom: "fresh" | "last-good";
   fallbackReason: string | null;
+}
+
+export interface NmgCompleteMenuProducts {
+  flowers: FlowerProduct[];
+  items: ItemProduct[];
+  flowerSourceTimestamp: string;
+  itemSourceTimestamp: string | null;
+  version: string;
+  flowerSource: "fresh" | "last-good";
+  itemSource: "live" | "last-good" | "unavailable";
 }
 
 let inputCache: { expiresAt: number; promise: ReturnType<typeof fetchInputs> } | null = null;
@@ -131,4 +148,54 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
     console.warn("[NMG smart menu] rejected source input", error instanceof SmartMenuInputError ? error.code : "SOURCE_UNAVAILABLE");
     return fallback(before, storedItems, error, now);
   }
+}
+
+/**
+ * Complete inventory truth for non-TV menu surfaces. TV may show one
+ * deterministic 30-minute regular window, while tier pages must show every
+ * locked and regular product in that same eligible cycle.
+ */
+export async function getNmgCompleteMenuProducts(): Promise<NmgCompleteMenuProducts> {
+  const result = await getNmgSmartMenu();
+  const flowers = NMG_SMART_TIERS.flatMap((tier) => [
+    ...result.lineup.tiers[tier].lockedProducts,
+    ...result.lineup.tiers[tier].regularProducts,
+  ]) as unknown as FlowerProduct[];
+  return {
+    flowers,
+    items: result.items as unknown as ItemProduct[],
+    flowerSourceTimestamp: result.lineup.sourceTimestamp,
+    itemSourceTimestamp: result.itemsSourceTimestamp,
+    version: result.lineup.version,
+    flowerSource: result.servedFrom,
+    itemSource: result.itemsSource,
+  };
+}
+
+export async function getNmgFlowerDetail(slug: string): Promise<{
+  flower: FlowerProduct | undefined;
+  relatedPool: FlowerProduct[];
+}> {
+  try {
+    const menu = await getNmgCompleteMenuProducts();
+    const flower = menu.flowers.find((product) => product.slug === slug);
+    if (flower) return { flower, relatedPool: menu.flowers };
+  } catch {
+    // Stable catalog routes remain available if neither source nor LKG exists.
+  }
+  return {
+    flower: allFlowers.find((product) => product.slug === slug),
+    relatedPool: allFlowers,
+  };
+}
+
+export async function getNmgItemDetail(slug: string): Promise<ItemProduct | undefined> {
+  try {
+    const menu = await getNmgCompleteMenuProducts();
+    const item = menu.items.find((product) => product.slug === slug);
+    if (item) return item;
+  } catch {
+    // Stable catalog routes remain available if neither source nor LKG exists.
+  }
+  return allItems.find((product) => product.slug === slug);
 }

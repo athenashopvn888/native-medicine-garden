@@ -75,7 +75,12 @@ export default function FlowerCard({
     effectivePrice > 0 ? (effectivePrice / active.grams).toFixed(2) : "—";
 
   return (
-    <div className={styles.card}>
+    <div
+      className={styles.card}
+      data-product-sku={flower.sku}
+      data-product-name={flower.name}
+      data-product-tier={flower.tier}
+    >
       {/* Image */}
       <Link href={`/flower/${flower.slug}`} className={styles.imageLink}>
         <div className={styles.imageWrap}>
