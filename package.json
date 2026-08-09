@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "prebuild": "node scripts/prebuild-stock.js",
+    "verify:delivery-images": "node scripts/verify-athena-delivery-images.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
