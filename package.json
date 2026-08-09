@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "node scripts/prebuild-stock.js",
     "verify:delivery-images": "node scripts/verify-athena-delivery-images.mjs",
+    "verify:consent-webchat": "node scripts/verify-consent-webchat.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
