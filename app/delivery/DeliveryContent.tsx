@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import menu from "./delivery-menu.json";
 import styles from "./delivery.module.css";
+import NativeMedicineWebChat from "./NativeMedicineWebChat";
 
 type Tier = "SHREDS" | "Budget" | "BC Premium" | "CRAFTS" | "Exotics";
 type PriceOption = { key: string; label: string; price: number };
@@ -119,6 +120,7 @@ export default function DeliveryContent() {
     </section>
     <div className={styles.ctaSection}><p>Visit us in-store at <strong>76 Gerrard St W, Toronto</strong>. We are <strong>Open 24 Hours</strong>. Call <strong>+1 (437) 374-4544</strong>.</p></div>
     {selected && <div className={styles.backdrop} onMouseDown={(event) => { if (event.target === event.currentTarget) setSelected(null); }}><section className={styles.drawer} role="dialog" aria-modal="true" aria-labelledby="product-title"><header><strong>Product details</strong><button type="button" onClick={() => setSelected(null)} aria-label="Close product details">×</button></header><div className={styles.drawerContent}>{selected.images.map((src, index) => <div className={styles.drawerImage} key={src}><Image src={src} alt={`${selected.name}${index ? ` alternate ${index + 1}` : ""}`} fill sizes="(max-width: 720px) 100vw, 420px" unoptimized /></div>)}<h2 id="product-title">{selected.name}</h2><p>{selected.description || "Ask the store for current product details."}</p>{selected.effects.length > 0 && <div className={styles.effects}>{selected.effects.map((effect) => <span key={effect}>{effect}</span>)}</div>}<ProductPricing product={selected} /></div></section></div>}
+    <NativeMedicineWebChat />
     <Footer />
   </main>;
 }
