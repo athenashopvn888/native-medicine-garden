@@ -78,5 +78,6 @@ function collectPublicSources(directory) {
 
 const publicSource = collectPublicSources(fileURLToPath(appRoot)).map((file) => fs.readFileSync(file, "utf8")).join("\n");
 assert(!/Play Games|Games Arcade|href=["']\/games["']|href:\s*["']\/games["']|slug:\s*["']games["']|\$\{BASE\}\/games/.test(publicSource), "public Play Games and /games discovery links must not ship");
+assert(!/farmers\s*link|farmerslink|farmer['’]s\s*link/i.test(publicSource), "public supplier wording must not ship");
 
-+console.log("Verified delivery pricing, announcement bar, and public navigation guards.");
+console.log("Verified delivery pricing, announcement bar, public navigation, and supplier-wording guards.");

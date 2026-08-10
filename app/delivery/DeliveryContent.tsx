@@ -110,7 +110,7 @@ export default function DeliveryContent() {
     </section>
     <section className={styles.loyalty} aria-labelledby="loyalty-title">
       <div><p>MEMBER PRICING</p><h2 id="loyalty-title">Compare every price clearly</h2></div>
-      <p>Explicit Farmers Link offers are shown first. Otherwise, eligible BC Premium, CRAFTS, and Exotics 28g products show the standard price and member loyalty price. Budget and SHREDS do not receive the fallback discount.</p>
+      <p>Eligible member offers are shown automatically. Standard and member prices appear together when available.</p>
     </section>
     <section className={styles.catalogShell}>
       <aside className={styles.filters}><h2>Flower tiers</h2>{filters.map((tier) => <button type="button" key={tier} className={filter === tier ? styles.active : ""} onClick={() => setFilter(tier)}>{tier}<span>{tier === "ALL" ? products.length : products.filter((product) => product.tier === tier).length}</span></button>)}</aside>
