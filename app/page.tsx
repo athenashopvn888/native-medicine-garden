@@ -64,7 +64,6 @@ const EXPLORE_CATEGORIES = [
   { name: "Accessories", slug: "items/add-ons", banner: "/banners/05_Accessories.webp" },
   { name: "Cigarettes", slug: "items/cigarettes", banner: "/banners/06_Cigarettes.webp" },
   { name: "Magic Stuff", slug: "items/magic", banner: "/banners/09_Magic_Stuff.webp" },
-  { name: "Games Arcade", slug: "games", banner: "/banners/10_Games.webp" },
 ];
 
 /* -- Local FAQs for Jane St -- */
