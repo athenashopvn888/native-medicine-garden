@@ -108,9 +108,29 @@ export default function DeliveryContent() {
     <section className={`${styles.hero} ${styles.heroPlain}`}>
       <div><p>Native Medicine Garden</p><h1>Delivery Menu</h1><span>Browse the shared product catalog. The store confirms current availability and delivery details before an order is accepted.</span></div>
     </section>
+    <section className={styles.deliveryDetails} aria-label="Native Medicine Garden delivery details">
+      <strong>$60 PRODUCT MINIMUM</strong>
+      <a href="sms:+12899072789"><span>DELIVERY TEXT NUMBER</span> +1 (289) 907-2789</a>
+    </section>
     <section className={styles.loyalty} aria-labelledby="loyalty-title">
-      <div><p>MEMBER PRICING</p><h2 id="loyalty-title">Compare every price clearly</h2></div>
-      <p>Eligible member offers are shown automatically. Standard and member prices appear together when available.</p>
+      <div><p>SAVE ON A LATER ORDER</p><h2 id="loyalty-title">Member Loyalty Savings</h2></div>
+      <p>Qualify with an eligible regular-price 28g purchase in BC Premium, Crafts, or Exotics, or with a selected 2 × 28g tier offer. Rewards and coupons apply to a later order—not the qualifying purchase.</p>
+      <ol>
+        <li><strong>Qualify</strong><span>Purchase an eligible regular-price ounce or selected two-ounce tier offer.</span></li>
+        <li><strong>Return</strong><span>On your next visit, save $30 on an eligible regular-price 28g item in the selected tier.</span></li>
+        <li><strong>Use your coupon later</strong><span>A 3g Craft coupon earned with a qualifying $120+ purchase is redeemed on your next order.</span></li>
+        <li><strong>Keep access active</strong><span>Make a $50+ purchase within 14 days, or requalify with an eligible full-price purchase.</span></li>
+      </ol>
+      <aside><strong>Important conditions</strong><p>Complimentary items apply only to regular-price Craft or Exotic ounces—not BC Premium. Loyalty prices are firm and cannot be reduced with points. Loyalty-price orders do not include extra complimentary items. The dispatcher confirms current eligibility and any included item before checkout.</p></aside>
+    </section>
+    <section className={styles.howToOrder} aria-labelledby="how-to-order-title">
+      <div><p>HOW TO ORDER</p><h2 id="how-to-order-title">Order with the Native Medicine Garden dispatcher</h2><span>LIVE ORDER connects you with the Native Medicine Garden dispatcher.</span></div>
+      <ol>
+        <li><strong>Browse the delivery menu</strong><span>Note the product names and weights you want.</span></li>
+        <li><strong>Select LIVE ORDER</strong><span>Open Web Chat at the bottom-right and send your choices.</span></li>
+        <li><strong>Verify privately if you are new</strong><span>New customers complete the private selfie-with-ID step in Web Chat.</span></li>
+        <li><strong>Confirm with the dispatcher</strong><span>The Native Medicine Garden dispatcher confirms availability, delivery details, and next steps.</span></li>
+      </ol>
     </section>
     <section className={styles.catalogShell}>
       <aside className={styles.filters}><h2>Flower tiers</h2>{filters.map((tier) => <button type="button" key={tier} className={filter === tier ? styles.active : ""} onClick={() => setFilter(tier)}>{tier}<span>{tier === "ALL" ? products.length : products.filter((product) => product.tier === tier).length}</span></button>)}</aside>

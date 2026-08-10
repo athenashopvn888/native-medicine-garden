@@ -78,6 +78,25 @@ function collectPublicSources(directory) {
 
 const publicSource = collectPublicSources(fileURLToPath(appRoot)).map((file) => fs.readFileSync(file, "utf8")).join("\n");
 assert(!/Play Games|Games Arcade|href=["']\/games["']|href:\s*["']\/games["']|slug:\s*["']games["']|\$\{BASE\}\/games/.test(publicSource), "public Play Games and /games discovery links must not ship");
+
+assert(source.includes("$60 PRODUCT MINIMUM"), "delivery page must show the approved $60 product minimum");
+assert(source.includes("Member Loyalty Savings"), "delivery page must show the approved loyalty section");
+assert(source.includes("Rewards and coupons apply to a later order—not the qualifying purchase."), "loyalty rewards must be described as later-order rewards");
+assert(source.includes("save $30 on an eligible regular-price 28g item"), "delivery page must explain the approved later-order $30 saving");
+assert(source.includes("3g Craft coupon earned with a qualifying $120+ purchase"), "delivery page must explain the approved later-order Craft coupon");
+assert(source.includes("Make a $50+ purchase within 14 days"), "delivery page must explain the approved keep-active condition");
+assert(source.includes("Complimentary items apply only to regular-price Craft or Exotic ounces—not BC Premium."), "delivery page must preserve the approved complimentary-item condition");
+assert(source.includes("HOW TO ORDER") && source.includes("Select LIVE ORDER") && source.includes("private selfie-with-ID") && source.includes("dispatcher confirms availability"), "delivery page must show the four-step consent-first order flow");
+const smsMatch = source.match(/href="sms:(\+1[2-9]\d{9})"><span>DELIVERY TEXT NUMBER<\/span> (\+1 \([2-9]\d{2}\) \d{3}-\d{4})<\/a>/);
+assert(smsMatch, "delivery page must show one valid dedicated SMS number and sms action");
+assert(!source.includes("__DELIVERY_"), "delivery phone placeholders must never ship");
+const digits = smsMatch[2].replace(/\D/g, "");
+assert.equal(`+${digits}`, smsMatch[1], "visible delivery number must match the sms action");
+const deliveryStyles = fs.readFileSync(new URL("delivery.module.css", deliveryRoot), "utf8");
+if (/<Image src="\/banners\/.+Delivery/i.test(source)) {
+  assert(/\.hero>img\{[^}]*width:100%;[^}]*height:auto;[^}]*object-fit:contain/s.test(deliveryStyles), "delivery artwork must render full-width at its intrinsic aspect ratio without cropping");
+  assert(!/\.hero>img\{[^}]*(?:object-fit:cover|max-height:|height:\d)/s.test(deliveryStyles), "delivery artwork must not use cover crop or a fixed height");
+}
 assert(!/farmers\s*link|farmerslink|farmer['’]s\s*link/i.test(publicSource), "public supplier wording must not ship");
 
 console.log("Verified delivery pricing, announcement bar, public navigation, and supplier-wording guards.");
