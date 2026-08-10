@@ -46,6 +46,13 @@
 .sod-chat-account form input { min-height:44px; border:1px solid #aebdb5; border-radius:9px; padding:9px 10px; background:#fff; color:#17221d; font-size:16px; }
 .sod-chat-account form > div { display:grid; grid-template-columns:1fr auto; gap:8px; }
 .sod-chat-account .sod-start-another-order { border:0; background:#146b48; color:#fff; }
+.sod-ready-consent-recovery { display:grid; gap:10px; margin:12px 14px; border:2px solid #b45309; border-radius:12px; padding:13px; background:#fff7ed; color:#43200b; }
+.sod-ready-consent-recovery strong { font-size:15px; }
+.sod-ready-consent-recovery p { margin:0; font-size:12px; line-height:1.45; }
+.sod-ready-consent-recovery label { display:grid; grid-template-columns:20px minmax(0,1fr); align-items:start; gap:9px; font-size:12px; font-weight:700; line-height:1.4; }
+.sod-ready-consent-recovery input { width:18px; height:18px; margin:0; accent-color:#146b48; }
+.sod-ready-consent-recovery button { min-height:42px; border:0; border-radius:9px; background:#146b48; color:#fff; font-weight:900; }
+.sod-ready-consent-recovery button:disabled { opacity:.55; }
 .sod-chat-transcript { display:grid; align-content:start; gap:9px; min-height:150px; padding:14px; background:#f4f7f5; }
 .sod-chat-transcript > div { display:grid; max-width:82%; gap:3px; }
 .sod-chat-transcript > div span { border-radius:13px; padding:9px 11px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.08); font-size:13px; line-height:1.4; }
