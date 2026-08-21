@@ -58,7 +58,7 @@ export default function Footer() {
               <Link href="/budget">Budget Flower</Link>
               <Link href="/items/edibles">Edibles</Link>
               <Link href="/items/cigarettes">Cigarettes</Link>
-              <Link href="/items/vapes">Vape Pens</Link>
+<Link href="/items/vapes">Nicotine Vapes</Link>
               <Link href="/faq">FAQ</Link>
               <Link href="/delivery">DELIVERY MENU</Link>
               <Link href="/info/gerrard-bay-weed-dispensary">
@@ -67,9 +67,10 @@ export default function Footer() {
               <Link href="/info/cheap-weed-gerrard-bay">
                 Cheap Weed Gerrard and Bay
               </Link>
-              <Link href="/info/native-cigarettes-gerrard-bay">
+<Link href="/info/native-cigarettes-gerrard-bay">
                 Native Cigarettes
               </Link>
+              <Link href="/info/nicotine-vapes-gerrard-bay">Nicotine Vapes Gerrard & Bay</Link>
               <Link href="/info/weed-store-near-downtown-toronto">
                 Weed Store Near Gerrard and Bay
               </Link>

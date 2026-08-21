@@ -211,50 +211,32 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
 
   "VAPE PENS": {
     banner: "/banners/01_Vape_Pens.webp",
-    name: "THC Vape",
+    name: "Nic Vape",
     slug: "vapes",
     color: "#8b5cf6",
-    icon: "",
-    seoTitle: "THC Vape Toronto | Native Medicine Garden",
-    seoIntro:
-      "Browse thc vape category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
-    seoDescription:
-      "Review thc vape category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
+    icon: "NV",
+    seoTitle: "Nicotine Vape Menu Gerrard & Bay",
+    seoIntro: "Browse nicotine vape devices, formats, flavours, puff counts and listed prices at Native Medicine Garden.",
+    seoDescription: "The nicotine vape menu at Native Medicine Garden lists devices, formats and prices for Gerrard & Bay shoppers. THC vapes have a separate category. Visit 76 Gerrard St W.",
     faqs: [
-      {
-        q: "What thc vape information can shoppers review?",
-        a: "Customers can review thc vape category information and confirm current menu details before visiting Native Medicine Garden.",
-      },
-      {
-        q: "Does this page guarantee current listings?",
-        a: "No. Category details can change, so customers should confirm the current menu before visiting.",
-      },
+      { q: "Is this the nicotine vape menu?", a: "Yes. This category lists nicotine vape devices and prices from Native Medicine Garden." },
+      { q: "Where are THC vapes?", a: "THC vapes are listed in a separate THC vape category." },
     ],
   },
-
   "VAPE DISPOSABLE": {
     banner: "/banners/02_Vape_Disposable.webp",
-    name: "Nic Vape",
+    name: "THC Vape",
     slug: "vape-disposables",
     color: "#a78bfa",
-    icon: "",
-    seoTitle: "Nic Vape Toronto | Native Medicine Garden",
-    seoIntro:
-      "Browse nic vape category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
-    seoDescription:
-      "Review nic vape category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
+    icon: "V",
+    seoTitle: "THC Vape Menu Gerrard & Bay",
+    seoIntro: "Browse THC vape products and listed prices at Native Medicine Garden.",
+    seoDescription: "The THC vape category at Native Medicine Garden lists cannabis vape products and prices for Gerrard & Bay shoppers. Nicotine vapes have a separate category. Visit 76 Gerrard St W.",
     faqs: [
-      {
-        q: "What nic vape information can shoppers review?",
-        a: "Customers can review nic vape category information and confirm current menu details before visiting Native Medicine Garden.",
-      },
-      {
-        q: "Does this page guarantee current listings?",
-        a: "No. Category details can change, so customers should confirm the current menu before visiting.",
-      },
+      { q: "Is this the THC vape menu?", a: "Yes. This category lists THC vape products and prices from Native Medicine Garden." },
+      { q: "Where are nicotine vapes?", a: "Nicotine vapes are listed in a separate nicotine vape category." },
     ],
   },
-
   CONCENTRATES: {
     banner: "/banners/03_Concentrates.webp",
     name: "Concentrates",
@@ -351,21 +333,14 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     name: "Cigarettes",
     slug: "cigarettes",
     color: "#78716c",
-    icon: "",
-    seoTitle: "Cigarettes Toronto | Native Medicine Garden",
-    seoIntro:
-      "Browse cigarettes category information at Native Medicine Garden near Gerrard Street West and Bay Street.",
-    seoDescription:
-      "Review cigarettes category information for Native Medicine Garden in Toronto. Confirm current menu details before visiting 76 Gerrard St W. This page supports browsing and does not promise current product listings.",
+    icon: "CG",
+    seoTitle: "Native Cigarette Menu Gerrard & Bay",
+    seoIntro: "Browse Native cigarette brands, pack styles and listed prices at Native Medicine Garden.",
+    seoDescription: "The cigarette menu at Native Medicine Garden lists cigarette brands, styles and prices for Gerrard & Bay shoppers. Visit 76 Gerrard St W. Open 24 Hours.",
     faqs: [
-      {
-        q: "What cigarettes information can shoppers review?",
-        a: "Customers can review cigarettes category information and confirm current menu details before visiting Native Medicine Garden.",
-      },
-      {
-        q: "Does this page guarantee current listings?",
-        a: "No. Category details can change, so customers should confirm the current menu before visiting.",
-      },
+      { q: "Does Native Medicine Garden list Native cigarettes?", a: "Yes. This category lists Native cigarette brands, styles and prices from Native Medicine Garden." },
+      { q: "What cigarette styles are listed?", a: "The selection includes full, light and menthol styles across several listed brands." },
+      { q: "Where is Native Medicine Garden?", a: "Native Medicine Garden is at 76 Gerrard St W." },
     ],
   },
 };
