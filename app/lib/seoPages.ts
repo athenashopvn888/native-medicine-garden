@@ -228,12 +228,12 @@ export const SEO_PAGES: SeoPageData[] = [
     heroTagline: "Nicotine vape devices, flavours and prices from Native Medicine Garden.",
     sections: [
       { heading: "Nicotine Vape Selection", body: "Native Medicine Garden lists nicotine vape devices, flavours, formats, puff counts and prices." },
-      { heading: "Separate From THC Vapes", body: "Nicotine vapes and THC vapes have separate selections so each product group is clear." },
+      { heading: "Pods and Disposables Downtown", body: "Compare listed formats, flavours, puff counts and prices near Gerrard and Bay." },
       { heading: "Open 24 Hours", body: "Visit Native Medicine Garden at 76 Gerrard St W for cigarettes, nicotine vapes and other smoke-shop essentials." },
     ],
     faqs: [
       { q: "Does Native Medicine Garden list nicotine vapes?", a: "Yes. The nicotine vape selection includes listed devices, flavours, formats, puff counts and prices." },
-      { q: "Where are THC vapes?", a: "THC vapes have a separate category." },
+      { q: "Can I compare nicotine vape prices online?", a: "Yes. Current listings include product details and posted prices." },
       { q: "Where is Native Medicine Garden?", a: "Native Medicine Garden is at 76 Gerrard St W." },
     ],
   },

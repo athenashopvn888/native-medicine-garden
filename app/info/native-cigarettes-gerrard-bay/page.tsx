@@ -20,7 +20,7 @@ export default function NativeCigarettesPage() {
         storeName="Native Medicine Garden"
         locationLabel="Gerrard & Bay"
         eyebrow="Native Cigarettes · Gerrard Street West"
-        title="Native Cigarettes in Gerrard & Bay"
+        title="Native Cigarettes Near Gerrard and Bay"
         intro="Shop Native cigarette brands, full, light and menthol styles, plus Backwoods, grabba and nicotine pouches at Native Medicine Garden near Gerrard and Bay."
         items={items}
         menuHref="/items/cigarettes"
@@ -30,8 +30,8 @@ export default function NativeCigarettesPage() {
         crossLink={{ href: "/info/nicotine-vapes-gerrard-bay", eyebrow: "Also at Native Medicine Garden", title: "Prefer a nicotine vape?", body: "Shop nicotine vape devices with brand, flavour, puff-count and listed price details from Native Medicine Garden.", label: "Shop nicotine vapes" }}
         sections={[
           { heading: "Native Cigarettes Near Gerrard and Bay", body: "Native Medicine Garden carries Native cigarettes and smoke-shop essentials at 76 Gerrard St W in downtown Toronto." },
-          { heading: "Full, Light and Menthol Styles", body: "Compare Canadian, Canadian Goose, Canadian Classics, Nexus, Time and Putters across full, light and menthol styles in the listed selection." },
-          { heading: "Backwoods, Grabba and Nicotine Pouches", body: "The smoke-shop selection also includes Backwoods, grabba, grabba shakers and nicotine pouches where listed." },
+          { heading: "Canadian Brands Downtown", body: "Compare listed Canadian, Canadian Goose, Canadian Classics, Nexus, Time and Putters options near Toronto's downtown core." },
+          { heading: "Grabba, Backwoods and Pouches Near Bay Street", body: "The listed smoke-shop selection includes grabba, grabba shakers, Backwoods and nicotine pouches alongside cigarette options." },
         ]}
         faqs={[
           { q: "Does Native Medicine Garden sell Native cigarettes?", a: "Yes. Native Medicine Garden lists Native cigarette brands and related smoke-shop products at 76 Gerrard St W, Toronto." },

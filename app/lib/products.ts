@@ -217,10 +217,10 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     icon: "NV",
     seoTitle: "Nicotine Vape Menu Gerrard & Bay",
     seoIntro: "Browse nicotine vape devices, formats, flavours, puff counts and listed prices at Native Medicine Garden.",
-    seoDescription: "The nicotine vape menu at Native Medicine Garden lists devices, formats and prices for Gerrard & Bay shoppers. THC vapes have a separate category. Visit 76 Gerrard St W.",
+    seoDescription: "Compare nicotine vape devices, formats, flavours, puff counts and listed prices at Native Medicine Garden, 76 Gerrard St W.",
     faqs: [
       { q: "Is this the nicotine vape menu?", a: "Yes. This category lists nicotine vape devices and prices from Native Medicine Garden." },
-      { q: "Where are THC vapes?", a: "THC vapes are listed in a separate THC vape category." },
+      { q: "Can I compare nicotine vape prices online?", a: "Yes. Current listings show available product details and posted prices near Gerrard and Bay." },
     ],
   },
   "VAPE DISPOSABLE": {
@@ -231,10 +231,10 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     icon: "V",
     seoTitle: "THC Vape Menu Gerrard & Bay",
     seoIntro: "Browse THC vape products and listed prices at Native Medicine Garden.",
-    seoDescription: "The THC vape category at Native Medicine Garden lists cannabis vape products and prices for Gerrard & Bay shoppers. Nicotine vapes have a separate category. Visit 76 Gerrard St W.",
+    seoDescription: "Compare listed THC vape products, formats and prices at Native Medicine Garden, 76 Gerrard St W near Gerrard and Bay.",
     faqs: [
       { q: "Is this the THC vape menu?", a: "Yes. This category lists THC vape products and prices from Native Medicine Garden." },
-      { q: "Where are nicotine vapes?", a: "Nicotine vapes are listed in a separate nicotine vape category." },
+      { q: "Can I compare THC vape prices online?", a: "Yes. Current listings show available product details and posted prices near Gerrard and Bay." },
     ],
   },
   CONCENTRATES: {
