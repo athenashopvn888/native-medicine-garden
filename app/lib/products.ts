@@ -219,7 +219,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro: "Browse nicotine vape devices, formats, flavours, puff counts and listed prices at Native Medicine Garden.",
     seoDescription: "Compare nicotine vape devices, formats, flavours, puff counts and listed prices at Native Medicine Garden, 76 Gerrard St W.",
     faqs: [
-      { q: "Is this the nicotine vape menu?", a: "Yes. This category lists nicotine vape devices and prices from Native Medicine Garden." },
+      { q: "What nicotine vape details are available?", a: "Compare listed device formats, flavours, puff counts and prices before visiting Native Medicine Garden." },
       { q: "Can I compare nicotine vape prices online?", a: "Yes. Current listings show available product details and posted prices near Gerrard and Bay." },
     ],
   },
@@ -233,7 +233,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro: "Browse THC vape products and listed prices at Native Medicine Garden.",
     seoDescription: "Compare listed THC vape products, formats and prices at Native Medicine Garden, 76 Gerrard St W near Gerrard and Bay.",
     faqs: [
-      { q: "Is this the THC vape menu?", a: "Yes. This category lists THC vape products and prices from Native Medicine Garden." },
+      { q: "What THC vape details are available?", a: "Compare listed product names, formats and prices before visiting Native Medicine Garden." },
       { q: "Can I compare THC vape prices online?", a: "Yes. Current listings show available product details and posted prices near Gerrard and Bay." },
     ],
   },
@@ -338,7 +338,7 @@ export const CATEGORY_CONFIG: Record<string, CategoryInfo> = {
     seoIntro: "Browse Native cigarette brands, pack styles and listed prices at Native Medicine Garden.",
     seoDescription: "The cigarette menu at Native Medicine Garden lists cigarette brands, styles and prices for Gerrard & Bay shoppers. Visit 76 Gerrard St W. Open 24 Hours.",
     faqs: [
-      { q: "Does Native Medicine Garden list Native cigarettes?", a: "Yes. This category lists Native cigarette brands, styles and prices from Native Medicine Garden." },
+      { q: "Does Native Medicine Garden list Native cigarettes?", a: "Yes. Compare listed Native cigarette brands, styles and prices from Native Medicine Garden." },
       { q: "What cigarette styles are listed?", a: "The selection includes full, light and menthol styles across several listed brands." },
       { q: "Where is Native Medicine Garden?", a: "Native Medicine Garden is at 76 Gerrard St W." },
     ],

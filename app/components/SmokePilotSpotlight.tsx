@@ -22,7 +22,7 @@ export default function SmokePilotSpotlight({
           <h2 id="smoke-spotlight-title">Cigarettes &amp; Nicotine Vapes</h2>
           <p>
             Find Native cigarette brands, nicotine vape devices, flavours and listed
-            prices at {storeName} in {locationLabel}.
+            prices at {storeName} near {locationLabel}.
           </p>
         </div>
         <div className={styles.spotlightCards}>
@@ -47,4 +47,3 @@ export default function SmokePilotSpotlight({
     </section>
   );
 }
-

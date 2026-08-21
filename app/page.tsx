@@ -284,7 +284,7 @@ export default function HomePage() {
 
       <SmokePilotSpotlight
         storeName="Native Medicine Garden"
-        locationLabel="Gerrard & Bay"
+        locationLabel="Gerrard and Bay"
         cigaretteHref="/info/native-cigarettes-gerrard-bay"
         nicotineHref="/info/nicotine-vapes-gerrard-bay"
       />
