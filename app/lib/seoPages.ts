@@ -26,7 +26,7 @@ export const SEO_PAGES: SeoPageData[] = [
       {
         heading:
           "A Local Cannabis Stop Near Gerrard Street West and Bay Street",
-        body: "Native Medicine Garden is located at 76 Gerrard St W, Toronto, ON M5G 1J5. This page helps shoppers around Gerrard Street West, Bay Street, Yonge Street, College Park, Toronto Metropolitan University, University Avenue, Downtown Toronto confirm store information and compare categories before visiting.",
+        body: "Native Medicine Garden is at 76 Gerrard St W, close to Bay Street, Yonge Street, College Park, Toronto Metropolitan University and University Avenue.",
       },
       {
         heading: "Flower Tiers And Category Choices",
@@ -216,6 +216,25 @@ export const SEO_PAGES: SeoPageData[] = [
         q: "What neighbourhoods does this page focus on?",
         a: "Gerrard Street West, Bay Street, Yonge Street, College Park, Toronto Metropolitan University, University Avenue, Downtown Toronto",
       },
+    ],
+  },
+
+  {
+    slug: "nicotine-vapes-gerrard-bay",
+    title: "Nicotine Vapes Gerrard & Bay | Native Medicine Garden",
+    metaDescription: "Browse nicotine vape devices, flavours, formats and listed prices at Native Medicine Garden, 76 Gerrard St W. Open 24 Hours.",
+    h1: "Nicotine Vapes Gerrard & Bay",
+    icon: "NV",
+    heroTagline: "Nicotine vape devices, flavours and prices from Native Medicine Garden.",
+    sections: [
+      { heading: "Nicotine Vape Selection", body: "Native Medicine Garden lists nicotine vape devices, flavours, formats, puff counts and prices." },
+      { heading: "Pods and Disposables Downtown", body: "Compare listed formats, flavours, puff counts and prices near Gerrard and Bay." },
+      { heading: "Open 24 Hours", body: "Visit Native Medicine Garden at 76 Gerrard St W for cigarettes, nicotine vapes and other smoke-shop essentials." },
+    ],
+    faqs: [
+      { q: "Does Native Medicine Garden list nicotine vapes?", a: "Yes. The nicotine vape selection includes listed devices, flavours, formats, puff counts and prices." },
+      { q: "Can I compare nicotine vape prices online?", a: "Yes. Current listings include product details and posted prices." },
+      { q: "Where is Native Medicine Garden?", a: "Native Medicine Garden is at 76 Gerrard St W." },
     ],
   },
 ];
