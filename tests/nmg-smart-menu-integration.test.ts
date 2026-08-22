@@ -46,6 +46,11 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.match(service, /persistence failed/);
   assert.match(service, /items: liveItems, itemsSource: "live"/);
   assert.match(service, /return fallback\(before, storedItems/);
+  const itemWrite = service.indexOf("await writeLiveItemsSnapshot(liveItemsSnapshot)");
+  const itemFailureFallback = service.indexOf("LIVE_ITEMS_PERSISTENCE_FAILED", itemWrite);
+  const flowerWrite = service.indexOf("await mutateSmartMenuState", itemWrite);
+  assert.ok(itemWrite >= 0 && itemFailureFallback > itemWrite && flowerWrite > itemFailureFallback);
+  assert.match(service.slice(itemWrite, flowerWrite), /catch[\s\S]*return fallback/);
 });
 
 test("NMG smart-menu state, manifest, and four-hour refresh stay store-scoped", () => {

@@ -1,6 +1,7 @@
 import "server-only";
-import { BlobAccessError, BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
+import { get, head, put } from "@vercel/blob";
 import type { LiveItemsSnapshot } from "./nmgSmartMenu";
+import { persistLiveItemsSnapshot } from "./nmgLiveItemsPersistence";
 
 export const NMG_LIVE_ITEMS_STATE_PATH = "nmg-smart-menu/items/v1.json";
 let localSnapshot: LiveItemsSnapshot | null = null;
@@ -43,35 +44,27 @@ export async function writeLiveItemsSnapshot(snapshot: LiveItemsSnapshot) {
     localSnapshot = structuredClone(snapshot);
     return;
   }
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    const current = await readVersion();
-    if (current.snapshot && Date.parse(current.snapshot.sourceTimestamp) > Date.parse(snapshot.sourceTimestamp)) return;
-    try {
-      if (!current.etag) {
-        await put(NMG_LIVE_ITEMS_STATE_PATH, JSON.stringify(snapshot), {
+  await persistLiveItemsSnapshot(snapshot, {
+    readVersion,
+    headEtag: async () => (await head(NMG_LIVE_ITEMS_STATE_PATH, blobAuth())).etag,
+    create: async (next) => {
+      await put(NMG_LIVE_ITEMS_STATE_PATH, JSON.stringify(next), {
           access: "private",
           contentType: "application/json",
           cacheControlMaxAge: 60,
           allowOverwrite: false,
           ...blobAuth(),
-        });
-        return;
-      }
-      const latest = await head(NMG_LIVE_ITEMS_STATE_PATH, blobAuth());
-      if (latest.etag.replaceAll('"', "") !== current.etag.replaceAll('"', "")) continue;
-      await put(NMG_LIVE_ITEMS_STATE_PATH, JSON.stringify(snapshot), {
+      });
+    },
+    overwrite: async (next, etag) => {
+      await put(NMG_LIVE_ITEMS_STATE_PATH, JSON.stringify(next), {
         access: "private",
         contentType: "application/json",
         cacheControlMaxAge: 60,
         allowOverwrite: true,
-        ifMatch: latest.etag,
+        ifMatch: etag,
         ...blobAuth(),
       });
-      return;
-    } catch (error) {
-      if (error instanceof BlobAccessError || error instanceof BlobPreconditionFailedError) continue;
-      throw error;
-    }
-  }
-  throw new Error("NMG live item state was busy.");
+    },
+  });
 }
