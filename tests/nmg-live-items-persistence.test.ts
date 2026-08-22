@@ -24,6 +24,7 @@ function operations(overrides: Partial<LiveItemsPersistenceOperations> = {}) {
   const sleeps: number[] = [];
   const ops: LiveItemsPersistenceOperations = {
     readVersion: async () => ({ snapshot: snapshot(OLD), etag: "old-etag" }),
+    headEtag: async () => "head-etag",
     create: async () => { creates += 1; },
     overwrite: async () => { overwrites += 1; },
     sleep: async (milliseconds) => { sleeps.push(milliseconds); },
@@ -49,6 +50,13 @@ test("BlobPreconditionFailedError retries with bounded deterministic backoff", a
   assert.equal(await persistLiveItemsSnapshot(snapshot(FRESH), fixture.ops), "written");
   assert.equal(attempts, 2);
   assert.deepEqual(fixture.counts().sleeps, [25]);
+});
+
+test("conditional overwrite uses the documented head ETag", async () => {
+  let receivedEtag = "";
+  const fixture = operations({ overwrite: async (_next, etag) => { receivedEtag = etag; } });
+  assert.equal(await persistLiveItemsSnapshot(snapshot(FRESH), fixture.ops), "written");
+  assert.equal(receivedEtag, "head-etag");
 });
 
 test("concurrent identical same-version content is a no-op", async () => {

@@ -23,6 +23,7 @@ interface StoredVersion {
 
 export interface LiveItemsPersistenceOperations {
   readVersion: () => Promise<StoredVersion>;
+  headEtag: () => Promise<string>;
   create: (snapshot: LiveItemsSnapshot) => Promise<void>;
   overwrite: (snapshot: LiveItemsSnapshot, etag: string) => Promise<void>;
   sleep?: (milliseconds: number) => Promise<void>;
@@ -63,10 +64,10 @@ export async function persistLiveItemsSnapshot(
       if (!current.etag) {
         await operations.create(snapshot);
       } else {
-        // The conditional write is the concurrency check. A second HEAD can
-        // observe a different representation/version and create a false race;
-        // if the blob changed, put(ifMatch) returns a precondition failure.
-        await operations.overwrite(snapshot, current.etag);
+        // Vercel Blob documents head().etag as the conditional-write token.
+        // put(ifMatch) remains the race gate; a real concurrent write yields a
+        // precondition failure and retries from a fresh content read.
+        await operations.overwrite(snapshot, await operations.headEtag());
       }
       return "written";
     } catch (error) {
