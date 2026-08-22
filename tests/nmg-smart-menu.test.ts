@@ -128,6 +128,22 @@ test("an unranked sale is accepted fresh, warned, and kept out of every locked p
   assert.ok(allProducts(lineup).filter((row) => row.sku === "501").every((row) => !row.isHot && !row.isMustTry));
 });
 
+test("all nine current unranked sale SKUs are accepted without synthetic rank or promo placement", () => {
+  const currentUnranked = ["207", "213", "215", "323", "372", "380", "393", "476", "515"];
+  const flowers = [
+    ...currentUnranked.map((sku, index) => flower(sku, NMG_SMART_TIERS[index % NMG_SMART_TIERS.length], { sale: true })),
+    ...NMG_SMART_TIERS.map((tier, index) => flower(String(800 + index), tier)),
+  ];
+  const { lineup } = build(flowers, defaultSmartMenuState(BASE), BASE, inventoryFor(flowers, BASE), config(flowers, { saleRanks: {} }));
+  assert.equal(lineup.manifest.accepted, true);
+  assert.deepEqual(lineup.manifest.unrankedSaleSkus, currentUnranked);
+  assert.deepEqual(lineup.manifest.warnings, [{ code: "UNRANKED_SALE_SKUS", skus: currentUnranked }]);
+  const products = allProducts(lineup).filter((row) => currentUnranked.includes(row.sku));
+  assert.equal(products.length, currentUnranked.length);
+  assert.ok(products.every((row) => row.isSale && row.smartBadge === "REGULAR" && row.saleRank === null && !row.isHot && !row.isMustTry));
+  assert.ok(NMG_SMART_TIERS.flatMap((tier) => lineup.tiers[tier].lockedProducts).every((row) => !currentUnranked.includes(row.sku)));
+});
+
 test("configured sale ranks override catalog drift and preserve locked rank positions", () => {
   const flowers = [
     flower("501", "EXOTIC", { sale: true, saleRank: 99 }),

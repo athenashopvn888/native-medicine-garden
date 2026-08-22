@@ -10,6 +10,13 @@ function blobConfigured() {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
 }
 
+function blobAuth() {
+  // @vercel/blob prefers deployment OIDC over BLOB_READ_WRITE_TOKEN when both
+  // exist. This legacy private store is explicitly linked by its existing
+  // read-write token, so pass that token to keep writes on the same resource.
+  return process.env.BLOB_READ_WRITE_TOKEN ? { token: process.env.BLOB_READ_WRITE_TOKEN } : {};
+}
+
 function parseSnapshot(value: unknown): LiveItemsSnapshot {
   if (!value || typeof value !== "object") throw new Error("NMG live item state is invalid.");
   const snapshot = value as Partial<LiveItemsSnapshot>;
@@ -21,7 +28,7 @@ function parseSnapshot(value: unknown): LiveItemsSnapshot {
 
 async function readVersion(): Promise<{ snapshot: LiveItemsSnapshot | null; etag: string | null }> {
   if (!blobConfigured()) return { snapshot: structuredClone(localSnapshot), etag: null };
-  const result = await get(NMG_LIVE_ITEMS_STATE_PATH, { access: "private", useCache: false });
+  const result = await get(NMG_LIVE_ITEMS_STATE_PATH, { access: "private", useCache: false, ...blobAuth() });
   if (!result) return { snapshot: null, etag: null };
   if (result.statusCode !== 200 || !result.stream) throw new Error("NMG live item state could not be read.");
   return { snapshot: parseSnapshot(JSON.parse(await new Response(result.stream).text())), etag: result.blob.etag };
@@ -46,10 +53,11 @@ export async function writeLiveItemsSnapshot(snapshot: LiveItemsSnapshot) {
           contentType: "application/json",
           cacheControlMaxAge: 60,
           allowOverwrite: false,
+          ...blobAuth(),
         });
         return;
       }
-      const latest = await head(NMG_LIVE_ITEMS_STATE_PATH);
+      const latest = await head(NMG_LIVE_ITEMS_STATE_PATH, blobAuth());
       if (latest.etag.replaceAll('"', "") !== current.etag.replaceAll('"', "")) continue;
       await put(NMG_LIVE_ITEMS_STATE_PATH, JSON.stringify(snapshot), {
         access: "private",
@@ -57,6 +65,7 @@ export async function writeLiveItemsSnapshot(snapshot: LiveItemsSnapshot) {
         cacheControlMaxAge: 60,
         allowOverwrite: true,
         ifMatch: latest.etag,
+        ...blobAuth(),
       });
       return;
     } catch (error) {

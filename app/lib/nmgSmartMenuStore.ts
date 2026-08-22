@@ -10,6 +10,12 @@ function blobConfigured() {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
 }
 
+function blobAuth() {
+  // Keep this existing private state on its linked legacy Blob resource even
+  // when Vercel also injects deployment OIDC credentials.
+  return process.env.BLOB_READ_WRITE_TOKEN ? { token: process.env.BLOB_READ_WRITE_TOKEN } : {};
+}
+
 function parseState(value: unknown): SmartMenuState {
   if (!value || typeof value !== "object") throw new Error("NMG smart-menu state is invalid.");
   const state = value as Partial<SmartMenuState>;
@@ -21,7 +27,7 @@ function parseState(value: unknown): SmartMenuState {
 
 async function readVersion(): Promise<{ state: SmartMenuState; etag: string | null }> {
   if (!blobConfigured()) return { state: structuredClone(localState), etag: null };
-  const result = await get(NMG_SMART_MENU_STATE_PATH, { access: "private", useCache: false });
+  const result = await get(NMG_SMART_MENU_STATE_PATH, { access: "private", useCache: false, ...blobAuth() });
   if (!result) {
     const state = defaultSmartMenuState();
     try {
@@ -30,6 +36,7 @@ async function readVersion(): Promise<{ state: SmartMenuState; etag: string | nu
         contentType: "application/json",
         cacheControlMaxAge: 60,
         allowOverwrite: false,
+        ...blobAuth(),
       });
       return { state, etag: created.etag };
     } catch (error) {
@@ -56,7 +63,7 @@ export async function mutateSmartMenuState<T>(mutator: (draft: SmartMenuState) =
       return result;
     }
     try {
-      const current = await head(NMG_SMART_MENU_STATE_PATH);
+      const current = await head(NMG_SMART_MENU_STATE_PATH, blobAuth());
       if (current.etag.replaceAll('"', "") !== String(etag || "").replaceAll('"', "")) {
         await new Promise((resolve) => setTimeout(resolve, 25 * (attempt + 1)));
         continue;
@@ -67,6 +74,7 @@ export async function mutateSmartMenuState<T>(mutator: (draft: SmartMenuState) =
         cacheControlMaxAge: 60,
         allowOverwrite: true,
         ifMatch: current.etag,
+        ...blobAuth(),
       });
       return result;
     } catch (error) {

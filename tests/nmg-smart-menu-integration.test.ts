@@ -27,6 +27,7 @@ test("NMG items use the same live email feed and durable last-good state as flow
   const service = read("../app/lib/nmgSmartMenuService.ts");
   const state = read("../app/lib/nmgSmartMenu.ts");
   const itemStore = read("../app/lib/nmgLiveItemsStore.ts");
+  const flowerStore = read("../app/lib/nmgSmartMenuStore.ts");
   assert.doesNotMatch(route, /allItems/);
   assert.match(route, /result\.items/);
   assert.match(route, /x-tv-data-source/);
@@ -35,6 +36,8 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.match(service, /selectValidatedLiveItems/);
   assert.match(state, /liveItems: LiveItemsSnapshot \| null/);
   assert.match(itemStore, /nmg-smart-menu\/items\/v1\.json/);
+  assert.match(itemStore, /token: process\.env\.BLOB_READ_WRITE_TOKEN/);
+  assert.match(flowerStore, /token: process\.env\.BLOB_READ_WRITE_TOKEN/);
   assert.match(service, /writeLiveItemsSnapshot/);
   assert.match(service, /LIVE_ITEMS_PERSISTENCE_FAILED/);
   assert.match(service, /LINEUP_PERSISTENCE_FAILED/);
