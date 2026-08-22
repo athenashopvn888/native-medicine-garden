@@ -29,8 +29,8 @@ function flower(sku: string, tier: SmartTier, options: { sale?: boolean; saleRan
     thc: "30%",
     price3g: { regular: 20, sale: options.sale ? 15 : null },
     price5g: { regular: 30, sale: null },
-    price14g: null,
-    price28g: null,
+    price14g: { regular: 60, sale: null },
+    price28g: { regular: 100, sale: null },
     image: `/products/${sku}.webp`,
   };
 }
@@ -113,9 +113,33 @@ test("locked priority overflow rejects instead of hiding or rotating a sale", ()
   );
 });
 
-test("missing explicit saleRank fails closed", () => {
+test("an unranked sale is accepted fresh, warned, and kept out of every locked promo lane", () => {
   const flowers = [flower("501", "EXOTIC", { sale: true }), ...NMG_SMART_TIERS.slice(1).map((tier) => flower(String(tierBases[tier] + 1), tier))];
-  assert.throws(() => build(flowers, defaultSmartMenuState(BASE), BASE, inventoryFor(flowers, BASE), config(flowers, { saleRanks: {} })), (error) => error instanceof SmartMenuInputError && error.code === "MISSING_SALE_RANK");
+  const { lineup } = build(flowers, defaultSmartMenuState(BASE), BASE, inventoryFor(flowers, BASE), config(flowers, { saleRanks: {} }));
+  const product = allProducts(lineup).find((row) => row.sku === "501");
+  assert.equal(lineup.manifest.accepted, true);
+  assert.deepEqual(lineup.manifest.unrankedSaleSkus, ["501"]);
+  assert.deepEqual(lineup.manifest.warnings, [{ code: "UNRANKED_SALE_SKUS", skus: ["501"] }]);
+  assert.equal(product?.isSale, true);
+  assert.equal(product?.smartBadge, "REGULAR");
+  assert.equal(product?.saleRank, null);
+  assert.ok(lineup.tiers.EXOTIC.regularProducts.some((row) => row.sku === "501"));
+  assert.ok(lineup.tiers.EXOTIC.lockedProducts.every((row) => row.sku !== "501"));
+  assert.ok(allProducts(lineup).filter((row) => row.sku === "501").every((row) => !row.isHot && !row.isMustTry));
+});
+
+test("configured sale ranks override catalog drift and preserve locked rank positions", () => {
+  const flowers = [
+    flower("501", "EXOTIC", { sale: true, saleRank: 99 }),
+    flower("502", "EXOTIC", { sale: true, saleRank: 1 }),
+    ...NMG_SMART_TIERS.slice(1).map((tier) => flower(String(tierBases[tier] + 1), tier)),
+  ];
+  const cfg = config(flowers, { saleRanks: { "501": 1, "502": 2 } });
+  const { lineup } = build(flowers, defaultSmartMenuState(BASE), BASE, inventoryFor(flowers, BASE), cfg);
+  assert.deepEqual(
+    lineup.tiers.EXOTIC.lockedProducts.filter((row) => row.smartBadge === "SALE").map((row) => [row.sku, row.saleRank]),
+    [["501", 1], ["502", 2]],
+  );
 });
 
 test("TOP PICK is one safe low-stock product per tier with SKU tie-break and prior-period cooldown", () => {
@@ -200,7 +224,7 @@ test("manifest separates complete eligible-cycle coverage from the current visib
   for (const sku of lineup.manifest.currentlyVisibleSkus) assert.ok(lineup.manifest.eligibleCycleSkus.includes(sku));
 });
 
-test("malformed, stale, and partial inputs retain the durable last-known-good lineup", () => {
+test("wrong-store, malformed, invalid-price, stale, and partial inputs retain the durable last-known-good lineup", () => {
   const flowers = fixtureFlowers(6);
   const valid = build(flowers);
   const malformed = inventoryFor(flowers, BASE);
@@ -209,6 +233,18 @@ test("malformed, stale, and partial inputs retain the durable last-known-good li
   assert.equal(malformedResult.servedFrom, "last-good");
   assert.equal(malformedResult.fallbackReason, "MALFORMED_QUANTITY");
   assert.equal(malformedResult.lineup.version, valid.lineup.version);
+
+  const wrongStore = inventoryFor(flowers, BASE);
+  wrongStore.storeCode = "PL601";
+  const wrongStoreResult = buildOrRetainSmartLineup({ inventory: wrongStore, flowers, items: [], state: valid.nextState, config: config(flowers), now: BASE });
+  assert.equal(wrongStoreResult.servedFrom, "last-good");
+  assert.equal(wrongStoreResult.fallbackReason, "STORE_MISMATCH");
+
+  const invalidPriceFlowers = structuredClone(flowers);
+  invalidPriceFlowers[0].price3g = { regular: "invalid", sale: null };
+  const invalidPriceResult = buildOrRetainSmartLineup({ inventory: inventoryFor(invalidPriceFlowers, BASE), flowers: invalidPriceFlowers, items: [], state: valid.nextState, config: config(flowers), now: BASE });
+  assert.equal(invalidPriceResult.servedFrom, "last-good");
+  assert.equal(invalidPriceResult.fallbackReason, "INVALID_FLOWER_PRICE");
 
   const staleNow = new Date(BASE.getTime() + 40 * 60 * 60_000);
   const staleResult = buildOrRetainSmartLineup({ inventory: inventoryFor(flowers, BASE), flowers, items: [], state: valid.nextState, config: config(flowers), now: staleNow });

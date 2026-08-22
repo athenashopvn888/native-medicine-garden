@@ -5,6 +5,11 @@ export type SmartTier = (typeof NMG_SMART_TIERS)[number];
 export type SmartBadge = "SALE" | "TOP PICK" | "MUST TRY" | "REGULAR";
 export type QuantityMap = Record<string, number>;
 
+export interface SmartWarning {
+  code: "UNRANKED_SALE_SKUS";
+  skus: string[];
+}
+
 export interface SmartMenuConfig {
   storeCode: "NMG01";
   periodHours: number;
@@ -116,6 +121,8 @@ export interface SmartAudit {
   wrongCategorySkus: string[];
   outOfStockIncludedSkus: string[];
   unexplainedExcludedSkus: string[];
+  unrankedSaleSkus: string[];
+  warnings: SmartWarning[];
 }
 
 export interface SmartManifest extends SmartAudit {
@@ -221,6 +228,16 @@ function hasSalePrice(product: CatalogFlower) {
     if (!point || typeof point !== "object") return false;
     return (point as { sale?: unknown }).sale !== null && Number.isFinite(Number((point as { sale?: unknown }).sale));
   });
+}
+
+function hasValidPricePoint(point: unknown) {
+  if (!point || typeof point !== "object" || Array.isArray(point)) return false;
+  const value = point as { regular?: unknown; sale?: unknown };
+  const regular = Number(value.regular);
+  if (!Number.isFinite(regular) || regular <= 0) return false;
+  if (value.sale === null || value.sale === undefined || value.sale === "") return true;
+  const sale = Number(value.sale);
+  return Number.isFinite(sale) && sale > 0;
 }
 
 function validateInventory(input: RawInventory, now: Date, config: SmartMenuConfig) {
@@ -353,6 +370,7 @@ export function buildSmartLineup(args: {
   const flowerQuantities: Record<string, QuantityMap> = {};
   const candidates: SmartFlower[] = [];
   const duplicateInputSkus: string[] = [];
+  const unrankedSaleSkus: string[] = [];
 
   for (const [sku, group] of catalogGroups) {
     if (group.length !== 1) {
@@ -378,18 +396,19 @@ export function buildSmartLineup(args: {
     }
     flowerQuantities[sku] = { ...quantities };
     const sale = Boolean(source.isSale || hasSalePrice(source));
-    const rank = source.saleRank ?? config.saleRanks[sku];
-    if (sale && (!Number.isInteger(rank) || Number(rank) < 1)) {
-      throw new SmartMenuInputError("MISSING_SALE_RANK", `Sale SKU ${sku} is missing an explicit saleRank.`);
-    }
+    // The operational config owns the locked promo order. A catalog rank can
+    // opt a new SKU in only when no configured rank exists.
+    const rank = config.saleRanks[sku] ?? source.saleRank;
+    const rankedSale = sale && Number.isInteger(rank) && Number(rank) >= 1;
+    if (sale && !rankedSale) unrankedSaleSkus.push(sku);
     const product: SmartFlower = {
       ...source,
       tier,
       isSale: sale,
       isHot: false,
       isMustTry: false,
-      smartBadge: sale ? "SALE" : "REGULAR",
-      saleRank: sale ? Number(rank) : null,
+      smartBadge: rankedSale ? "SALE" : "REGULAR",
+      saleRank: rankedSale ? Number(rank) : null,
       quantities: { ...quantities },
       totalUnits: totalUnits(quantities),
       stockTimestamp: inventory.date,
@@ -400,6 +419,11 @@ export function buildSmartLineup(args: {
     };
     if (!product.price3g && !product.price5g && !product.price14g && !product.price28g) {
       throw new SmartMenuInputError("OUT_OF_STOCK_LINEUP", `Flower SKU ${sku} has quantities but no matching visible weight.`);
+    }
+    for (const [weight, price] of [["3g", product.price3g], ["5g", product.price5g], ["14g", product.price14g], ["28g", product.price28g]] as const) {
+      if (quantities[weight] > 0 && !hasValidPricePoint(price)) {
+        throw new SmartMenuInputError("INVALID_FLOWER_PRICE", `Flower SKU ${sku} has an invalid visible ${weight} price.`);
+      }
     }
     candidates.push(product);
   }
@@ -424,8 +448,11 @@ export function buildSmartLineup(args: {
 
   for (const tier of NMG_SMART_TIERS) {
     const tierProducts = candidates.filter((product) => product.tier === tier);
-    const sales = tierProducts.filter((product) => product.isSale).sort((a, b) => (a.saleRank || 0) - (b.saleRank || 0) || skuSort(a, b));
-    const nonSales = tierProducts.filter((product) => !product.isSale);
+    const sales = tierProducts.filter((product) => product.smartBadge === "SALE").sort((a, b) => (a.saleRank || 0) - (b.saleRank || 0) || skuSort(a, b));
+    // Unranked sale rows remain truthful sale products in the deterministic
+    // ordinary lane, but never enter locked SALE, TOP PICK, or MUST TRY slots.
+    const ordinary = tierProducts.filter((product) => product.smartBadge !== "SALE");
+    const nonSales = ordinary.filter((product) => !product.isSale);
     const priorTop = args.state.previousTopByTier[tier];
     const topEligible = nonSales.filter((product) =>
       product.totalUnits > config.safetyStock[tier] &&
@@ -454,7 +481,7 @@ export function buildSmartLineup(args: {
       nextPreviousMust[tier] = must.sku;
       if (isNewPeriod) nextMustCooldown[must.sku] = period + config.mustTryCooldownPeriods;
     }
-    const regular = nonSales.filter((product) => product.sku !== top?.sku && product.sku !== must?.sku).sort(skuSort);
+    const regular = ordinary.filter((product) => product.sku !== top?.sku && product.sku !== must?.sku).sort(skuSort);
     const rotationOffset = regular.length ? stableHash(`${period}:${tier}`) % regular.length : 0;
     const regularProducts = rotate(regular, rotationOffset);
     const lockedProducts = [...sales, top, must].filter((value): value is SmartFlower => Boolean(value));
@@ -492,6 +519,7 @@ export function buildSmartLineup(args: {
   for (const reason of excluded.values()) excludedByReason[reason] = (excludedByReason[reason] || 0) + 1;
   const accepted = !missingSkus.length && !duplicateSkus.length && !wrongCategorySkus.length && !outOfStockIncludedSkus.length && !unexplainedExcludedSkus.length;
   if (!accepted) throw new SmartMenuInputError("COVERAGE_AUDIT_FAILED", "Smart menu coverage audit rejected the lineup.");
+  const sortedUnrankedSaleSkus = [...unrankedSaleSkus].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   const audit: SmartAudit = {
     accepted,
     inputCatalogFlowers: flowers.length,
@@ -528,6 +556,8 @@ export function buildSmartLineup(args: {
     wrongCategorySkus,
     outOfStockIncludedSkus,
     unexplainedExcludedSkus,
+    unrankedSaleSkus: sortedUnrankedSaleSkus,
+    warnings: sortedUnrankedSaleSkus.length ? [{ code: "UNRANKED_SALE_SKUS", skus: sortedUnrankedSaleSkus }] : [],
   };
   const generatedAt = now.toISOString();
   const manifest: SmartManifest = { ...audit, storeCode: "NMG01", sourceTimestamp: inventory.date, generatedAt, period, version, stockSignature: signature };

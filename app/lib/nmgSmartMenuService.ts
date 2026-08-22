@@ -116,7 +116,7 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
     try {
       await writeLiveItemsSnapshot(liveItemsSnapshot);
     } catch {
-      console.warn("[NMG smart menu] live item LKG persistence unavailable");
+      return fallback(before, storedItems, new SmartMenuInputError("LIVE_ITEMS_PERSISTENCE_FAILED", "NMG live items could not be persisted."), now);
     }
     if (before.currentLineup?.schemaVersion === 2 && before.currentLineup.version === built.lineup.version && before.currentLineup.sourceTimestamp === built.lineup.sourceTimestamp) {
       return { lineup: materializeSmartLineup(before.currentLineup, now), items: liveItems, itemsSource: "live", itemsSourceTimestamp: inventory.date, servedFrom: "fresh", fallbackReason: null };
@@ -124,7 +124,7 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
     try {
       await mutateSmartMenuState((draft) => copyState(draft, built.nextState));
     } catch {
-      console.warn("[NMG smart menu] flower LKG persistence unavailable");
+      return fallback(before, storedItems, new SmartMenuInputError("LINEUP_PERSISTENCE_FAILED", "NMG flower lineup could not be persisted."), now);
     }
     return { lineup: built.lineup, items: liveItems, itemsSource: "live", itemsSourceTimestamp: inventory.date, servedFrom: "fresh", fallbackReason: null };
   } catch (error) {

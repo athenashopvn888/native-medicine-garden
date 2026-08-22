@@ -41,6 +41,16 @@ test("live NMG email inventory and catalog pass the prepublish audit", { skip: !
   assert.equal(lineup.manifest.includedSkus, lineup.manifest.inputFlowerStockSkus);
   assert.equal(lineup.manifest.eligibleCycleSkus.length, lineup.manifest.includedSkus);
   assert.equal(lineup.manifest.currentlyVisibleCount, lineup.manifest.currentlyVisibleSkus.length);
+  assert.equal(lineup.manifest.warnings.length, lineup.manifest.unrankedSaleSkus.length ? 1 : 0);
+  assert.deepEqual(lineup.manifest.warnings[0]?.skus || [], lineup.manifest.unrankedSaleSkus);
+  const allProducts = Object.values(lineup.tiers).flatMap((tier) => [...tier.lockedProducts, ...tier.regularProducts]);
+  for (const sku of lineup.manifest.unrankedSaleSkus) {
+    const product = allProducts.find((row) => row.sku === sku);
+    assert.equal(product?.isSale, true);
+    assert.equal(product?.smartBadge, "REGULAR");
+    assert.equal(product?.saleRank, null);
+    assert.ok(Object.values(lineup.tiers).every((tier) => tier.lockedProducts.every((row) => row.sku !== sku)));
+  }
   for (const tier of Object.values(lineup.tiers)) {
     assert.ok(tier.lockedProducts.length <= NMG_SMART_MENU_CONFIG.pageSize, `${tier.tier} locked rows exceed visible capacity`);
     assert.deepEqual(

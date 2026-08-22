@@ -36,9 +36,11 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.match(state, /liveItems: LiveItemsSnapshot \| null/);
   assert.match(itemStore, /nmg-smart-menu\/items\/v1\.json/);
   assert.match(service, /writeLiveItemsSnapshot/);
-  assert.match(service, /try\s*\{[\s\S]*await writeLiveItemsSnapshot\(liveItemsSnapshot\);[\s\S]*\}\s*catch/);
+  assert.match(service, /LIVE_ITEMS_PERSISTENCE_FAILED/);
+  assert.match(service, /LINEUP_PERSISTENCE_FAILED/);
+  assert.doesNotMatch(service, /persistence unavailable/);
   assert.match(service, /items: liveItems, itemsSource: "live"/);
-  assert.match(service, /try\s*\{[\s\S]*await mutateSmartMenuState\([\s\S]*\}\s*catch\s*\{[\s\S]*flower LKG persistence unavailable/);
+  assert.match(service, /return fallback\(before, storedItems/);
 });
 
 test("NMG smart-menu state, manifest, and four-hour refresh stay store-scoped", () => {

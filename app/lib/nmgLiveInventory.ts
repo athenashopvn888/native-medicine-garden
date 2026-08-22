@@ -20,6 +20,11 @@ function hasPositiveStock(inventory: RawInventory, sku: string) {
   return Object.values(inventory.stock[sku] || {}).some((quantity) => quantity > 0);
 }
 
+function hasValidPrice(value: unknown) {
+  if (typeof value === "number") return Number.isFinite(value) && value >= 0;
+  return typeof value === "string" && /^\$?\d+(?:\.\d{1,2})?$/.test(value.trim());
+}
+
 /**
  * Selects live item rows directly from the authoritative email inventory and
  * catalog snapshots. This produces the same rows as the combined menu feed
@@ -47,6 +52,9 @@ export function selectValidatedLiveItems(args: {
     const identity = `${parts.join(",")}\u0000${String(item.category || "").trim().toUpperCase()}\u0000${name.toUpperCase()}`;
     if (!name || parts.length === 0 || parts.some((sku) => !/^\d+$/.test(sku)) || seenRows.has(identity)) {
       throw new SmartMenuInputError("LIVE_ITEM_INVALID", "Live item menu contains an invalid or duplicate row.");
+    }
+    if (!hasValidPrice(item.price)) {
+      throw new SmartMenuInputError("LIVE_ITEM_INVALID_PRICE", `Live item ${parts.join(",")} has an invalid price.`);
     }
     seenRows.add(identity);
     liveItems.push(item);

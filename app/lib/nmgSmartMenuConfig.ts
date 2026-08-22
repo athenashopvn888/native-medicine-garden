@@ -14,8 +14,8 @@ export const NMG_SMART_MENU_CONFIG: SmartMenuConfig = {
   mustTryStablePeriods: 3,
   mustTryCooldownPeriods: 2,
   minSnapshotCoverageRatio: 0.55,
-  // Explicit operational order. New sale SKUs must be ranked here or supplied
-  // with a catalog saleRank before a lineup can pass prepublish validation.
+  // Explicit operational order. Only configured/catalog-ranked sale SKUs join
+  // the locked promo lane; unranked sales remain ordinary and are reported.
   saleRanks: {
     "289": 1,
     "319": 2,

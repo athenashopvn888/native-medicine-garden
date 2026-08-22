@@ -15,9 +15,9 @@ const inventory: RawInventory = {
   },
 };
 const items = [
-  { sku: "900", name: "Unavailable", category: "EDIBLES" },
-  { sku: "900,901", name: "Grouped item", category: "EDIBLES" },
-  { sku: "902", name: "Single item", category: "PREROLLS" },
+  { sku: "900", name: "Unavailable", category: "EDIBLES", price: "$10" },
+  { sku: "900,901", name: "Grouped item", category: "EDIBLES", price: "$15" },
+  { sku: "902", name: "Single item", category: "PREROLLS", price: 12 },
 ] as CatalogItem[];
 
 test("live email menu keeps a grouped item when any listed SKU is in stock", () => {
@@ -30,8 +30,8 @@ test("live email menu keeps a grouped item when any listed SKU is in stock", () 
 
 test("distinct display products may intentionally share one grouped SKU set", () => {
   const shared = [
-    { sku: "900,901", name: "First display", category: "EDIBLES" },
-    { sku: "900,901", name: "Second display", category: "EDIBLES" },
+    { sku: "900,901", name: "First display", category: "EDIBLES", price: "$15" },
+    { sku: "900,901", name: "Second display", category: "EDIBLES", price: "$15" },
     items[2],
   ] as CatalogItem[];
   const selected = selectValidatedLiveItems({
@@ -53,8 +53,15 @@ test("a stock-qualified row with an invalid SKU fails closed", () => {
   invalidInventory.stock.bad = { e: 1 };
   assert.throws(() => selectValidatedLiveItems({
     inventory: invalidInventory,
-    catalogItems: [{ sku: "bad", name: "Invalid", category: "EDIBLES" }, ...items],
+    catalogItems: [{ sku: "bad", name: "Invalid", category: "EDIBLES", price: "$10" }, ...items],
   }), (error) => error instanceof SmartMenuInputError && error.code === "LIVE_ITEM_INVALID");
+});
+
+test("a stock-qualified row with an invalid price fails closed", () => {
+  assert.throws(() => selectValidatedLiveItems({
+    inventory,
+    catalogItems: [{ ...items[2], price: "call" }, items[1]],
+  }), (error) => error instanceof SmartMenuInputError && error.code === "LIVE_ITEM_INVALID_PRICE");
 });
 
 test("an item catalog with no live products fails closed", () => {
