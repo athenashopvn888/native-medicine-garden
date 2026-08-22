@@ -38,6 +38,10 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.match(itemStore, /nmg-smart-menu\/items\/v1\.json/);
   assert.match(itemStore, /token: process\.env\.BLOB_READ_WRITE_TOKEN/);
   assert.match(flowerStore, /token: process\.env\.BLOB_READ_WRITE_TOKEN/);
+  assert.doesNotMatch(itemStore, /head\(/);
+  assert.doesNotMatch(flowerStore, /head\(/);
+  assert.match(itemStore, /ifMatch: etag/);
+  assert.match(flowerStore, /ifMatch: String\(etag\)/);
   assert.match(service, /writeLiveItemsSnapshot/);
   assert.match(service, /LIVE_ITEMS_PERSISTENCE_FAILED/);
   assert.match(service, /LINEUP_PERSISTENCE_FAILED/);

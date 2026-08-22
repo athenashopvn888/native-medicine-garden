@@ -23,7 +23,6 @@ interface StoredVersion {
 
 export interface LiveItemsPersistenceOperations {
   readVersion: () => Promise<StoredVersion>;
-  headEtag: () => Promise<string>;
   create: (snapshot: LiveItemsSnapshot) => Promise<void>;
   overwrite: (snapshot: LiveItemsSnapshot, etag: string) => Promise<void>;
   sleep?: (milliseconds: number) => Promise<void>;
@@ -37,10 +36,6 @@ function canonicalize(value: unknown): unknown {
 
 export function liveItemsContentHash(snapshot: Pick<LiveItemsSnapshot, "items">) {
   return createHash("sha256").update(JSON.stringify(canonicalize(snapshot.items))).digest("hex");
-}
-
-function cleanEtag(value: string | null) {
-  return String(value || "").replaceAll('"', "");
 }
 
 export async function persistLiveItemsSnapshot(
@@ -68,12 +63,10 @@ export async function persistLiveItemsSnapshot(
       if (!current.etag) {
         await operations.create(snapshot);
       } else {
-        const latestEtag = await operations.headEtag();
-        if (cleanEtag(latestEtag) !== cleanEtag(current.etag)) {
-          await sleep(25 * (attempt + 1));
-          continue;
-        }
-        await operations.overwrite(snapshot, latestEtag);
+        // The conditional write is the concurrency check. A second HEAD can
+        // observe a different representation/version and create a false race;
+        // if the blob changed, put(ifMatch) returns a precondition failure.
+        await operations.overwrite(snapshot, current.etag);
       }
       return "written";
     } catch (error) {

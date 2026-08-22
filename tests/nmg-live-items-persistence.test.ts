@@ -24,7 +24,6 @@ function operations(overrides: Partial<LiveItemsPersistenceOperations> = {}) {
   const sleeps: number[] = [];
   const ops: LiveItemsPersistenceOperations = {
     readVersion: async () => ({ snapshot: snapshot(OLD), etag: "old-etag" }),
-    headEtag: async () => "old-etag",
     create: async () => { creates += 1; },
     overwrite: async () => { overwrites += 1; },
     sleep: async (milliseconds) => { sleeps.push(milliseconds); },

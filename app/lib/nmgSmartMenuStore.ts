@@ -1,5 +1,5 @@
 import "server-only";
-import { BlobAccessError, BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
+import { BlobAccessError, BlobPreconditionFailedError, get, put } from "@vercel/blob";
 import { defaultSmartMenuState, type SmartMenuState } from "./nmgSmartMenu";
 
 export const NMG_SMART_MENU_STATE_PATH = "nmg-smart-menu/state/v2.json";
@@ -63,17 +63,12 @@ export async function mutateSmartMenuState<T>(mutator: (draft: SmartMenuState) =
       return result;
     }
     try {
-      const current = await head(NMG_SMART_MENU_STATE_PATH, blobAuth());
-      if (current.etag.replaceAll('"', "") !== String(etag || "").replaceAll('"', "")) {
-        await new Promise((resolve) => setTimeout(resolve, 25 * (attempt + 1)));
-        continue;
-      }
       await put(NMG_SMART_MENU_STATE_PATH, JSON.stringify(draft), {
         access: "private",
         contentType: "application/json",
         cacheControlMaxAge: 60,
         allowOverwrite: true,
-        ifMatch: current.etag,
+        ifMatch: String(etag),
         ...blobAuth(),
       });
       return result;

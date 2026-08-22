@@ -1,5 +1,5 @@
 import "server-only";
-import { get, head, put } from "@vercel/blob";
+import { get, put } from "@vercel/blob";
 import type { LiveItemsSnapshot } from "./nmgSmartMenu";
 import { persistLiveItemsSnapshot } from "./nmgLiveItemsPersistence";
 
@@ -46,7 +46,6 @@ export async function writeLiveItemsSnapshot(snapshot: LiveItemsSnapshot) {
   }
   await persistLiveItemsSnapshot(snapshot, {
     readVersion,
-    headEtag: async () => (await head(NMG_LIVE_ITEMS_STATE_PATH, blobAuth())).etag,
     create: async (next) => {
       await put(NMG_LIVE_ITEMS_STATE_PATH, JSON.stringify(next), {
           access: "private",
