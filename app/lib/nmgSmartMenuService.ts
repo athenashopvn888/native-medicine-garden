@@ -112,10 +112,14 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
     if (built.servedFrom === "last-good") {
       return fallback(before, storedItems, new SmartMenuInputError(built.fallbackReason || "SOURCE_REJECTED", "NMG source input was rejected."), now);
     }
+    if (built.lineup.manifest.unrankedSaleSkus.length) {
+      console.warn("[NMG smart menu] unranked sale SKUs", built.lineup.manifest.unrankedSaleSkus.join(","));
+    }
     const liveItemsSnapshot = { sourceTimestamp: inventory.date, capturedAt: now.toISOString(), items: liveItems };
     try {
       await writeLiveItemsSnapshot(liveItemsSnapshot);
-    } catch {
+    } catch (error) {
+      console.warn("[NMG smart menu] live item LKG persistence failed", error instanceof Error ? error.name : "UnknownError");
       return fallback(before, storedItems, new SmartMenuInputError("LIVE_ITEMS_PERSISTENCE_FAILED", "NMG live items could not be persisted."), now);
     }
     if (before.currentLineup?.schemaVersion === 2 && before.currentLineup.version === built.lineup.version && before.currentLineup.sourceTimestamp === built.lineup.sourceTimestamp) {
@@ -123,7 +127,8 @@ export async function getNmgSmartMenu(options: { force?: boolean } = {}): Promis
     }
     try {
       await mutateSmartMenuState((draft) => copyState(draft, built.nextState));
-    } catch {
+    } catch (error) {
+      console.warn("[NMG smart menu] flower LKG persistence failed", error instanceof Error ? error.name : "UnknownError");
       return fallback(before, storedItems, new SmartMenuInputError("LINEUP_PERSISTENCE_FAILED", "NMG flower lineup could not be persisted."), now);
     }
     return { lineup: built.lineup, items: liveItems, itemsSource: "live", itemsSourceTimestamp: inventory.date, servedFrom: "fresh", fallbackReason: null };

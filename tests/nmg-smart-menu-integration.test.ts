@@ -39,6 +39,8 @@ test("NMG items use the same live email feed and durable last-good state as flow
   assert.match(service, /LIVE_ITEMS_PERSISTENCE_FAILED/);
   assert.match(service, /LINEUP_PERSISTENCE_FAILED/);
   assert.doesNotMatch(service, /persistence unavailable/);
+  assert.match(service, /unranked sale SKUs/);
+  assert.match(service, /persistence failed/);
   assert.match(service, /items: liveItems, itemsSource: "live"/);
   assert.match(service, /return fallback\(before, storedItems/);
 });
