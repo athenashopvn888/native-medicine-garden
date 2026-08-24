@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { ItemProduct } from "../lib/products";
 import SmokePilotImage from "./SmokePilotImage";
@@ -14,7 +15,14 @@ interface LandingFaq {
   a: string;
 }
 
-interface SmokePilotLandingProps {
+interface HeroPreviewItem {
+  name: string;
+  image: string;
+}
+
+export const SMOKE_PILOT_HERO_DISCLOSURE = "Brand preview only. Selection varies by store; check the current cigarette menu before visiting.";
+
+interface SmokePilotLandingBaseProps {
   canonicalUrl: string;
   storeName: string;
   locationLabel: string;
@@ -41,6 +49,17 @@ interface SmokePilotLandingProps {
   inventoryVersion?: string;
   inventoryAsOf?: string;
 }
+
+type SmokePilotLandingProps = SmokePilotLandingBaseProps & (
+  | {
+      heroItems: readonly HeroPreviewItem[];
+      heroDisclosure: typeof SMOKE_PILOT_HERO_DISCLOSURE;
+    }
+  | {
+      heroItems?: never;
+      heroDisclosure?: never;
+    }
+);
 
 function displayPrice(price: string) {
   if (!price) return "See menu";
@@ -69,6 +88,8 @@ export function SmokePilotLanding({
   address,
   hours,
   theme,
+  heroItems,
+  heroDisclosure,
   inventoryVersion,
   inventoryAsOf,
 }: SmokePilotLandingProps) {
@@ -108,7 +129,7 @@ export function SmokePilotLanding({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }} />
 
-      <section className={styles.hero}>
+      <section className={`${styles.hero} ${heroItems ? styles.curatedHero : ""}`}>
         <div className={styles.heroGlow} />
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
@@ -120,15 +141,35 @@ export function SmokePilotLanding({
             <p>{intro}</p>
             <div className={styles.heroActions}>
               <Link href={menuHref} className={styles.primaryButton}>{menuLabel}</Link>
-              <a href="#menu-highlights" className={styles.secondaryButton}>See the selection</a>
+              {heroItems ? (
+                <Link href={menuHref} className={styles.secondaryButton}>See the selection</Link>
+              ) : (
+                <a href="#menu-highlights" className={styles.secondaryButton}>See the selection</a>
+              )}
             </div>
             <div className={styles.storeLine}>
               <span>{storeName}</span><i /> <span>{address}</span><i /> <span>{hours}</span>
             </div>
           </div>
 
-          <div className={styles.productStage} aria-label={`${title} menu preview`}>
-            {featuredItems.length > 0 ? featuredItems.map((item, index) => (
+          <div className={`${styles.productStage} ${heroItems ? styles.curatedProductStage : ""}`} aria-label={`${title} menu preview`}>
+            {heroItems ? heroItems.map((item, index) => (
+              <Link
+                key={item.name}
+                href={menuHref}
+                className={styles.stageProduct}
+              >
+                <Image
+                  src={item.image}
+                  alt={`${item.name} brand preview`}
+                  width={800}
+                  height={800}
+                  priority={index === 0}
+                  sizes="(max-width: 720px) 42vw, (max-width: 980px) 46vw, 220px"
+                />
+                <span>{item.name}</span>
+              </Link>
+            )) : featuredItems.length > 0 ? featuredItems.map((item, index) => (
               <Link
                 key={`${item.sku}-${item.name}`}
                 href={`/item/${item.slug}`}
@@ -144,6 +185,7 @@ export function SmokePilotLanding({
                 <strong>Ask about today&apos;s selection</strong>
               </div>
             )}
+            {heroItems && <p className={styles.heroDisclosure}>{heroDisclosure}</p>}
           </div>
         </div>
       </section>
@@ -232,4 +274,3 @@ export function SmokePilotLanding({
     </main>
   );
 }
-
