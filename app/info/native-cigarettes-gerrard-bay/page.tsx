@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { SmokePilotLanding } from "../../components/SmokePilot";
+import { SMOKE_PILOT_HERO_DISCLOSURE, SmokePilotLanding } from "../../components/SmokePilot";
 import { getItemsByCategory } from "../../lib/products";
 
 export const metadata: Metadata = {
@@ -9,6 +9,15 @@ export const metadata: Metadata = {
   description: "Browse Native cigarette brands, pack styles, and listed prices at Native Medicine Garden, 76 Gerrard St W, Toronto. Open 24 Hours.",
   alternates: { canonical: "https://www.nativemedicinecannabis.com/info/native-cigarettes-gerrard-bay" },
 };
+
+const HERO_ITEMS = [
+  { name: "BB Lights", image: "/products/1001-BB-LIGHTS-CARTONS.webp" },
+  { name: "BB Full", image: "/products/1003-BB-FULL-CARTON.webp" },
+  { name: "Canadian Lights", image: "/products/1005-CANADIAN-LIGHTS.webp" },
+  { name: "Canadian Full", image: "/products/1006-CANADIAN-FULL.webp" },
+  { name: "Canadian Classics Silver", image: "/products/1015-CANADIAN-CLASSICS-SILVER.webp" },
+  { name: "Canadian Menthol", image: "/products/1013-CANADIAN-MENTHOL.webp" },
+] as const;
 
 export default function NativeCigarettesPage() {
   const items = getItemsByCategory("CIGARETTES");
@@ -41,6 +50,8 @@ export default function NativeCigarettesPage() {
         address="76 Gerrard St W, Toronto"
         hours="Open 24 Hours"
         theme="cigarettes"
+        heroItems={HERO_ITEMS}
+        heroDisclosure={SMOKE_PILOT_HERO_DISCLOSURE}
       />
       <Footer />
     </>

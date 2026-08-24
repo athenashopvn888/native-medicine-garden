@@ -216,6 +216,23 @@
   white-space: nowrap;
 }
 
+.curatedProductStage .stageProduct {
+  height: 158px;
+  transform: none;
+}
+
+.curatedProductStage .stageProduct img {
+  height: 56%;
+}
+
+.heroDisclosure {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #aaa6b2;
+  font-size: .82rem;
+  line-height: 1.55;
+}
+
 .stageEmpty {
   grid-column: 1 / -1;
   min-height: 360px;
@@ -403,15 +420,18 @@
   .heroInner { grid-template-columns: 1fr; gap: 42px; }
   .productStage { min-height: 400px; }
   .stageProduct { height: 190px; }
+  .curatedProductStage .stageProduct { height: 158px; }
   .productGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .spotlightInner { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 720px) {
   .hero { padding: 122px 18px 62px; }
+  .curatedHero { padding-top: 164px; }
   .heroCopy h1 { font-size: clamp(2.8rem, 14vw, 4.3rem); }
   .productStage { min-height: 0; gap: 10px; }
   .stageProduct { height: 165px; border-radius: 18px; }
+  .curatedProductStage .stageProduct { height: 150px; }
   .menuSection, .guideSection, .visitSection, .faqSection { padding-left: 18px; padding-right: 18px; }
   .sectionHeader { grid-template-columns: 1fr; gap: 16px; }
   .productGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -430,4 +450,3 @@
   .productGrid { grid-template-columns: 1fr; }
   .productImage { height: 230px; }
 }
-
