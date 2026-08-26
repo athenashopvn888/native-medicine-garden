@@ -6,6 +6,7 @@
   color: #f7f4ed;
   min-height: 100vh;
 }
+.nicotineWarning { margin:0; padding:22px 24px 34px; color:#f7f4ed; background:#08080c; font-size:.9rem; font-weight:800; text-align:center; }
 
 .hero {
   position: relative;

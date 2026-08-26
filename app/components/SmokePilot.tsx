@@ -34,7 +34,7 @@ interface SmokePilotLandingBaseProps {
   menuLabel: string;
   menuHeading: string;
   menuIntro: string;
-  crossLink: {
+  crossLink?: {
     href: string;
     eyebrow: string;
     title: string;
@@ -43,17 +43,22 @@ interface SmokePilotLandingBaseProps {
   };
   sections: LandingSection[];
   faqs: LandingFaq[];
-  address: string;
-  hours: string;
+  address?: string;
+  hours?: string;
   theme: "cigarettes" | "nicotine";
   inventoryVersion?: string;
   inventoryAsOf?: string;
+  showMenuGrid?: boolean;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+  identityLabel?: string;
+  warning?: string;
 }
 
 type SmokePilotLandingProps = SmokePilotLandingBaseProps & (
   | {
       heroItems: readonly HeroPreviewItem[];
-      heroDisclosure: typeof SMOKE_PILOT_HERO_DISCLOSURE;
+      heroDisclosure: string;
     }
   | {
       heroItems?: never;
@@ -92,6 +97,11 @@ export function SmokePilotLanding({
   heroDisclosure,
   inventoryVersion,
   inventoryAsOf,
+  showMenuGrid = true,
+  secondaryHref,
+  secondaryLabel,
+  identityLabel,
+  warning,
 }: SmokePilotLandingProps) {
   const featuredItems = items.filter((item) => item.image).slice(0, 4);
   const menuItems = items.slice(0, 12);
@@ -142,13 +152,13 @@ export function SmokePilotLanding({
             <div className={styles.heroActions}>
               <Link href={menuHref} className={styles.primaryButton}>{menuLabel}</Link>
               {heroItems ? (
-                <Link href={menuHref} className={styles.secondaryButton}>See the selection</Link>
+                <Link href={secondaryHref ?? menuHref} className={styles.secondaryButton}>{secondaryLabel ?? "See the selection"}</Link>
               ) : (
                 <a href="#menu-highlights" className={styles.secondaryButton}>See the selection</a>
               )}
             </div>
             <div className={styles.storeLine}>
-              <span>{storeName}</span><i /> <span>{address}</span><i /> <span>{hours}</span>
+              <span>{storeName}</span>{identityLabel && <><i /><span>{identityLabel}</span></>}{address && <><i /><span>{address}</span></>}{hours && <><i /><span>{hours}</span></>}
             </div>
           </div>
 
@@ -165,6 +175,7 @@ export function SmokePilotLanding({
                   width={800}
                   height={800}
                   priority={index === 0}
+                  unoptimized={item.image.startsWith("https://")}
                   sizes="(max-width: 720px) 42vw, (max-width: 980px) 46vw, 220px"
                 />
                 <span>{item.name}</span>
@@ -190,7 +201,7 @@ export function SmokePilotLanding({
         </div>
       </section>
 
-      <section className={styles.menuSection} id="menu-highlights">
+      <section className={styles.menuSection} id={showMenuGrid ? "menu-highlights" : "featured-vapes"}>
         <div className={styles.contentWidth}>
           <div className={styles.sectionHeader}>
             <div>
@@ -200,7 +211,7 @@ export function SmokePilotLanding({
             <p>{menuIntro}</p>
           </div>
 
-          {menuItems.length > 0 ? (
+          {showMenuGrid && (menuItems.length > 0 ? (
             <div className={styles.productGrid}>
               {menuItems.map((item) => (
                 <Link key={`${item.sku}-${item.name}`} href={`/item/${item.slug}`} className={styles.productCard}>
@@ -217,7 +228,7 @@ export function SmokePilotLanding({
             </div>
           ) : (
             <div className={styles.noItems}>Selection can change. Ask the store about today&apos;s options.</div>
-          )}
+          ))}
 
           <div className={styles.centerAction}>
             <Link href={menuHref} className={styles.primaryButton}>{menuLabel}</Link>
@@ -237,25 +248,25 @@ export function SmokePilotLanding({
             ))}
           </div>
 
-          <Link href={crossLink.href} className={styles.crossSell}>
+          {crossLink && <Link href={crossLink.href} className={styles.crossSell}>
             <div>
               <span className={styles.kicker}>{crossLink.eyebrow}</span>
               <h2>{crossLink.title}</h2>
               <p>{crossLink.body}</p>
             </div>
             <strong>{crossLink.label} <b aria-hidden="true">→</b></strong>
-          </Link>
+          </Link>}
         </div>
       </section>
 
-      <section className={styles.visitSection}>
+      {(address || hours) && <section className={styles.visitSection}>
         <div className={styles.contentWidth}>
           <div className={styles.visitCard}>
             <div><span className={styles.kicker}>Visit {storeName}</span><h2>{address}</h2></div>
             <strong>{hours}</strong>
           </div>
         </div>
-      </section>
+      </section>}
 
       <section className={styles.faqSection}>
         <div className={styles.faqWrap}>
@@ -271,6 +282,7 @@ export function SmokePilotLanding({
           </div>
         </div>
       </section>
+      {warning && <p className={styles.nicotineWarning}>{warning}</p>}
     </main>
   );
 }
