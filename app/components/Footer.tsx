@@ -51,11 +51,11 @@ export default function Footer() {
             <h3 className={styles.colTitle}>Quick Links</h3>
             <nav className={styles.links}>
               <Link href="/">Home</Link>
-              <Link href="/exotic-weed">Weed Exotic</Link>
-              <Link href="/premium-weed">Weed Premium</Link>
-              <Link href="/aaa-weed">Weed AAA+</Link>
-              <Link href="/aa-weed">Weed AA</Link>
-              <Link href="/budget-weed">Weed Budget</Link>
+              <Link href="/exotic-weed">Exotic Weed</Link>
+              <Link href="/premium-weed">Premium Weed</Link>
+              <Link href="/aaa-weed">AAA+ Weed</Link>
+              <Link href="/aa-weed">AA Weed</Link>
+              <Link href="/budget-weed">Budget Weed</Link>
               <Link href="/items/edibles">Edibles</Link>
               <Link href="/items/cigarettes">Cigarettes</Link>
 <Link href="/items/vapes">Nicotine Vapes</Link>
