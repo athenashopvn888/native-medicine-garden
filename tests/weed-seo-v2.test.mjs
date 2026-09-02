@@ -28,7 +28,7 @@ test("V2 legacy routes redirect directly to Weed or Cannabis canonicals", () => 
 });
 
 test("tier names, slugs and metadata use the approved Weed-first convention", () => {
-  for (const [label, slug] of [["Weed Exotic", "exotic-weed"], ["Weed Premium", "premium-weed"], ["Weed AAA+", "aaa-weed"], ["Weed AA", "aa-weed"], ["Weed Budget", "budget-weed"]]) {
+  for (const [label, slug] of [["Exotic Weed", "exotic-weed"], ["Premium Weed", "premium-weed"], ["AAA+ Weed", "aaa-weed"], ["AA Weed", "aa-weed"], ["Budget Weed", "budget-weed"]]) {
     assert.ok(products.includes(`name: "${label}"`));
     assert.ok(products.includes(`slug: "${slug}"`));
     assert.ok(nav.includes(`href: "/${slug}", label: "${label}"`));
