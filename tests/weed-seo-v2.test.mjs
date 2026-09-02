@@ -27,12 +27,17 @@ test("V2 legacy routes redirect directly to Weed or Cannabis canonicals", () => 
   }
 });
 
-test("tier names, slugs and metadata use the approved Weed-first convention", () => {
+test("tier names, slugs and metadata use the approved Tier Name + Weed convention", () => {
   for (const [label, slug] of [["Exotic Weed", "exotic-weed"], ["Premium Weed", "premium-weed"], ["AAA+ Weed", "aaa-weed"], ["AA Weed", "aa-weed"], ["Budget Weed", "budget-weed"]]) {
     assert.ok(products.includes(`name: "${label}"`));
     assert.ok(products.includes(`slug: "${slug}"`));
     assert.ok(nav.includes(`href: "/${slug}", label: "${label}"`));
     assert.ok(tiers.includes(`${label.replace("+", "\\+")} & Cannabis Flower Toronto`) || tiers.includes(`${label} & Cannabis Flower Toronto`));
+  }
+  for (const reversed of ["Weed Exotic", "Weed Premium", "Weed AAA", "Weed AA", "Weed Budget"]) {
+    assert.ok(!products.includes(reversed));
+    assert.ok(!nav.includes(reversed));
+    assert.ok(!tiers.includes(reversed));
   }
 });
 
