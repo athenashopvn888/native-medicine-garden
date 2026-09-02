@@ -116,8 +116,8 @@ export const TIER_CONFIG: Record<
   }
 > = {
   EXOTIC: {
-    name: "Exotic",
-    slug: "exotic",
+    name: "Weed Exotic",
+    slug: "exotic-weed",
     color: "#f59e0b",
     icon: "\uD83D\uDD25",
     tagline: "Explore the current Exotic flower menu",
@@ -127,8 +127,8 @@ export const TIER_CONFIG: Record<
     deal6g: { label: "6g bundle", total: "6G", price: 60 },
   },
   PREMIUM: {
-    name: "Premium",
-    slug: "premium",
+    name: "Weed Premium",
+    slug: "premium-weed",
     color: "#a78bfa",
     icon: "\uD83D\uDC8E",
     tagline: "Explore the current Premium flower menu",
@@ -138,8 +138,8 @@ export const TIER_CONFIG: Record<
     deal6g: { label: "6g bundle", total: "6G", price: 45 },
   },
   "AAA+": {
-    name: "AAA+",
-    slug: "aaa",
+    name: "Weed AAA+",
+    slug: "aaa-weed",
     color: "#22d3ee",
     icon: "\u26A1",
     tagline: "Explore the current AAA+ flower menu",
@@ -149,8 +149,8 @@ export const TIER_CONFIG: Record<
     deal6g: { label: "6g bundle", total: "6G", price: 30 },
   },
   AA: {
-    name: "AA",
-    slug: "aa",
+    name: "Weed AA",
+    slug: "aa-weed",
     color: "#34d399",
     icon: "\u2726",
     tagline: "Explore the current AA flower menu",
@@ -160,8 +160,8 @@ export const TIER_CONFIG: Record<
     deal6g: null,
   },
   BUDGET: {
-    name: "Budget",
-    slug: "budget",
+    name: "Weed Budget",
+    slug: "budget-weed",
     color: "#94a3b8",
     icon: "\uD83D\uDCB0",
     tagline: "Shreds & value OZs \u00B7 From $40/oz",

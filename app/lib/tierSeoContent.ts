@@ -7,7 +7,7 @@ export interface TierSeoData {
 
 export const TIER_SEO: Record<string, TierSeoData> = {
   EXOTIC: {
-    seoTitle: "Exotic Cannabis Flower Toronto | Native Medicine Garden",
+    seoTitle: "Weed Exotic & Cannabis Flower Toronto | Native Medicine Garden Cannabis Dispensary",
     seoIntro:
       "Browse the Exotic flower category at Native Medicine Garden near Gerrard Street West and Bay Street. Check the current menu for listed names, prices, and package details before visiting.",
     sections: [
@@ -38,7 +38,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   },
 
   PREMIUM: {
-    seoTitle: "Premium Cannabis Flower Toronto | Native Medicine Garden",
+    seoTitle: "Weed Premium & Cannabis Flower Toronto | Native Medicine Garden Cannabis Dispensary",
     seoIntro:
       "Browse premium flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and listings before visiting.",
     sections: [
@@ -69,7 +69,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   },
 
   "AAA+": {
-    seoTitle: "AAA+ Cannabis Flower Toronto | Native Medicine Garden",
+    seoTitle: "Weed AAA+ & Cannabis Flower Toronto | Native Medicine Garden Cannabis Dispensary",
     seoIntro:
       "Browse the AAA+ flower tier at Native Medicine Garden near Gerrard Street West and Bay Street. Check current menu items and prices before visiting.",
     sections: [
@@ -100,7 +100,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   },
 
   AA: {
-    seoTitle: "AA Cannabis Flower Toronto | Native Medicine Garden",
+    seoTitle: "Weed AA & Cannabis Flower Toronto | Native Medicine Garden Cannabis Dispensary",
     seoIntro:
       "Browse daily-driver flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and listings before visiting.",
     sections: [
@@ -131,7 +131,7 @@ export const TIER_SEO: Record<string, TierSeoData> = {
   },
 
   BUDGET: {
-    seoTitle: "Budget Cannabis Toronto | Native Medicine Garden",
+    seoTitle: "Weed Budget & Cannabis Flower Toronto | Native Medicine Garden Cannabis Dispensary",
     seoIntro:
       "Browse value flower category browsing at Native Medicine Garden near Gerrard Street West and Bay Street. Confirm current strains, prices, and listings before visiting.",
     sections: [

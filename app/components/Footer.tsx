@@ -51,16 +51,16 @@ export default function Footer() {
             <h3 className={styles.colTitle}>Quick Links</h3>
             <nav className={styles.links}>
               <Link href="/">Home</Link>
-              <Link href="/exotic">Exotic Flower</Link>
-              <Link href="/premium">Premium Flower</Link>
-              <Link href="/aaa">AAA+ Flower</Link>
-              <Link href="/aa">AA Flower</Link>
-              <Link href="/budget">Budget Flower</Link>
+              <Link href="/exotic-weed">Weed Exotic</Link>
+              <Link href="/premium-weed">Weed Premium</Link>
+              <Link href="/aaa-weed">Weed AAA+</Link>
+              <Link href="/aa-weed">Weed AA</Link>
+              <Link href="/budget-weed">Weed Budget</Link>
               <Link href="/items/edibles">Edibles</Link>
               <Link href="/items/cigarettes">Cigarettes</Link>
 <Link href="/items/vapes">Nicotine Vapes</Link>
               <Link href="/faq">FAQ</Link>
-              <Link href="/delivery">DELIVERY MENU</Link>
+              <Link href="/weed-delivery-toronto">WEED DELIVERY</Link>
               <Link href="/info/gerrard-bay-weed-dispensary">
                 Gerrard and Bay Dispensary
               </Link>
@@ -78,7 +78,7 @@ export default function Footer() {
                 Native Medicine Garden Weed Dispensary in Toronto
               </Link>
               <Link href="/contact">Contact Us</Link>
-              <Link href="/resources">Resources</Link>
+              <Link href="/weed-resources">Weed Resources</Link>
             </nav>
           </div>
         </div>
