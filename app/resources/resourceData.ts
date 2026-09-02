@@ -32,8 +32,8 @@ export const RESOURCE_PAGES: ResourcePage[] = [
     cards: [
       { title: "Weed Visit Guide", href: "/resources/downtown-bay-street-weed-visit-guide", text: "Review the store details already published for a downtown Toronto visit." },
       { title: "Cannabis Menu Guide", href: "/resources/cannabis-menu-guide", text: "Start with flower, pre-rolls, edibles, vapes, or smokes, then compare the categories that interest you." },
-      { title: "Weed Flower Guide", href: "/resources/weed-flower-guide", text: "Compare Weed Exotic, Weed Premium, Weed AAA+, Weed AA, and Weed Budget." },
-      { title: "Weed Value Guide", href: "/resources/weed-value-guide", text: "Explore the Weed Budget, Weed AA and Weed AAA+ collections." },
+      { title: "Weed Flower Guide", href: "/resources/weed-flower-guide", text: "Compare Exotic Weed, Premium Weed, AAA+ Weed, AA Weed, and Budget Weed." },
+      { title: "Weed Value Guide", href: "/resources/weed-value-guide", text: "Explore the Budget Weed, AA Weed and AAA+ Weed collections." },
       { title: "Native Smokes Prices", href: "/resources/native-smokes", text: "Brand and price notes for cigarettes, Backwoods, grabba, and pouch listings." }
     ],
     sections: [
@@ -84,7 +84,7 @@ export const RESOURCE_PAGES: ResourcePage[] = [
     eyebrow: "Menu Guide",
     intro: "The menu gets easier when you choose the category first. Flower has tier math. Pre-rolls have format details. Edibles, THC vapes, concentrates, and accessories each have different details to compare. Cigarettes need brand and price checks.",
     cards: [
-      { title: "Weed Flower Collections", href: "/resources/weed-flower-guide", text: "Start here for Weed Exotic, Weed Premium, Weed AAA+, Weed AA, and Weed Budget." },
+      { title: "Weed Flower Collections", href: "/resources/weed-flower-guide", text: "Start here for Exotic Weed, Premium Weed, AAA+ Weed, AA Weed, and Budget Weed." },
       { title: "Pre-Rolls", href: "/resources/pre-roll-guide", text: "Use this for ready-to-smoke singles, packs, and quick-trip browsing." },
       { title: "Cigarettes", href: "/items/cigarettes", text: "Open the cigarette category for current Native smokes listings." },
       { title: "Local Store Page", href: "/weed-dispensary-toronto", text: "Return to the local store page." }
@@ -109,11 +109,11 @@ export const RESOURCE_PAGES: ResourcePage[] = [
     eyebrow: "Flower Tiers",
     intro: "Here is the clean flower read: Exotic is posted at $20/g, Premium at $15/g, AAA+ at $10/g, AA at $4/g, and Budget at $3/g. Where the 6g tier deal applies, shoppers can compare Exotic around $60 for 6g, Premium around $45 for 6g, and AAA+ around $30 for 6g.",
     cards: [
-      { title: "Weed Exotic", href: "/exotic-weed", text: "Explore the Weed Exotic collection." },
-      { title: "Weed Premium", href: "/premium-weed", text: "Browse the Weed Premium collection." },
-      { title: "Weed AAA+", href: "/aaa-weed", text: "Explore the Weed AAA+ collection." },
-      { title: "Weed AA", href: "/aa-weed", text: "Browse the Weed AA collection." },
-      { title: "Weed Budget", href: "/budget-weed", text: "Explore the Weed Budget collection." }
+      { title: "Exotic Weed", href: "/exotic-weed", text: "Explore the Exotic Weed collection." },
+      { title: "Premium Weed", href: "/premium-weed", text: "Browse the Premium Weed collection." },
+      { title: "AAA+ Weed", href: "/aaa-weed", text: "Explore the AAA+ Weed collection." },
+      { title: "AA Weed", href: "/aa-weed", text: "Browse the AA Weed collection." },
+      { title: "Budget Weed", href: "/budget-weed", text: "Explore the Budget Weed collection." }
     ],
     sections: [
       {
@@ -135,9 +135,9 @@ export const RESOURCE_PAGES: ResourcePage[] = [
     eyebrow: "Value Guide",
     intro: "For downtown Toronto value shopping, value shopping works best when the shelf is clear. Start with Budget, AA, and AAA+ before jumping into higher tiers or mixed categories.",
     cards: [
-      { title: "Weed Budget", href: "/budget-weed", text: "Explore the Weed Budget collection." },
-      { title: "Weed AA", href: "/aa-weed", text: "Browse the Weed AA collection." },
-      { title: "Weed AAA+", href: "/aaa-weed", text: "Explore the Weed AAA+ collection." },
+      { title: "Budget Weed", href: "/budget-weed", text: "Explore the Budget Weed collection." },
+      { title: "AA Weed", href: "/aa-weed", text: "Browse the AA Weed collection." },
+      { title: "AAA+ Weed", href: "/aaa-weed", text: "Explore the AAA+ Weed collection." },
       { title: "Native Smokes Prices", href: "/resources/native-smokes", text: "Use this if cigarettes or Backwoods are part of the same stop." }
     ],
     sections: [
