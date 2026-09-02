@@ -82,7 +82,7 @@ export default async function TierPage({
             <div className={styles.heroTitleRow}>
               <span className={styles.heroIcon}>{config.icon}</span>
               <h1 className={styles.heroTitle}>
-                <span style={{ color: config.color }}>{config.name}</span>
+                <span style={{ color: config.color }}>{config.name} &amp; Cannabis Flower in Toronto</span>
               </h1>
             </div>
             <p className={styles.heroTagline}>{config.tagline}</p>
