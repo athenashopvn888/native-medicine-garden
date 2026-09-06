@@ -595,7 +595,7 @@
         "level": 2,
         "heading": "Downtown Location Context",
         "paragraphs": [
-          "The current NMG evidence supports local context around:",
+          "Native Medicine Garden is in downtown Toronto, with local context around:",
           "Use that context for orientation only.",
           "Current transit conditions, route timing and access can change, so follow current transit information when travelling."
         ],
@@ -670,7 +670,7 @@
       "- AAA+ Weed;",
       "- AA Weed;",
       "- Budget Weed.",
-      "The current version of this guide should explain the language behind those categories without freezing per-gram prices, bundle math or current stock into evergreen education."
+      "Use this guide to understand the language behind those categories, then use current category and product pages for prices, deals and availability."
     ],
     "cards": [
       {
@@ -2300,7 +2300,7 @@
         "paragraphs": [
           "Some current menus may position smalls differently by price or package amount.",
           "That information belongs on the current listing.",
-          "An evergreen educational guide should explain size, not freeze a price rule."
+          "Bud size does not set a permanent price rule; use the current listing for current price and package details."
         ],
         "bullets": [],
         "ordered": []
@@ -3326,7 +3326,7 @@
     "eyebrow": "Native Smokes Education",
     "intro": "“Native cigarettes” is a common phrase adults use when talking about commercial tobacco products connected in some way with Indigenous communities, retailers, manufacturers or supply channels.",
     "lead": [
-      "The phrase is useful in everyday search language.",
+      "The phrase is common in everyday conversation.",
       "It is not one precise legal product category.",
       "That distinction matters.",
       "A commercial cigarette brand can be manufactured by an Indigenous-owned or Indigenous-associated company without every sale being tax-exempt.",
@@ -3362,7 +3362,7 @@
     "blocks": [
       {
         "level": 2,
-        "heading": "“Native Cigarettes” Is Common Search Language",
+        "heading": "What People Mean by “Native Cigarettes”",
         "paragraphs": [
           "Adults often use the phrase “Native cigarettes” as a practical shortcut.",
           "Depending on the context, they may mean:",
@@ -3389,7 +3389,7 @@
           "**Indigenous-manufactured = tax-free**",
           "or:",
           "**tax-exempt sale = proof of the brand's manufacturer identity.**",
-          "Those claims require separate evidence."
+          "Those questions need to be confirmed separately."
         ],
         "bullets": [],
         "ordered": []
@@ -3429,12 +3429,12 @@
       },
       {
         "level": 2,
-        "heading": "Brand Names Need Evidence",
+        "heading": "Brand Names Do Not Prove Manufacturer or Ownership",
         "paragraphs": [
           "Native Medicine Garden may publicly display cigarette brand names on current product surfaces.",
-          "Those names can be referenced as **observed retail/catalog terminology** when accurate.",
-          "Do not infer from the store's menu that a brand is:",
-          "Manufacturer or ownership claims require separate verification."
+          "A current store listing shows how a brand is presented for retail browsing.",
+          "A store menu does not by itself prove that a brand is:",
+          "Manufacturer or ownership details should be confirmed from reliable information about the exact brand."
         ],
         "bullets": [
           "Indigenous-owned",
@@ -3447,9 +3447,9 @@
       },
       {
         "level": 2,
-        "heading": "Current Prices and Availability Belong on Current Product Surfaces",
+        "heading": "Check Current Product Pages for Prices and Availability",
         "paragraphs": [
-          "Educational content should not freeze a cigarette price list into an evergreen authority guide.",
+          "This guide is not a live cigarette price list.",
           "Prices, brand mix, package formats and availability can change.",
           "If a visitor needs current retail details, use the current cigarette category or in-store information.",
           "This guide should remain useful even when the menu changes."
@@ -3476,12 +3476,11 @@
       },
       {
         "level": 2,
-        "heading": "Native Medicine Garden and Protected Native Wording",
+        "heading": "What the Native Medicine Garden Name Does — and Does Not — Tell You",
         "paragraphs": [
-          "Native Medicine Garden is the store's exact public identity.",
-          "The word “Native” in the business name must be preserved.",
-          "At the same time, the business name does not automatically prove that every cigarette brand on a current menu is Native-manufactured, Indigenous-owned or tax-exempt.",
-          "That separation keeps the public explanation factual."
+          "Native Medicine Garden is the store's business name.",
+          "The store name does not, by itself, establish who manufactured or owns every cigarette brand shown on a current menu, or whether a particular sale is tax-exempt.",
+          "Those are separate questions that require product- and sale-specific information."
         ],
         "bullets": [],
         "ordered": []
@@ -3490,7 +3489,7 @@
     "faqs": [
       {
         "question": "Are all “Native cigarettes” tax-free?",
-        "answer": "No. “Native cigarettes” is common search language, not one single tax category."
+        "answer": "No. “Native cigarettes” is common consumer language, not one single tax category."
       },
       {
         "question": "Does Indigenous manufacturing automatically make a cigarette tax-exempt?",
@@ -3498,7 +3497,7 @@
       },
       {
         "question": "Does a Native Medicine Garden menu listing prove who owns or manufactures a cigarette brand?",
-        "answer": "No. A retailer listing can show that a brand is offered or has been catalogued, but ownership/manufacturer claims require separate evidence."
+        "answer": "No. A retailer listing can show that a brand is offered or has been catalogued, but ownership and manufacturer details need to be confirmed separately."
       },
       {
         "question": "Are traditional tobacco and commercial cigarettes the same thing?",
@@ -3515,9 +3514,9 @@
     "slug": "native-smokes",
     "title": "Native Smokes Guide: Commercial Cigarette Terms Without the Guesswork",
     "seoTitle": "Native Smokes Guide | Native Medicine Garden Toronto",
-    "description": "An evergreen guide to Native-smokes search language, commercial cigarette terminology, brand references and current-menu checking at Native Medicine Garden.",
+    "description": "A guide to Native-smokes terminology, commercial cigarette terms, brand references and current-menu checking at Native Medicine Garden.",
     "eyebrow": "Native Smokes Education",
-    "intro": "Adults use “Native smokes” as a broad retail/search phrase.",
+    "intro": "Adults use “Native smokes” as a broad retail phrase.",
     "lead": [
       "The phrase can be useful for finding a category.",
       "It should not be used to make unverified claims about a brand's manufacturer, ownership or tax status.",
@@ -3558,12 +3557,12 @@
           "Use this guide for:"
         ],
         "bullets": [
-          "Native-smokes search language",
+          "Native-smokes terminology",
           "cigarette brand terminology",
           "Full / Light / Menthol style labels",
           "the difference between commercial tobacco and cannabis products",
-          "why current prices and availability belong on current product surfaces",
-          "why manufacturer and tax-status claims require evidence."
+          "why current prices and availability belong on current product pages",
+          "why manufacturer identity and tax status need separate confirmation."
         ],
         "ordered": []
       },
@@ -3572,7 +3571,7 @@
         "heading": "What This Page Does Not Promise",
         "paragraphs": [
           "This page does not promise:",
-          "Those details need current product information or separate evidence."
+          "Those details need current product information or separate confirmation."
         ],
         "bullets": [
           "current stock",
@@ -3600,7 +3599,7 @@
       },
       {
         "level": 2,
-        "heading": "Use Current Product Surfaces for Current Retail Details",
+        "heading": "Use Current Product Pages for Current Retail Details",
         "paragraphs": [
           "If the goal is to check a current cigarette listing, use the current cigarette category.",
           "If the goal is to understand what “Native cigarettes” means in Ontario, use the detailed informational guide."
@@ -3612,7 +3611,7 @@
     "faqs": [
       {
         "question": "Is this a current cigarette price list?",
-        "answer": "No. Evergreen educational content should not be treated as a live price list."
+        "answer": "No. This guide should not be treated as a live price list."
       },
       {
         "question": "Does this page guarantee cigarette inventory?",
@@ -3648,8 +3647,8 @@
       "- trim;",
       "- aroma;",
       "- how much the product matches the intended budget.",
-      "The old version of this page leaned too heavily on fixed per-gram and bundle prices.",
-      "Those numbers belong on current commerce surfaces, not in evergreen education."
+      "Current prices and bundle details can change.",
+      "Use the current category and product pages for today's prices, package details and availability."
     ],
     "cards": [
       {

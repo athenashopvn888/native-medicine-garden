@@ -45,7 +45,7 @@ export const TIER_EDUCATION: Record<string, TierEducation> = {
   },
   AA: {
     sections: [
-      { heading: "AA Weed as a Clear Menu Category", body: "AA Weed is one of Native Medicine Garden's five protected flower categories. The label makes the menu easier to scan. It does not define one mandatory THC level, aroma profile or bud size." },
+      { heading: "AA Weed as a Clear Menu Category", body: "AA Weed is one of Native Medicine Garden's five flower categories. The label makes the menu easier to scan. It does not define one mandatory THC level, aroma profile or bud size." },
       { heading: "Value and Quality Are Different Questions", body: "AA Weed can be part of a value-first browse. Value does not automatically mean low quality, and a lower price does not prove that flower is weak or stale." },
       { heading: "Compare Current Product Information", body: "Use the current listing for changing price, stock, package and product-specific details." },
     ],
@@ -60,7 +60,7 @@ export const TIER_EDUCATION: Record<string, TierEducation> = {
     sections: [
       { heading: "Budget Weed Means Value-First Browsing", body: "Budget Weed is Native Medicine Garden's value-first flower category. The word Budget describes price positioning on the menu. It does not automatically mean unsafe, stale, weak or low THC." },
       { heading: "Do Not Judge the Product From the Label Alone", body: "Adults can still compare producer, cultivar, THC/CBD, package details, aroma information where provided and the actual flower characteristics." },
-      { heading: "Current Price Belongs on the Current Page", body: "This educational section should not freeze a price or deal into permanent copy. The live category remains the current source for changing commercial details." },
+      { heading: "Current Price Belongs on the Current Page", body: "Prices and deals can change. Use the live category for current pricing, product details and availability." },
     ],
     links: [
       { label: "Weed Value Guide", href: "/resources/weed-value-guide" },

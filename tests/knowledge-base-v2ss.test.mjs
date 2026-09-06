@@ -33,7 +33,13 @@ test("every long-form authority owner has metadata, one H1 source and visible FA
 
 test("evergreen packet output contains no internal workflow language or fixed deal copy", () => {
   const rendered = JSON.stringify(pages);
-  for (const forbidden of ["PINKY", "Agent X", "canonical evidence", "$20/g", "3g for $", "6g around $"]) {
+  for (const forbidden of [
+    "PINKY", "Agent X", "canonical evidence", "$20/g", "3g for $", "6g around $",
+    "The current NMG evidence supports", "The current version of this guide should",
+    "evergreen authority guide", "everyday search language", "Brand Names Need Evidence",
+    "Current Prices and Availability Belong on Current Product Surfaces",
+    "Native Medicine Garden and Protected Native Wording", "old version of this page leaned",
+  ]) {
     assert.equal(rendered.includes(forbidden), false, forbidden);
   }
 });
