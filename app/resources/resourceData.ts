@@ -1,3 +1,5 @@
+import knowledgeData from "./knowledgeData.json";
+
 export interface ResourceCard {
   title: string;
   href: string;
@@ -19,244 +21,120 @@ export interface ResourcePage {
   intro: string;
   cards: ResourceCard[];
   sections: ResourceSection[];
+  lead?: string[];
+  blocks?: {
+    level: number;
+    heading: string;
+    paragraphs: string[];
+    bullets: string[];
+    ordered: string[];
+  }[];
+  faqs?: { question: string; answer: string }[];
+  schemaType?: "Article" | "WebPage" | "CollectionPage";
 }
 
-export const RESOURCE_PAGES: ResourcePage[] = [
-  {
-    slug: "",
-    title: "Native Medicine Garden Resources",
-    seoTitle: "Native Medicine Garden Resources | Downtown Toronto / Bay Street Menu And Visit Guides",
-    description: "Native Medicine Garden resource pages for Downtown Toronto / Bay Street shoppers, with local visit planning, menu shortcuts, flower tier pricing, value shopping, pre-roll tips, and Native smokes prices.",
-    eyebrow: "Downtown Toronto Resource Hub",
-    intro: "A practical resource hub for downtown Toronto, Bay Street, and Yonge Street shoppers. Use it to find the relevant menu section for flower, pre-rolls, edibles, THC vapes, concentrates, accessories, cigarettes, Native smokes, Backwoods, and grabba.",
-    cards: [
-      { title: "Weed Visit Guide", href: "/resources/downtown-bay-street-weed-visit-guide", text: "Review the store details already published for a downtown Toronto visit." },
-      { title: "Cannabis Menu Guide", href: "/resources/cannabis-menu-guide", text: "Start with flower, pre-rolls, edibles, vapes, or smokes, then compare the categories that interest you." },
-      { title: "Weed Flower Guide", href: "/resources/weed-flower-guide", text: "Compare Exotic Weed, Premium Weed, AAA+ Weed, AA Weed, and Budget Weed." },
-      { title: "Weed Value Guide", href: "/resources/weed-value-guide", text: "Explore the Budget Weed, AA Weed and AAA+ Weed collections." },
-      { title: "Native Smokes Prices", href: "/resources/native-smokes", text: "Brand and price notes for cigarettes, Backwoods, grabba, and pouch listings." }
-    ],
-    sections: [
-      {
-        heading: "Local Search, Useful Next Step",
-        body: "Native Medicine Garden is listed at 76 Gerrard St W, Toronto, ON M5G 1J5. These guides help shoppers plan the visit. Start with the local page for address and visit details, then use these guides to compare categories.",
-        bullets: ["Local store page: /weed-dispensary-toronto", "Local areas: Gerrard St W, Bay St, Yonge St, Eaton Centre, Dundas Station, College Street, and TTC routes", "Listed store hours: Open 24 Hours"]
-      },
-      {
-        heading: "Built Around Real Menu Choices",
-        body: "The guides stay focused on real visits: weed dispensary near Downtown Toronto / Bay Street, cannabis store Toronto, cheap weed, budget weed, pre-rolls, edibles, THC vapes, concentrates, Native cigarettes, Backwoods, and grabba."
-      }
-    ],
-  },
-  {
-    slug: "downtown-bay-street-weed-visit-guide",
-    title: "Weed Guide for Downtown Bay Street",
-    seoTitle: "Downtown Toronto And Bay Street Weed Dispensary Visit Guide | Native Medicine Garden",
-    description: "Local visit planning for Native Medicine Garden at 76 Gerrard St W, with Gerrard St W, Bay St, Yonge St, Eaton Centre, Dundas Station, College Street, and TTC routes context, menu shortcuts, hours, and category guides.",
-    eyebrow: "Visit Guide",
-    intro: "Use this page when the search starts local: weed dispensary near Downtown Toronto / Bay Street, cannabis store near 76 Gerrard St W, or a quick menu check before visiting from Gerrard St W, Bay St, Yonge St, Eaton Centre, Dundas Station, College Street, and TTC routes.",
-    cards: [
-      { title: "Local Store Page", href: "/weed-dispensary-toronto", text: "Use the local store page for address, directions, hours, and contact details." },
-      { title: "Cannabis Menu Guide", href: "/resources/cannabis-menu-guide", text: "Choose the product category before opening the menu." },
-      { title: "Weed Value Guide", href: "/resources/weed-value-guide", text: "Explore value-oriented Weed flower collections." }
-    ],
-    sections: [
-      {
-        heading: "Address Anchor",
-        body: "Native Medicine Garden is listed at 76 Gerrard St W, Toronto, ON M5G 1J5. Keep that address as the local anchor, then use the resource pages to decide whether the trip is about flower, pre-rolls, edibles, THC vapes, concentrates, accessories, or cigarettes."
-      },
-      {
-        heading: "Neighborhood Search Areas",
-        body: "Downtown shoppers move fast between Bay, Yonge, Gerrard, Eaton Centre, Dundas Station, and College Street, so these resources are built for quick decisions and clear category links.",
-        bullets: ["Gerrard St W cannabis store local search", "Bay St cannabis store local search", "Yonge St cannabis store local search", "Eaton Centre cannabis store local search", "Dundas Station cannabis store local search", "TTC cannabis store local search", "College Street cannabis store local search"]
-      },
-      {
-        heading: "Best First Click",
-        body: "If you need store details, start with /weed-dispensary-toronto. If you are comparing product types, start with the menu guide. If the trip is about Native smokes or cigarettes, start with the Native smokes page and then confirm the current category page."
-      }
-    ],
-  },
+const SUPPORTING_PAGES: ResourcePage[] = [
   {
     slug: "cannabis-menu-guide",
-    title: "Cannabis Menu Guide",
-    seoTitle: "Native Medicine Garden Menu Guide | Flower, Pre-Rolls, Edibles, Vapes And Cigarettes",
-    description: "A practical menu guide for Native Medicine Garden, covering flower tiers, pre-rolls, edibles, THC vapes, concentrates, accessories, cigarettes, and Native smokes.",
+    title: "Cannabis Menu Guide: Pick the Product Category First",
+    seoTitle: "Native Medicine Garden Cannabis Menu Guide | Downtown Toronto",
+    description: "Use this practical guide to choose a Native Medicine Garden menu category first, then open the current product surface for changing details.",
     eyebrow: "Menu Guide",
-    intro: "The menu gets easier when you choose the category first. Flower has tier math. Pre-rolls have format details. Edibles, THC vapes, concentrates, and accessories each have different details to compare. Cigarettes need brand and price checks.",
+    intro: "The menu gets easier when you choose the product category first. Educational guides explain stable concepts; current product names, prices, package formats and availability belong on current category and product pages.",
     cards: [
-      { title: "Weed Flower Collections", href: "/resources/weed-flower-guide", text: "Start here for Exotic Weed, Premium Weed, AAA+ Weed, AA Weed, and Budget Weed." },
-      { title: "Pre-Rolls", href: "/resources/pre-roll-guide", text: "Use this for ready-to-smoke singles, packs, and quick-trip browsing." },
-      { title: "Cigarettes", href: "/items/cigarettes", text: "Open the cigarette category for current Native smokes listings." },
-      { title: "Local Store Page", href: "/weed-dispensary-toronto", text: "Return to the local store page." }
+      { title: "Weed & Flower Quality Guide", href: "/resources/weed-flower-guide", text: "Learn what the five protected Weed categories can and cannot tell you." },
+      { title: "Weed Value Guide", href: "/resources/weed-value-guide", text: "Compare value-first flower using the current listing." },
+      { title: "What Does Good Weed Mean?", href: "/resources/flower-guides/what-does-good-weed-mean", text: "Compare aroma, cure, trichomes, freshness and preference." },
+      { title: "Pre-Roll Guide", href: "/resources/pre-roll-guide", text: "Keep prepared pre-rolls in their own product-format lane." },
+      { title: "Cannabis 101", href: "/resources/cannabis-101", text: "Learn the basics of the main cannabis product categories." },
+      { title: "Native Smokes Guide", href: "/resources/native-smokes", text: "Understand commercial-cigarette terminology without freezing current retail details." },
+      { title: "Native Cigarettes in Ontario", href: "/resources/native-smokes/native-cigarettes-guide", text: "Read the deeper Ontario terminology guide." },
     ],
     sections: [
-      {
-        heading: "Pick The Shelf First",
-        body: "For downtown Toronto, Bay Street, and Yonge Street shoppers, the best first step is simple: flower shoppers compare tiers, pre-roll shoppers compare format, edible and vape shoppers compare current item details, and cigarette shoppers compare brand, full/light/menthol style, and price.",
-        bullets: ["Flower, pre-rolls, edibles, THC vapes, concentrates, accessories, and cigarettes are easier to compare one category at a time.", "Use current category pages for today's details.", "Use these guides for visit planning."]
-      },
-      {
-        heading: "Local Shopping Cues",
-        body: "This page helps shoppers searching for weed dispensary near Downtown Toronto / Bay Street, cannabis store Toronto, cheap weed near me, Native cigarettes, and THC vape menu while keeping the actual shopping step clear."
-      }
+      { heading: "Flower", body: "Flower is easiest to browse through the five protected Weed categories. Open the current category for changing product details." },
+      { heading: "Pre-Rolls", body: "Pre-rolls belong in their own product-format lane. Read the current listing for pack count, total weight, format, price and availability." },
+      { heading: "Edibles, THC Vapes and Concentrates", body: "Keep these as separate product types and use current product surfaces for changing details." },
+      { heading: "Cigarettes / Native Smokes", body: "Commercial cigarettes belong in their own category. Use the current cigarette surface for changing retail details and the Native Smokes guides for terminology and Ontario context." },
+      { heading: "Current Details Belong on Current Pages", body: "Educational guides explain how to read the menu. Current product names, prices, package formats and availability belong on the current category/product pages." },
     ],
-  },
-  {
-    slug: "weed-flower-guide",
-    title: "Weed & Cannabis Flower Guide",
-    seoTitle: "Native Medicine Garden Flower Tier Guide | Exotic, Premium, AAA+, AA And Budget",
-    description: "Compare Native Medicine Garden flower tiers with posted per-gram prices, 3g specials, 6g deal math, Budget flower, AA flower, AAA+, Premium, and Exotic.",
-    eyebrow: "Flower Tiers",
-    intro: "Here is the clean flower read: Exotic is posted at $20/g, Premium at $15/g, AAA+ at $10/g, AA at $4/g, and Budget at $3/g. Where the 6g tier deal applies, shoppers can compare Exotic around $60 for 6g, Premium around $45 for 6g, and AAA+ around $30 for 6g.",
-    cards: [
-      { title: "Exotic Weed", href: "/exotic-weed", text: "Explore the Exotic Weed collection." },
-      { title: "Premium Weed", href: "/premium-weed", text: "Browse the Premium Weed collection." },
-      { title: "AAA+ Weed", href: "/aaa-weed", text: "Explore the AAA+ Weed collection." },
-      { title: "AA Weed", href: "/aa-weed", text: "Browse the AA Weed collection." },
-      { title: "Budget Weed", href: "/budget-weed", text: "Explore the Budget Weed collection." }
-    ],
-    sections: [
-      {
-        heading: "Why The 6g Line Matters",
-        body: "A straight per-gram price does not always tell the whole shelf story. The top flower lanes can show 3g and 6g deal logic, so a shopper comparing Exotic, Premium, and AAA+ should read the bundle line before judging value.",
-        bullets: ["Exotic: $20/g, 3g for $40 or 6g around $60 where listed.", "Premium: $15/g, 3g for $30 or 6g around $45 where listed.", "AAA+: $10/g, 3g for $20 or 6g around $30 where listed."]
-      },
-      {
-        heading: "Budget And AA Keep It Simple",
-        body: "For cheap weed and budget weed searches, Budget at $3/g and AA at $4/g are the simplest lanes to compare. Check the current tier page for listed product names, prices, and item notes."
-      }
-    ],
-  },
-  {
-    slug: "weed-value-guide",
-    title: "Native Medicine Garden Value Weed Guide",
-    seoTitle: "Native Medicine Garden Value Weed Guide | Cheap Weed Near Downtown Toronto / Bay Street",
-    description: "A value shopping guide for Native Medicine Garden, covering cheap weed, budget weed, AA flower, AAA+ deals, 6g tier math, and affordable menu choices.",
-    eyebrow: "Value Guide",
-    intro: "For downtown Toronto value shopping, value shopping works best when the shelf is clear. Start with Budget, AA, and AAA+ before jumping into higher tiers or mixed categories.",
-    cards: [
-      { title: "Budget Weed", href: "/budget-weed", text: "Explore the Budget Weed collection." },
-      { title: "AA Weed", href: "/aa-weed", text: "Browse the AA Weed collection." },
-      { title: "AAA+ Weed", href: "/aaa-weed", text: "Explore the AAA+ Weed collection." },
-      { title: "Native Smokes Prices", href: "/resources/native-smokes", text: "Use this if cigarettes or Backwoods are part of the same stop." }
-    ],
-    sections: [
-      {
-        heading: "Start With Budget, Then Move Up",
-        body: "If the search is cheap weed, budget weed, or affordable cannabis near Downtown Toronto / Bay Street, start with Budget and AA. If the trip can stretch a little, AAA+ gives shoppers another value lane with 3g and 6g deal logic."
-      },
-      {
-        heading: "Compare Inside The Category",
-        body: "Value looks different across flower, pre-rolls, edibles, THC vapes, concentrates, accessories, and cigarettes. Compare one product type at a time so the choice stays clear."
-      }
-    ],
+    schemaType: "WebPage",
   },
   {
     slug: "pre-roll-guide",
-    title: "Native Medicine Garden Pre-Roll And Quick Trip Guide",
-    seoTitle: "Native Medicine Garden Pre-Roll Guide | Ready-To-Smoke Menu Tips",
-    description: "A pre-roll guide for Native Medicine Garden, with quick-trip tips for ready-to-smoke options, flower cross-shopping, edibles, vapes, concentrates, and accessories.",
+    title: "Native Medicine Garden Pre-Roll Guide",
+    seoTitle: "Pre-Roll Guide | Native Medicine Garden Downtown Toronto",
+    description: "A practical Native Medicine Garden pre-roll guide covering format, pack size, current product details and when to switch to loose flower education.",
     eyebrow: "Pre-Roll Guide",
-    intro: "Pre-roll shoppers usually want a faster path than loose flower shoppers. Use this page when the goal is ready-to-smoke options, a quick stop, or a small add-on beside another category.",
+    intro: "Pre-rolls should be compared by format, pack size and the current product information rather than by loose-flower tier language.",
     cards: [
-      { title: "Pre-Rolls", href: "/items/prerolls", text: "Open the current pre-roll category." },
-      { title: "Weed Flower Collections", href: "/resources/weed-flower-guide", text: "Switch here if the visit turns into loose flower." },
-      { title: "Cannabis Menu Guide", href: "/resources/cannabis-menu-guide", text: "Use this if the stop includes edibles, vapes, concentrates, or accessories." }
+      { title: "Weed & Flower Quality Guide", href: "/resources/weed-flower-guide", text: "Switch here when the question becomes a loose-flower question." },
+      { title: "Cannabis 101", href: "/resources/cannabis-101", text: "Review the main cannabis product formats." },
+      { title: "First Visit Guide", href: "/resources/downtown-bay-street-weed-visit-guide", text: "Plan a downtown Toronto visit." },
     ],
     sections: [
-      {
-        heading: "Keep Pre-Rolls In Their Own Lane",
-        body: "Pre-rolls should be compared by format, pack size, posted details, and current price. Do not force loose-flower tier logic onto pre-roll shopping unless the visit actually changes categories."
-      },
-      {
-        heading: "Useful For Local Quick Stops",
-        body: "For downtown Toronto, Bay Street, and Yonge Street shoppers, pre-rolls offer a direct category to check before heading through Gerrard St W, Bay St, Yonge St, Eaton Centre, Dundas Station, College Street, and TTC routes. Use the current category page for current details."
-      }
+      { heading: "Keep Pre-Rolls in Their Own Lane", body: "Pre-rolls should be compared by format, pack size, posted details and current price. Do not force loose-flower tier logic onto pre-roll shopping unless the visit actually changes categories." },
+      { heading: "Read the Current Listing", body: "Use current product pages for current pack count, total weight, infused or non-infused details when listed, current price and current availability." },
+      { heading: "When the Question Becomes a Flower Question", body: "If the visit shifts from prepared pre-rolls to loose flower, use the Weed & Flower Quality Guide rather than forcing loose-flower tier language onto the pre-roll category." },
     ],
-  },
-  {
-    slug: "native-smokes",
-    title: "Native Medicine Garden Native Smokes Price Guide",
-    seoTitle: "Native Medicine Garden Native Smokes Prices | Cigarettes, Backwoods And Grabba",
-    description: "Native Medicine Garden Native smokes resource with cigarette brands and listed prices for Canadian, Putters, Canadian Goose, Nexus, Time, Backwoods, grabba, pouches, and mixed smoke items where shown.",
-    eyebrow: "Native Smokes",
-    intro: "This page gives cigarette shoppers a real starting point instead of a vague category page. Use it for Native cigarettes, Canadian brands, Backwoods, grabba, nicotine pouches, and mixed smoke item price checks at Native Medicine Garden.",
-    cards: [
-      { title: "$25 Cigarette Brands", href: "/items/cigarettes", text: "The cigarette category lists CANADIAN LIGHTS, CANADIAN FULL, PUTTERS, CANADIAN GOOSE FULL, CANADIAN GOOSE LIGHTS, CANADIAN MENTHOL, CANADIAN CLASSICS ORIGINAL, CANADIAN CLASSICS SILVER, ROLLED GOLD LIGHTS, NEXUS FULL, NEXUS LIGHTS, TIME FULL at $25 where shown." },
-      { title: "Backwoods And Grabba", href: "/items/cigarettes", text: "NICOTINE POUCHES , VELO, PABLO, KILLA at $20; GRABBA at $5; GRABBA SHAKER *RedRose / Red Herring* at $19; BACKWOODS ASSORTED FLAVORS $20-$25 at $20; NEW BACKWOODS FLAVORS at $25; 10 X PREMIUM MIX CIGARETTES at $3" },
-      { title: "Native Cigarettes Guide", href: "/resources/native-smokes/native-cigarettes-guide", text: "A fuller brand and price breakdown for cigarette shoppers." }
-    ],
-    sections: [
-      {
-        heading: "$25 Cigarette Brand List",
-        body: "The cigarette category lists CANADIAN LIGHTS, CANADIAN FULL, PUTTERS, CANADIAN GOOSE FULL, CANADIAN GOOSE LIGHTS, CANADIAN MENTHOL, CANADIAN CLASSICS ORIGINAL, CANADIAN CLASSICS SILVER, ROLLED GOLD LIGHTS, NEXUS FULL, NEXUS LIGHTS, TIME FULL at $25 where shown.",
-        bullets: ["CANADIAN LIGHTS - $25", "CANADIAN FULL - $25", "PUTTERS - $25", "CANADIAN GOOSE FULL - $25", "CANADIAN GOOSE LIGHTS - $25", "CANADIAN MENTHOL - $25", "CANADIAN CLASSICS ORIGINAL - $25", "CANADIAN CLASSICS SILVER - $25", "ROLLED GOLD LIGHTS - $25", "NEXUS FULL - $25", "NEXUS LIGHTS - $25", "TIME FULL - $25"]
-      },
-      {
-        heading: "Backwoods, Grabba, Pouches, And Mix Items",
-        body: "NICOTINE POUCHES , VELO, PABLO, KILLA at $20; GRABBA at $5; GRABBA SHAKER *RedRose / Red Herring* at $19; BACKWOODS ASSORTED FLAVORS $20-$25 at $20; NEW BACKWOODS FLAVORS at $25; 10 X PREMIUM MIX CIGARETTES at $3"
-      },
-      {
-        heading: "Confirm The Current Shelf",
-        body: "Cigarette inventory, flavors, and brand mix can change. Use the cigarette category for the current public list, then confirm in store when one exact brand, full/light/menthol style, pouch, grabba, or Backwoods flavor matters."
-      }
-    ],
-  },
-  {
-    slug: "native-smokes/native-cigarettes-guide",
-    title: "Native Medicine Garden Native Cigarettes Brand Guide",
-    seoTitle: "Native Medicine Garden Native Cigarettes Guide | Brand And Price List",
-    description: "A detailed Native cigarettes brand guide for Native Medicine Garden, including $25 cigarette listings and smoke add-on prices where shown.",
-    eyebrow: "Native Cigarettes",
-    intro: "If the trip includes cigarettes, start with brand and price first. This guide keeps Native cigarettes, Backwoods, grabba, pouches, and mixed smoke items separate from flower, pre-rolls, edibles, THC vapes, and concentrates.",
-    cards: [
-      { title: "Cigarette Category", href: "/items/cigarettes", text: "Open the current cigarette category." },
-      { title: "Native Smokes Overview", href: "/resources/native-smokes", text: "Return to the shorter price guide." },
-      { title: "Weed Visit Guide", href: "/resources/downtown-bay-street-weed-visit-guide", text: "Plan the store stop using the published local details." }
-    ],
-    sections: [
-      {
-        heading: "Brand Names To Check",
-        body: "The cigarette category lists CANADIAN LIGHTS, CANADIAN FULL, PUTTERS, CANADIAN GOOSE FULL, CANADIAN GOOSE LIGHTS, CANADIAN MENTHOL, CANADIAN CLASSICS ORIGINAL, CANADIAN CLASSICS SILVER, ROLLED GOLD LIGHTS, NEXUS FULL, NEXUS LIGHTS, TIME FULL at $25 where shown.",
-        bullets: ["CANADIAN LIGHTS - $25", "CANADIAN FULL - $25", "PUTTERS - $25", "CANADIAN GOOSE FULL - $25", "CANADIAN GOOSE LIGHTS - $25", "CANADIAN MENTHOL - $25", "CANADIAN CLASSICS ORIGINAL - $25", "CANADIAN CLASSICS SILVER - $25", "ROLLED GOLD LIGHTS - $25", "NEXUS FULL - $25", "NEXUS LIGHTS - $25", "TIME FULL - $25"]
-      },
-      {
-        heading: "Smoke Category Add-Ons",
-        body: "NICOTINE POUCHES , VELO, PABLO, KILLA at $20; GRABBA at $5; GRABBA SHAKER *RedRose / Red Herring* at $19; BACKWOODS ASSORTED FLAVORS $20-$25 at $20; NEW BACKWOODS FLAVORS at $25; 10 X PREMIUM MIX CIGARETTES at $3"
-      },
-      {
-        heading: "Separate The Smoke Shelf From Cannabis Shopping",
-        body: "When the same visit includes flower, pre-rolls, edibles, THC vapes, concentrates, or accessories, keep cigarettes as their own lane. It makes the category easier for both cannabis shoppers and Native smokes shoppers."
-      }
-    ],
+    schemaType: "WebPage",
   },
   {
     slug: "resource-centre-launch",
     title: "Native Medicine Garden Resource Centre",
-    seoTitle: "Native Medicine Garden Resource Centre | Local Menu Guides",
-    description: "Native Medicine Garden resource centre with local visit planning, menu guides, flower tier pricing, value shopping, pre-roll tips, and Native smokes prices.",
-    eyebrow: "Resource Update",
-    intro: "Use this page for local visit planning, menu guides, flower tier pricing, value shopping, pre-roll tips, and cigarette price notes.",
-    cards: [
-      { title: "Weed Resource Home", href: "/weed-resources", text: "Start at the Weed resource hub." },
-      { title: "Weed Visit Guide", href: "/resources/downtown-bay-street-weed-visit-guide", text: "Review the published store details for a downtown Toronto visit." },
-      { title: "Weed Flower Guide", href: "/resources/weed-flower-guide", text: "Compare the five Weed flower collections." },
-      { title: "Native Smokes Prices", href: "/resources/native-smokes", text: "Check brand and price notes." }
-    ],
+    seoTitle: "Native Medicine Garden Resource Centre | Weed & Cannabis Guides",
+    description: "Start with Native Medicine Garden's Weed & Cannabis Resources for downtown visit guidance, Cannabis 101, flower education and Native-smokes information.",
+    eyebrow: "Resource Centre",
+    intro: "Native Medicine Garden's resource centre groups useful evergreen guides without replacing the current menu.",
+    cards: [{ title: "Weed & Cannabis Resources", href: "/weed-resources", text: "Start at the primary educational hub." }],
     sections: [
-      {
-        heading: "What Changed",
-        body: "The resource pages keep local shoppers oriented with visit planning, category guides, and quick links back to the menu."
-      },
-      {
-        heading: "What Stayed Protected",
-        body: "The main guides connect shoppers with the broader Toronto Weed selection, five Weed flower collections, the Cannabis menu guide, pre-roll information and separate Native smokes resources."
-      }
+      { heading: "Start With the Weed & Cannabis Resource Hub", body: "Native Medicine Garden's resource centre now groups the most useful evergreen guides in one place. Start with the Weed & Cannabis Resources hub for downtown Toronto visit information, Cannabis 101, flower-quality education, Weed slang and Native-smokes terminology." },
+      { heading: "Current Menu Details Stay Current", body: "These resources explain stable concepts. Current product names, prices, package formats and availability remain on current menu and product pages." },
     ],
-  }
+    schemaType: "WebPage",
+  },
 ];
 
-export const RESOURCE_HOME = RESOURCE_PAGES[0];
+export const RESOURCE_HOME: ResourcePage = {
+  slug: "",
+  title: "Weed & Cannabis Resources",
+  seoTitle: "Native Medicine Garden Weed Resources | Toronto Cannabis Guides",
+  description: "Explore Native Medicine Garden Weed resources for Cannabis 101, downtown visit planning, flower quality, Weed slang, value browsing and Native-smokes education.",
+  eyebrow: "Native Medicine Garden Education",
+  intro: "Use these resource pages for stable explanations and visit planning. Use the current Native Medicine Garden category and product pages for changing product names, prices, package formats and availability.",
+  cards: [
+    { title: "First Visit to Native Medicine Garden", href: "/resources/downtown-bay-street-weed-visit-guide", text: "Plan a downtown Toronto / Bay Street visit, learn what adults 19+ can expect and choose the right menu lane before arriving." },
+    { title: "Cannabis 101", href: "/resources/cannabis-101", text: "Learn the basics of flower, pre-rolls, edibles, THC vapes, Weed tiers, THC, genetics and everyday cannabis language." },
+    { title: "Cannabis vs Weed Dispensary", href: "/resources/cannabis-dispensary-vs-weed-dispensary", text: "Understand why adults use cannabis dispensary, weed dispensary, cannabis store and dispensary near me for closely related local searches." },
+    { title: "Weed & Flower Quality Guide", href: "/resources/weed-flower-guide", text: "Start with the five Native Medicine Garden Weed categories, then learn what quality language can and cannot tell you." },
+    { title: "What Does Good Weed Mean?", href: "/resources/flower-guides/what-does-good-weed-mean", text: "Compare aroma, cure, trichomes, freshness, structure and preference." },
+    { title: "Top Shelf, Mids & Quads", href: "/resources/flower-guides/top-shelf-mids-quads", text: "Decode common Weed grade language." },
+    { title: "THC vs Weed Quality", href: "/resources/flower-guides/thc-vs-weed-quality", text: "Understand why THC is not a complete flower-quality score." },
+    { title: "Bag Appeal", href: "/resources/flower-guides/bag-appeal", text: "Learn what visual first impressions can and cannot show." },
+    { title: "Frosty Weed & Trichomes", href: "/resources/flower-guides/trichomes-frosty-weed", text: "Understand the crystals adults notice on cannabis flower." },
+    { title: "Gas, Loud & Terpy", href: "/resources/flower-guides/terpenes-gas-loud-aroma", text: "Translate common cannabis aroma language." },
+    { title: "Drying, Curing & Freshness", href: "/resources/flower-guides/drying-curing-freshness", text: "Learn what happens to flower after harvest." },
+    { title: "Smalls vs Big Buds", href: "/resources/flower-guides/smalls-vs-big-buds", text: "Understand what bud size can and cannot tell you." },
+    { title: "BC Grown / Indoor / Hydro / Outdoor", href: "/resources/flower-guides/bc-grown-indoor-hydro-outdoor", text: "Separate origin, environment and cultivation method." },
+    { title: "Craft vs Commercial Cannabis", href: "/resources/flower-guides/craft-vs-commercial-cannabis", text: "Compare production scale without treating it as a grade." },
+    { title: "Indica vs Sativa vs Hybrid", href: "/resources/cannabis-101/indica-sativa-hybrid", text: "Use familiar labels without turning them into effect guarantees." },
+    { title: "Strain vs Cultivar", href: "/resources/cannabis-101/strain-vs-cultivar", text: "Understand why a familiar name still needs context." },
+    { title: "Landrace vs Hybrid", href: "/resources/cannabis-101/landrace-vs-hybrid", text: "Read a simple guide to cannabis genetics." },
+    { title: "Weed Slang Explained", href: "/resources/cannabis-101/weed-slang-glossary", text: "Translate gas, loud, fire, dank, mids, quads and more." },
+    { title: "Cannabis Menu Guide", href: "/resources/cannabis-menu-guide", text: "Pick the product category first." },
+    { title: "Weed Value Guide", href: "/resources/weed-value-guide", text: "Compare the category, then the current listing." },
+    { title: "Pre-Roll Guide", href: "/resources/pre-roll-guide", text: "Keep prepared pre-rolls in their own product-format lane." },
+    { title: "Native Smokes Guide", href: "/resources/native-smokes", text: "Read commercial-cigarette terminology without the guesswork." },
+    { title: "Native Cigarettes in Ontario", href: "/resources/native-smokes/native-cigarettes-guide", text: "Understand terms, brands and legal context." },
+  ],
+  sections: [
+    { heading: "Current Menu vs Evergreen Guides", body: "Use these resource pages for stable explanations and visit planning. Use the current Native Medicine Garden category and product pages for changing product names, prices, package formats and availability." },
+    { heading: "Native Medicine Garden in Downtown Toronto", body: "Native Medicine Garden is at 76 Gerrard St W, Toronto, ON M5G 1J5. The local store page remains the source for current visit details. The resource hub helps adults understand the menu and the language around it." },
+  ],
+  schemaType: "CollectionPage",
+};
+
+const PACKET_PAGES = knowledgeData as unknown as ResourcePage[];
+export const RESOURCE_PAGES: ResourcePage[] = [RESOURCE_HOME, ...PACKET_PAGES, ...SUPPORTING_PAGES];
 
 export function getResourcePage(slug: string) {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "");

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import FlowerCard from "../components/FlowerCard";
@@ -9,6 +10,7 @@ import {
   TIER_CONFIG,
 } from "../lib/products";
 import { TIER_SEO } from "../lib/tierSeoContent";
+import { TIER_EDUCATION } from "../lib/tierEducation";
 import styles from "./tier.module.css";
 
 /* -- Generate all tier pages at build -- */
@@ -54,6 +56,7 @@ export default async function TierPage({
   const flowers = getFlowersByTier(tierInfo.key);
   const { config } = tierInfo;
   const seo = TIER_SEO[tierInfo.key];
+  const education = TIER_EDUCATION[tierInfo.key];
 
   const saleFlowers = flowers.filter((f) => f.isSale);
   const regularFlowers = flowers.filter((f) => !f.isSale);
@@ -196,6 +199,25 @@ export default async function TierPage({
                 ))}
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {education && (
+        <section className={styles.seoSection}>
+          <div className={styles.container}>
+            {education.sections.map((section) => (
+              <div key={section.heading} className={styles.seoBlock}>
+                <h2 className={styles.seoHeading}>{section.heading}</h2>
+                <p className={styles.seoBody}>{section.body}</p>
+              </div>
+            ))}
+            <div className={styles.seoBlock}>
+              <h2 className={styles.seoHeading}>Learn the Flower Language</h2>
+              <ul>
+                {education.links.map((link) => <li key={link.href}><Link href={link.href}>{link.label}</Link></li>)}
+              </ul>
+            </div>
           </div>
         </section>
       )}

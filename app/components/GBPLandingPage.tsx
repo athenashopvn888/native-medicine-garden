@@ -205,6 +205,18 @@ export function GBPLandingPage() {
           ))}
         </div>
       </section>
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Learn Before You Browse</h2>
+        <p className={styles.infoText}>
+          New to Native Medicine Garden or want a clearer way to read the menu? Start with the downtown visit guide, Cannabis 101 or the Weed &amp; Flower Quality Guide.
+        </p>
+        <div className={styles.productGrid}>
+          <Link href="/resources/downtown-bay-street-weed-visit-guide" className={styles.productCard}>Downtown Visit Guide</Link>
+          <Link href="/resources/cannabis-101" className={styles.productCard}>Cannabis 101</Link>
+          <Link href="/resources/weed-flower-guide" className={styles.productCard}>Weed &amp; Flower Quality Guide</Link>
+          <Link href="/weed-resources" className={styles.productCard}>Weed &amp; Cannabis Resources</Link>
+        </div>
+      </section>
 
       {/* FAQ Section */}
       <section id="faq" className={styles.section}>

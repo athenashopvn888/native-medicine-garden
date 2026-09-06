@@ -4,8 +4,9 @@ import { RESOURCE_HOME } from "../resources/resourceData";
 
 export const metadata: Metadata = {
   title: { absolute: "Native Medicine Garden Weed Resources | Toronto Cannabis Guides" },
-  description: "Explore Native Medicine Garden Weed resources for flower collections, menu categories, value browsing and Toronto visit information.",
+  description: RESOURCE_HOME.description,
   alternates: { canonical: "https://www.nativemedicinecannabis.com/weed-resources" },
+  robots: { index: true, follow: true },
 };
 
 export default function WeedResourcesPage() {
