@@ -38,6 +38,7 @@ test("evergreen packet output contains no internal workflow language or fixed de
     "The current NMG evidence supports", "The current version of this guide should",
     "evergreen authority guide", "everyday search language", "Brand Names Need Evidence",
     "Current Prices and Availability Belong on Current Product Surfaces",
+    "current product surfaces",
     "Native Medicine Garden and Protected Native Wording", "old version of this page leaned",
   ]) {
     assert.equal(rendered.includes(forbidden), false, forbidden);

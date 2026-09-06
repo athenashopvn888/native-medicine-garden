@@ -137,6 +137,7 @@ const copyReplacements = new Map([
   ["Adults use “Native smokes” as a broad retail/search phrase.", "Adults use “Native smokes” as a broad retail phrase."],
   ["Native-smokes search language", "Native-smokes terminology"],
   ["why current prices and availability belong on current product surfaces", "why current prices and availability belong on current product pages"],
+  ["Native Medicine Garden may publicly display cigarette brand names on current product surfaces.", "Native Medicine Garden may publicly display cigarette brand names on current product pages."],
   ["why manufacturer and tax-status claims require evidence.", "why manufacturer identity and tax status need separate confirmation."],
   ["Those details need current product information or separate evidence.", "Those details need current product information or separate confirmation."],
   ["Use Current Product Surfaces for Current Retail Details", "Use Current Product Pages for Current Retail Details"],
