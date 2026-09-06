@@ -46,5 +46,9 @@ test("delivery and supporting resources expose only new indexable owners", () =>
   assert.match(delivery, /https:\/\/www\.nativemedicinecannabis\.com\/weed-delivery-toronto/);
   assert.match(sitemap, /weed-delivery-toronto/);
   assert.doesNotMatch(sitemap, /`\$\{BASE\}\/delivery`/);
-  for (const slug of ["cannabis-menu-guide", "weed-flower-guide", "weed-value-guide", "downtown-bay-street-weed-visit-guide"]) assert.ok(resources.includes(`slug: "${slug}"`));
+  const generatedResources = JSON.parse(read("app/resources/knowledgeData.json"));
+  const generatedSlugs = new Set(generatedResources.map((page) => page.slug));
+  for (const slug of ["cannabis-menu-guide", "weed-flower-guide", "weed-value-guide", "downtown-bay-street-weed-visit-guide"]) {
+    assert.ok(resources.includes(`slug: "${slug}"`) || generatedSlugs.has(slug), `missing ${slug}`);
+  }
 });

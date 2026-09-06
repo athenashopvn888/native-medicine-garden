@@ -6,8 +6,9 @@ export const metadata: Metadata = {
   title: { absolute: RESOURCE_HOME.seoTitle },
   description: RESOURCE_HOME.description,
   alternates: { canonical: "https://www.nativemedicinecannabis.com/resources" },
+  robots: { index: true, follow: true },
 };
 
 export default function ResourcesPage() {
-  return <ResourceView page={RESOURCE_HOME} />;
+  return <ResourceView page={RESOURCE_HOME} canonicalPath="/resources" />;
 }

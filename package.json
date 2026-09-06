@@ -15,7 +15,8 @@
     "audit:nmg-smart-menu": "node --env-file=.env.local scripts/audit-nmg-smart-menu.mjs",
     "test:staff-photo": "node --experimental-strip-types --experimental-specifier-resolution=node --test tests/staff-photo.test.ts",
     "test:nicotine-vapes": "node --test tests/nicotine-vape-landing.test.mjs",
-    "test:weed-seo-v2": "node --test tests/weed-seo-v2.test.mjs"
+    "test:weed-seo-v2": "node --test tests/weed-seo-v2.test.mjs",
+    "test:knowledge-base-v2ss": "node --test tests/knowledge-base-v2ss.test.mjs"
   },
   "dependencies": {
     "@vercel/blob": "^2.6.1",

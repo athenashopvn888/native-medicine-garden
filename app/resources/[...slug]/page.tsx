@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: ResourceRouteProps): Promise<
     title: { absolute: page.seoTitle },
     description: page.description,
     alternates: { canonical: "https://www.nativemedicinecannabis.com/resources/" + page.slug },
+    robots: { index: true, follow: true },
   };
 }
 
