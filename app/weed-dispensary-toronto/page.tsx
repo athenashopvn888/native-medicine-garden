@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { GBPLandingPage } from "@/app/components/GBPLandingPage";
+import { DeliveryCoverage } from "@/app/components/DeliveryCoverage";
 import { gbpLocation } from "@/app/lib/gbp-location";
 
 export const metadata: Metadata = {
@@ -28,5 +29,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <GBPLandingPage />;
+  return <><GBPLandingPage /><DeliveryCoverage /></>;
 }
