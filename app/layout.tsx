@@ -11,22 +11,6 @@ export const metadata: Metadata = {
   },
   description:
     "Native Medicine Garden is a Toronto cannabis dispensary on Gerrard St W with adult 19+ store info and category browsing for flower, pre-rolls, vapes, edibles, concentrates, and accessories. Open 24 Hours.",
-  keywords: [
-    "cannabis dispensary Toronto",
-    "weed store Toronto",
-    "exotic flower Toronto",
-    "premium cannabis",
-    "Native Medicine Garden",
-    "cheap weed Toronto",
-    "dispensary near me",
-    "THC flower",
-    "indica sativa hybrid",
-    "edibles Toronto",
-    "vapes",
-    "pre-rolls",
-    "native cigarettes Toronto",
-    "weed store Gerrard and Bay",
-  ],
   openGraph: {
     type: "website",
     locale: "en_CA",
@@ -75,8 +59,9 @@ export const metadata: Metadata = {
 /* JSON-LD Structured Data */
 const jsonLd = {
   "@context": "https://schema.org",
+  "@graph": [
+  {
   "@type": "Store",
-  additionalType: "https://schema.org/Store",
   "@id": "https://www.nativemedicinecannabis.com/#store",
   name: "Native Medicine Garden",
   description:
@@ -119,6 +104,15 @@ const jsonLd = {
     "@type": "City",
     name: "Toronto",
   },
+  },
+  {
+    "@type": "WebSite",
+    "@id": "https://www.nativemedicinecannabis.com/#website",
+    url: "https://www.nativemedicinecannabis.com/",
+    name: "Native Medicine Garden",
+    publisher: { "@id": "https://www.nativemedicinecannabis.com/#store" },
+  },
+  ],
 };
 
 export default function RootLayout({

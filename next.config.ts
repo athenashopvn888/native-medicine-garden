@@ -25,9 +25,12 @@ const nextConfig: NextConfig = {
       { source: "/resources/downtown-bay-street-visit-guide", destination: "/resources/downtown-bay-street-weed-visit-guide", permanent: true },
       {
         source: "/info/york-weed-dispensary",
-        destination: "/info/gerrard-bay-weed-dispensary",
+        destination: "/weed-dispensary-toronto",
         permanent: true,
       },
+      { source: "/info/gerrard-bay-weed-dispensary", destination: "/weed-dispensary-toronto", permanent: true },
+      { source: "/info/weed-store-near-downtown-toronto", destination: "/weed-dispensary-toronto", permanent: true },
+      { source: "/info/dispensary-near-me-gerrard-bay", destination: "/weed-dispensary-toronto", permanent: true },
       {
         source: "/info/cheap-weed-york",
         destination: "/info/cheap-weed-gerrard-bay",
