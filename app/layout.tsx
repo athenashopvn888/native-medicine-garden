@@ -104,6 +104,8 @@ const jsonLd = {
     "@type": "City",
     name: "Toronto",
   },
+  sameAs: ["https://www.google.com/maps?cid=10755313457698171095"],
+  hasMap: "https://www.google.com/maps?cid=10755313457698171095",
   },
   {
     "@type": "WebSite",
