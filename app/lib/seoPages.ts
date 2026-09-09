@@ -206,7 +206,7 @@ export const SEO_PAGES: SeoPageData[] = [
     faqs: [
       {
         q: "Where is the closest local page for this store?",
-        a: "Start with /weed-dispensary-toronto for GBP-style address and visit details.",
+        a: "Start with our Toronto store page for location, hours, directions, and helpful visit information.",
       },
       {
         q: "Is walk-in shopping supported?",

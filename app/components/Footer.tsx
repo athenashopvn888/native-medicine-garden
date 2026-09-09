@@ -61,9 +61,6 @@ export default function Footer() {
 <Link href="/items/vapes">Nicotine Vapes</Link>
               <Link href="/faq">FAQ</Link>
               <Link href="/weed-delivery-toronto">WEED DELIVERY</Link>
-              <Link href="/info/gerrard-bay-weed-dispensary">
-                Gerrard and Bay Dispensary
-              </Link>
               <Link href="/info/cheap-weed-gerrard-bay">
                 Cheap Weed Gerrard and Bay
               </Link>
@@ -71,9 +68,6 @@ export default function Footer() {
                 Native Cigarettes
               </Link>
               <Link href="/info/nicotine-vapes-gerrard-bay">Nicotine Vapes Gerrard & Bay</Link>
-              <Link href="/info/weed-store-near-downtown-toronto">
-                Weed Store Near Gerrard and Bay
-              </Link>
               <Link href="/weed-dispensary-toronto">
                 Native Medicine Garden Weed Dispensary in Toronto
               </Link>

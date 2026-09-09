@@ -20,6 +20,9 @@ type WebPageSchemaMarkup = {
   name: string;
   url: string;
   description: string;
+  isPartOf: {
+    "@id": string;
+  };
   about: {
     "@id": string;
   };
@@ -41,6 +44,9 @@ export function GBPLandingPage() {
     "name": gbpLocation.seoTitle,
     "url": canonicalUrl,
     "description": gbpLocation.metaDescription,
+    "isPartOf": {
+      "@id": `https://${gbpLocation.domain}/#website`
+    },
     "about": {
       "@id": `https://${gbpLocation.domain}/#store`
     }
