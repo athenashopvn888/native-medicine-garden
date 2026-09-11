@@ -7,7 +7,10 @@ import { allFlowers, TIER_CONFIG, type FlowerProduct, type PricePoint } from "..
 import { getStrainData } from "../../lib/strainData";
 import RelatedScroll from "./RelatedScroll";
 import Magnifier from "../../components/Magnifier";
+import { getNmgFlowerDetail } from "../../lib/nmgSmartMenuService";
 import styles from "./flower.module.css";
+
+export const dynamic = "force-dynamic";
 
 /* -- Pre-generate all flower pages -- */
 export function generateStaticParams() {
@@ -21,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const flower = allFlowers.find((f) => f.slug === slug);
+  const { flower } = await getNmgFlowerDetail(slug);
   if (!flower) return {};
 
   const tierName = TIER_CONFIG[flower.tier]?.name || flower.tier;
@@ -58,7 +61,7 @@ function getJsonLd(flower: FlowerProduct) {
 
   const strainData = getStrainData(flower.name, flower.type, flower.tier, flower.thc);
 
-  const offers: any = {
+  const offers: Record<string, unknown> = {
     "@type": "Offer",
     url: `https://www.nativemedicinecannabis.com/flower/${flower.slug}`,
     priceCurrency: "CAD",
@@ -128,7 +131,7 @@ export default async function FlowerPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const flower = allFlowers.find((f) => f.slug === slug);
+  const { flower, relatedPool } = await getNmgFlowerDetail(slug);
   if (!flower) notFound();
 
   const tierConfig = TIER_CONFIG[flower.tier];
@@ -159,7 +162,7 @@ export default async function FlowerPage({
   const bestValue = perGram[0];
 
   // Related strains from same tier
-  const related = allFlowers
+  const related = relatedPool
     .filter((f) => f.tier === flower.tier && f.slug !== flower.slug);
 
   return (

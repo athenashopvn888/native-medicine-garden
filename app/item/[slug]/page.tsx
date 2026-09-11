@@ -7,7 +7,10 @@ import { allItems, CATEGORY_CONFIG, type ItemProduct } from "../../lib/products"
 import { getItemData } from "../../lib/itemData";
 import { getItemPriceDisplay } from "../../lib/itemPricing";
 import Magnifier from "../../components/Magnifier";
+import { getNmgItemDetail } from "../../lib/nmgSmartMenuService";
 import styles from "../../flower/[slug]/flower.module.css";
+
+export const dynamic = "force-dynamic";
 
 /* -- Pre-generate all item pages -- */
 export function generateStaticParams() {
@@ -21,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const item = allItems.find((i) => i.slug === slug);
+  const item = await getNmgItemDetail(slug);
   if (!item) return {};
 
   const itemData = getItemData(item.category, item.name);
@@ -53,7 +56,7 @@ function getJsonLd(item: ItemProduct) {
   const itemData = getItemData(item.category, item.name);
   const priceNum = item.price ? parseFloat(item.price.replace('$', '')) : 0;
 
-  const offers: any = {
+  const offers: Record<string, unknown> = {
     "@type": "Offer",
     url: `https://www.nativemedicinecannabis.com/item/${item.slug}`,
     priceCurrency: "CAD",
@@ -118,7 +121,7 @@ export default async function ItemPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = allItems.find((i) => i.slug === slug);
+  const item = await getNmgItemDetail(slug);
   if (!item) notFound();
 
   const catInfo = Object.values(CATEGORY_CONFIG).find(c => c.name.toUpperCase() === item.category.toUpperCase() || c.name === item.category);

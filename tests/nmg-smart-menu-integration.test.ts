@@ -61,3 +61,28 @@ test("standalone Apps Script and ADC are absent from the implementation diff sur
   assert.match(service, /store=NMG01/);
   assert.doesNotMatch(service, /ADC|doPost|SpreadsheetApp|GmailApp/);
 });
+
+test("tier and category pages use the complete shared live menu directly", () => {
+  const service = read("../app/lib/nmgSmartMenuService.ts");
+  const tier = read("../app/[tier]/page.tsx");
+  const category = read("../app/items/[category]/page.tsx");
+  const flowerDetail = read("../app/flower/[slug]/page.tsx");
+  const itemDetail = read("../app/item/[slug]/page.tsx");
+  assert.match(service, /getNmgCompleteMenuProducts/);
+  assert.match(service, /lockedProducts/);
+  assert.match(service, /regularProducts/);
+  assert.match(tier, /getNmgCompleteMenuProducts/);
+  assert.match(category, /getNmgCompleteMenuProducts/);
+  assert.doesNotMatch(tier, /getFlowersByTier/);
+  assert.doesNotMatch(category, /getItemsByCategory/);
+  assert.doesNotMatch(tier, /fetch\(["'`]\/api\/tv-data/);
+  assert.doesNotMatch(category, /fetch\(["'`]\/api\/tv-data/);
+  assert.match(tier, /data-inventory-version/);
+  assert.match(category, /data-inventory-version/);
+  assert.match(service, /getNmgFlowerDetail/);
+  assert.match(service, /getNmgItemDetail/);
+  assert.match(flowerDetail, /getNmgFlowerDetail/);
+  assert.match(itemDetail, /getNmgItemDetail/);
+  assert.match(service, /allFlowers\.find/);
+  assert.match(service, /allItems\.find/);
+});
