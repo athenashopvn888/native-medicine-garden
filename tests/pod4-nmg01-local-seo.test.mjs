@@ -59,7 +59,7 @@ test("legacy .ca hosts permanently redirect to www.nativemedicinecannabis.com", 
   assert.match(config, /nativemedicinegarden\.ca/);
   assert.match(config, /www\.nativemedicinegarden\.ca/);
   assert.match(config, /destination: "https:\/\/www\.nativemedicinecannabis\.com\/:path\*"/);
-  assert.match(config, /permanent: true/);
+  assert.match(config, /statusCode: 301/);
   assert.match(proxy, /nativemedicinegarden\.ca/);
   assert.match(proxy, /NextResponse\.redirect\([^\n]+, 301\)/);
 });

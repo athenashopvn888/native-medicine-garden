@@ -8,7 +8,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FlowerCard from "./components/FlowerCard";
 import SmokePilotSpotlight from "./components/SmokePilotSpotlight";
-import { allFlowers } from "./lib/products";
+import { allFlowers, type FlowerProduct } from "./lib/products";
 import {
   ADDRESS_LINE,
   DIRECTIONS_URL,
@@ -90,7 +90,7 @@ interface ReviewStats {
 }
 
 export default function HomePageClient() {
-  const [featuredStrains, setFeaturedStrains] = useState<any[]>([]);
+  const [featuredStrains, setFeaturedStrains] = useState<FlowerProduct[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsStats, setReviewsStats] = useState<ReviewStats | null>(null);
   const [reviewsLoading, setReviewsLoading] = useState(true);
@@ -150,27 +150,28 @@ export default function HomePageClient() {
       });
   }, []);
 
-  /* -- 2. Build Featured Strains -- */
+  /* Featured strains after mount so SSR HTML stays stable. */
   useEffect(() => {
     const pool = [...allFlowers].filter((f) => f.image);
-    // Shuffle pool securely
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
 
-    const picked: typeof pool = [];
+    const picked: FlowerProduct[] = [];
     const tierCounts: Record<string, number> = {};
 
     for (const f of pool) {
       if (picked.length >= 8) break;
       const tc = tierCounts[f.tier] || 0;
-      if (tc >= 2) continue; // max 2 per tier
-      if (picked.some((p) => p.name === f.name)) continue; // avoid exact duplicates
+      if (tc >= 2) continue;
+      if (picked.some((p) => p.name === f.name)) continue;
       picked.push(f);
       tierCounts[f.tier] = tc + 1;
     }
 
+    // Featured sample is mount-only; empty initial state avoids SSR mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFeaturedStrains(picked);
   }, []);
 

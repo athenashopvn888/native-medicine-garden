@@ -22,7 +22,9 @@ import styles from "./visit.module.css";
 const canonical = `${PRIMARY_ORIGIN}/visit`;
 
 export const metadata: Metadata = {
-  title: "Visit Native Medicine Garden | Gerrard & Bay Walk-In",
+  title: {
+    absolute: "Visit Native Medicine Garden | Gerrard & Bay Walk-In",
+  },
   description:
     "How to reach Native Medicine Garden at 76 Gerrard St W, Toronto — Gerrard & Bay walk-in near College–Bay. TTC, parking, hours, and 19+ ID notes.",
   alternates: { canonical },

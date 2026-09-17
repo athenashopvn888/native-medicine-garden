@@ -17,13 +17,13 @@ const nextConfig: NextConfig = {
         source: "/",
         has: [{ type: "host" as const, value: host }],
         destination: "https://www.nativemedicinecannabis.com/",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/:path*",
         has: [{ type: "host" as const, value: host }],
         destination: "https://www.nativemedicinecannabis.com/:path*",
-        permanent: true,
+        statusCode: 301,
       },
     ]);
 
