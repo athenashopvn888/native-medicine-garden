@@ -51,6 +51,7 @@ export default function Footer() {
             <h3 className={styles.colTitle}>Quick Links</h3>
             <nav className={styles.links}>
               <Link href="/">Home</Link>
+              <Link href="/visit">Visit Gerrard &amp; Bay</Link>
               <Link href="/exotic-weed">Exotic Weed</Link>
               <Link href="/premium-weed">Premium Weed</Link>
               <Link href="/aaa-weed">AAA+ Weed</Link>
@@ -68,9 +69,6 @@ export default function Footer() {
                 Native Cigarettes
               </Link>
               <Link href="/info/nicotine-vapes-gerrard-bay">Nicotine Vapes Gerrard & Bay</Link>
-              <Link href="/weed-dispensary-toronto">
-                Native Medicine Garden Weed Dispensary in Toronto
-              </Link>
               <Link href="/contact">Contact Us</Link>
               <Link href="/weed-resources">Weed Resources</Link>
             </nav>

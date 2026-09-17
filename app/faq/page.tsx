@@ -4,9 +4,9 @@ import Footer from "../components/Footer";
 import styles from "./faq.module.css";
 
 export const metadata: Metadata = {
-  title: "FAQ Native Medicine Garden | Toronto Dispensary Questions",
+  title: "FAQ Native Medicine Garden | Gerrard & Bay",
   description:
-    "Frequently asked questions about Native Medicine Garden at 76 Gerrard St W, Toronto, ON M5G 1J5. Hours, location, products, category browsing, and visit planning.",
+    "Frequently asked questions about Native Medicine Garden at 76 Gerrard St W, Gerrard and Bay, downtown Toronto. Hours, location, products, and visit planning.",
   alternates: {
     canonical: "https://www.nativemedicinecannabis.com/faq",
   },
