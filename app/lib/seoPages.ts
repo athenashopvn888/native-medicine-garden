@@ -25,8 +25,8 @@ export const SEO_PAGES: SeoPageData[] = [
     sections: [
       {
         heading:
-          "A Local Cannabis Stop Near Gerrard Street West and Bay Street",
-        body: "Native Medicine Garden is at 76 Gerrard St W, close to Bay Street, Yonge Street, College Park, Toronto Metropolitan University and University Avenue.",
+          "A Walk-In Stop On Gerrard Street West At Bay Street",
+        body: "Native Medicine Garden is at 76 Gerrard St W, a downtown walk-in on Gerrard Street West at Bay Street. College–Bay, College Station, Dundas Station, College Park, Toronto Metropolitan University and University Avenue are the useful local pins — not a city-wide delivery landing.",
       },
       {
         heading: "Flower Tiers And Category Choices",
@@ -206,7 +206,7 @@ export const SEO_PAGES: SeoPageData[] = [
     faqs: [
       {
         q: "Where is the closest local page for this store?",
-        a: "Start with our Toronto store page for location, hours, directions, and helpful visit information.",
+        a: "Start with the homepage visit hub for location, hours, directions, and phone, or the /visit guide for TTC and parking.",
       },
       {
         q: "Is walk-in shopping supported?",

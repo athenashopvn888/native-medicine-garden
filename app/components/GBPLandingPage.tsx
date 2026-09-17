@@ -62,9 +62,17 @@ export function GBPLandingPage() {
 
       {/* Hero Header */}
       <header className={styles.hero}>
-        <h1 className={styles.h1}>{gbpLocation.storeName} — Weed Dispensary in {gbpLocation.city}</h1>
-        <p className={styles.heroTagline}>Serving {gbpLocation.city} & Nearby Neighborhoods</p>
+        <h1 className={styles.h1}>{gbpLocation.storeName} — Gerrard &amp; Bay walk-in</h1>
+        <p className={styles.heroTagline}>Downtown walk-in at 76 Gerrard St W near College–Bay</p>
       </header>
+
+      <p className={styles.introText} style={{ marginBottom: "24px" }}>
+        Address, listed hours, phone, and directions live on the{" "}
+        <Link href="/">Native Medicine Garden homepage</Link>
+        . How to walk, ride TTC, and park is on the{" "}
+        <Link href="/visit">Gerrard &amp; Bay visit guide</Link>
+        . This page is not the Google Business Profile website target.
+      </p>
 
       {/* Call to Actions */}
       <div className={styles.btnRow}>
@@ -103,7 +111,7 @@ export function GBPLandingPage() {
       <section className={styles.section}>
         <h2 className={styles.h2}>Plan a Visit to {gbpLocation.storeName}</h2>
         <p className={styles.infoText}>
-          Use this page to confirm the basics before visiting {gbpLocation.storeName} near {gbpLocation.neighborhood}. The store page brings together the address, phone number, menu links, nearby-area context, and adult 19+ shopping notes for customers comparing cannabis stores around {gbpLocation.city}.
+          Use this page to confirm the basics before visiting {gbpLocation.storeName} near {gbpLocation.neighborhood}. Address, hours, and directions stay on the homepage; this URL is a supporting remnant for older city searches.
         </p>
         <p className={styles.infoBlock}>
           Helpful local reference points include {landmarkList}. Customers also use this page when planning from {nearbyAreaList}.
@@ -116,7 +124,7 @@ export function GBPLandingPage() {
 
       {/* Location & NAP Section */}
       <section className={styles.section}>
-        <h2 className={styles.h2}>Visit {gbpLocation.storeName} in {gbpLocation.city}</h2>
+        <h2 className={styles.h2}>Visit {gbpLocation.storeName} at Gerrard &amp; Bay</h2>
         <div className={styles.napGrid}>
           <div className={styles.napDetails}>
             <div className={styles.napItem}>
@@ -218,6 +226,7 @@ export function GBPLandingPage() {
         </p>
         <div className={styles.productGrid}>
           <Link href="/resources/downtown-bay-street-weed-visit-guide" className={styles.productCard}>Downtown Visit Guide</Link>
+          <Link href="/visit" className={styles.productCard}>How to Reach Gerrard &amp; Bay</Link>
           <Link href="/resources/cannabis-101" className={styles.productCard}>Cannabis 101</Link>
           <Link href="/resources/weed-flower-guide" className={styles.productCard}>Weed &amp; Flower Quality Guide</Link>
           <Link href="/weed-resources" className={styles.productCard}>Weed &amp; Cannabis Resources</Link>

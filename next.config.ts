@@ -11,7 +11,24 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
+    const caHosts = ["nativemedicinegarden.ca", "www.nativemedicinegarden.ca"] as const;
+    const caToCom = caHosts.flatMap((host) => [
+      {
+        source: "/",
+        has: [{ type: "host" as const, value: host }],
+        destination: "https://www.nativemedicinecannabis.com/",
+        statusCode: 301,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host" as const, value: host }],
+        destination: "https://www.nativemedicinecannabis.com/:path*",
+        statusCode: 301,
+      },
+    ]);
+
     return [
+      ...caToCom,
       { source: "/exotic", destination: "/exotic-weed", permanent: true },
       { source: "/premium", destination: "/premium-weed", permanent: true },
       { source: "/aaa", destination: "/aaa-weed", permanent: true },
@@ -25,12 +42,14 @@ const nextConfig: NextConfig = {
       { source: "/resources/downtown-bay-street-visit-guide", destination: "/resources/downtown-bay-street-weed-visit-guide", permanent: true },
       {
         source: "/info/york-weed-dispensary",
-        destination: "/weed-dispensary-toronto",
+        destination: "/",
         permanent: true,
       },
-      { source: "/info/gerrard-bay-weed-dispensary", destination: "/weed-dispensary-toronto", permanent: true },
-      { source: "/info/weed-store-near-downtown-toronto", destination: "/weed-dispensary-toronto", permanent: true },
-      { source: "/info/dispensary-near-me-gerrard-bay", destination: "/weed-dispensary-toronto", permanent: true },
+      { source: "/info/gerrard-bay-weed-dispensary", destination: "/visit", permanent: true },
+      { source: "/info/weed-store-near-downtown-toronto", destination: "/visit", permanent: true },
+      { source: "/info/dispensary-near-me-gerrard-bay", destination: "/visit", permanent: true },
+      { source: "/info/weed-store-near-toronto", destination: "/visit", permanent: true },
+      { source: "/info/weed-store-near-mississauga", destination: "/visit", permanent: true },
       {
         source: "/info/cheap-weed-york",
         destination: "/info/cheap-weed-gerrard-bay",
@@ -42,18 +61,8 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/info/weed-store-near-toronto",
-        destination: "/info/weed-store-near-downtown-toronto",
-        permanent: true,
-      },
-      {
-        source: "/info/weed-store-near-mississauga",
-        destination: "/info/weed-store-near-downtown-toronto",
-        permanent: true,
-      },
-      {
         source: "/info/dispensary-near-me-york",
-        destination: "/info/dispensary-near-me-gerrard-bay",
+        destination: "/visit",
         permanent: true,
       },
       { source: "/blog", destination: "/", permanent: true },

@@ -2,40 +2,44 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import AgeGate from "./components/AgeGate";
+import {
+  cannabisStoreJsonLd,
+  OG_IMAGE_URL,
+  PRIMARY_ORIGIN,
+  STORE_NAME,
+} from "./lib/store";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.nativemedicinecannabis.com"),
+  metadataBase: new URL(PRIMARY_ORIGIN),
   title: {
-    default: "Native Medicine Garden | Toronto Dispensary",
+    default: "Native Medicine Garden | Gerrard & Bay Dispensary",
     template: "%s | Native Medicine Garden",
   },
   description:
-    "Native Medicine Garden is a Toronto cannabis dispensary on Gerrard St W with adult 19+ store info and category browsing for flower, pre-rolls, vapes, edibles, concentrates, and accessories. Open 24 Hours.",
+    "Walk-in cannabis dispensary at 76 Gerrard St W, Gerrard & Bay, downtown Toronto near College–Bay. Flower, pre-rolls, vapes, edibles, concentrates, and accessories. Open 24 Hours. Adults 19+.",
   openGraph: {
     type: "website",
     locale: "en_CA",
-    url: "https://www.nativemedicinecannabis.com",
-    siteName: "Native Medicine Garden",
-    title: "Native Medicine Garden — Premium Toronto Cannabis Dispensary",
+    url: PRIMARY_ORIGIN,
+    siteName: STORE_NAME,
+    title: "Native Medicine Garden | Gerrard & Bay Dispensary",
     description:
-      "Browse flower tiers and menu categories at 76 Gerrard St W. Open 24 Hours.",
+      "Walk-in shop at 76 Gerrard St W, Gerrard and Bay, downtown Toronto near College–Bay. Open 24 Hours.",
     images: [
       {
-        url: "https://www.nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Native Medicine Garden — Native Medicine Garden Toronto",
+        url: OG_IMAGE_URL,
+        width: 2172,
+        height: 724,
+        alt: "Native Medicine Garden — Gerrard and Bay, downtown Toronto",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Native Medicine Garden — Toronto's Uplifting Dispensary",
+    title: "Native Medicine Garden | Gerrard & Bay Dispensary",
     description:
-      "Browse current menu categories. Open 24 Hours at 76 Gerrard St W, Toronto.",
-    images: [
-      "https://www.nativemedicinecannabis.com/wp-content/uploads/2026/04/46Oi5.jpg",
-    ],
+      "Walk-in cannabis at 76 Gerrard St W, Gerrard & Bay, downtown Toronto. Open 24 Hours.",
+    images: [OG_IMAGE_URL],
   },
   robots: {
     index: true,
@@ -49,72 +53,11 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://www.nativemedicinecannabis.com",
+    canonical: PRIMARY_ORIGIN,
   },
   verification: {
     // google: "your-google-verification-code",
   },
-};
-
-/* JSON-LD Structured Data */
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-  {
-  "@type": "Store",
-  "@id": "https://www.nativemedicinecannabis.com/#store",
-  name: "Native Medicine Garden",
-  description:
-    "Cannabis dispensary at 76 Gerrard St W in Toronto, ON. Shop exotic, premium, AAA+, AA, and budget flower tiers plus edibles, prerolls, and vapes. Open 24 Hours.",
-  url: "https://www.nativemedicinecannabis.com",
-  telephone: "+14373744544",
-  image:
-    "https://www.nativemedicinecannabis.com/wp-content/uploads/2026/04/7Clmh.jpg",
-  priceRange: "$3 - $12/g",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "76 Gerrard St W",
-    addressLocality: "Toronto",
-    addressRegion: "ON",
-    postalCode: "M5G 1J5",
-    addressCountry: "CA",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 43.6586,
-    longitude: -79.3854,
-  },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ],
-      opens: "00:00",
-      closes: "23:59",
-    },
-  ],
-  areaServed: {
-    "@type": "City",
-    name: "Toronto",
-  },
-  sameAs: ["https://www.google.com/maps?cid=10755313457698171095"],
-  hasMap: "https://www.google.com/maps?cid=10755313457698171095",
-  },
-  {
-    "@type": "WebSite",
-    "@id": "https://www.nativemedicinecannabis.com/#website",
-    url: "https://www.nativemedicinecannabis.com/",
-    name: "Native Medicine Garden",
-    publisher: { "@id": "https://www.nativemedicinecannabis.com/#store" },
-  },
-  ],
 };
 
 export default function RootLayout({
@@ -126,7 +69,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="geo.region" content="CA-ON" />
-        <meta name="geo.placename" content="Toronto" />
+        <meta name="geo.placename" content="Gerrard and Bay, Toronto" />
         <meta name="geo.position" content="43.6586;-79.3854" />
         <meta name="ICBM" content="43.6586, -79.3854" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -137,7 +80,9 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(cannabisStoreJsonLd).replace(/</g, "\\u003c"),
+          }}
         />
         <script
           async

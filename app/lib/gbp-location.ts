@@ -10,8 +10,8 @@ export const gbpLocation = {
   postalCode: "M5G 1J5",
   phone: "+1 (437) 374-4544",
   phoneIntl: "+14373744544",
-  neighborhood: "Downtown Toronto / Bay Street",
-  nearbyAreas: ["Gerrard St W", "Bay St", "Yonge St", "Eaton Centre", "Dundas Station", "TTC", "College Street"],
+  neighborhood: "Gerrard & Bay",
+  nearbyAreas: ["Gerrard St W", "Bay St", "College–Bay", "College Park", "College Station", "Dundas Station", "University Avenue"],
   products: [
     "Flower",
     "Pre-rolls",
@@ -28,12 +28,12 @@ export const gbpLocation = {
   latitude: "43.6586",
   longitude: "-79.3854",
   hours: ["Open 24 Hours"],
-  seoTitle: "Native Medicine Garden | Weed Dispensary in Toronto",
-  metaDescription: "Visit Native Medicine Garden at 76 Gerrard St W in Toronto. Find store hours, directions, contact details, and menu-category links for adults 19+.",
-  localLandmarks: ["Gerrard St W", "Bay St", "Yonge St"],
-  introVariant: "Native Medicine Garden is located at 76 Gerrard St W in downtown Toronto near Bay Street. Adults 19+ can use this page to confirm the store address, phone number, hours, directions, and links to menu categories before visiting.",
-  neighborhoodDescription: "The store is on Gerrard Street West near Bay Street, with Yonge Street and downtown Toronto destinations nearby.",
-  parkingNote: "Check current street signs and nearby garage rules before parking",
+  seoTitle: "Native Medicine Garden | Gerrard & Bay Walk-In",
+  metaDescription: "Native Medicine Garden is a downtown walk-in at 76 Gerrard St W, Gerrard & Bay near College–Bay. Address, hours, and directions live on the homepage.",
+  localLandmarks: ["Gerrard & Bay", "College Park", "College Station"],
+  introVariant: "Native Medicine Garden is the walk-in cannabis shop at 76 Gerrard St W, on Gerrard Street West at Bay Street. This city URL is a supporting remnant — the homepage is the visit hub for address, hours, phone, and directions, and /visit covers how to reach Gerrard & Bay.",
+  neighborhoodDescription: "The store is on Gerrard Street West at Bay Street, a short walk from College–Bay, College Station, and Dundas Station.",
+  parkingNote: "Free evening street parking is available; check current street signs and nearby garage rules before parking",
   transitNote: "College and Dundas subway stations connect to nearby TTC routes",
-  sectionTitle: "Serving Customers Near Downtown Toronto"
+  sectionTitle: "Gerrard & Bay downtown walk-in"
 };
