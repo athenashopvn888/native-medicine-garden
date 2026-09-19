@@ -8,7 +8,7 @@ const separator = endpoint.includes("?") ? "&" : "?";
 const base = `${endpoint}${separator}store=NMG01`;
 
 async function readJson(url) {
-  const response = await fetch(url, { signal: AbortSignal.timeout(30_000) });
+  const response = await fetch(url, { signal: AbortSignal.timeout(120_000) });
   if (!response.ok) throw new Error(`NMG inventory endpoint returned HTTP ${response.status}.`);
   return response.json();
 }
