@@ -11,9 +11,9 @@ test("live NMG email inventory and catalog pass the prepublish audit", { skip: !
   assert.ok(endpoint, "APPS_SCRIPT_URL is required for the live integration test");
   const separator = endpoint.includes("?") ? "&" : "?";
   const base = `${endpoint}${separator}store=NMG01`;
-  const stockResponse = await fetch(`${base}&stock=1`, { signal: AbortSignal.timeout(30_000) });
-  const catalogResponse = await fetch(`${base}&catalog=1`, { signal: AbortSignal.timeout(30_000) });
-  const liveMenuResponse = await fetch(base, { signal: AbortSignal.timeout(30_000) });
+  const stockResponse = await fetch(`${base}&stock=1`, { signal: AbortSignal.timeout(120_000) });
+  const catalogResponse = await fetch(`${base}&catalog=1`, { signal: AbortSignal.timeout(120_000) });
+  const liveMenuResponse = await fetch(base, { signal: AbortSignal.timeout(120_000) });
   assert.equal(stockResponse.ok, true);
   assert.equal(catalogResponse.ok, true);
   assert.equal(liveMenuResponse.ok, true);
