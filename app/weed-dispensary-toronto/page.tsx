@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   },
   description: gbpLocation.metaDescription,
   alternates: {
-    canonical: PRIMARY_ORIGIN,
+    canonical: `${PRIMARY_ORIGIN}/weed-dispensary-toronto`,
   },
   openGraph: {
     type: "website",
@@ -35,10 +35,10 @@ export const metadata: Metadata = {
     images: [OG_IMAGE_URL],
   },
   robots: {
-    index: false,
+    index: true,
     follow: true,
     googleBot: {
-      index: false,
+      index: true,
       follow: true,
     },
   },
