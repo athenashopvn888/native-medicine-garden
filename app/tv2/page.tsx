@@ -4,7 +4,6 @@ import {
   useEffect,
   useCallback,
   useLayoutEffect,
-  useMemo,
   useRef,
 } from "react";
 import styles from "./tv2.module.css";
@@ -14,14 +13,10 @@ import { tvHiring } from "../lib/tvHiring";
 import { formatBoardTime, readStockUpdatedAt } from "../lib/tvStockTime";
 import {
   type Tv2DaytimePromo,
-  getNextTv2PromoIndex,
   getTv2DaytimePromo,
-  getTv2PromoRotationUrls,
+  isCigaretteOfferVisible,
   isTv2Daytime,
 } from "./tv2Promos";
-import {
-  TV2_PROMO_INTERVAL_MS,
-} from "./tv2Timing";
 
 /* -- TYPES -- */
 interface Item {
@@ -45,8 +40,8 @@ const fmtTHC = (v?:string) => { const s=String(v||"").trim(); if(!s)return""; if
 const fmtMG = (v?:string) => { const s=String(v||"").trim(); if(!s)return""; if(/^\d+(\.\d+)?$/.test(s))return s+"mg"; return s; };
 
 /* -- ITEM CARD -- */
-function ItemCard({ title, accent, items, hiIdx, preset }: {
-  title:string; accent:string; items:Item[]; hiIdx:number; preset:string;
+function ItemCard({ title, accent, items, hiIdx, preset, offerOverlay = false }: {
+  title:string; accent:string; items:Item[]; hiIdx:number; preset:string; offerOverlay?:boolean;
 }) {
   const MAX = 10;
   const hiW = Math.min(hiIdx % Math.max(1, items.length), items.length - 1);
@@ -147,6 +142,14 @@ function ItemCard({ title, accent, items, hiIdx, preset }: {
           </div>
         </div>
       </div>
+      {offerOverlay && (
+        <div className={styles.timedPromoOverlay} aria-label="Mix and Match 2 Pack $5 Cigarette Offer">
+          <img
+            src="/banners/2pack5cig.webp"
+            alt="Mix and Match 2 Pack $5 Cigarette Offer"
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -160,22 +163,6 @@ function PromoCard({
   accent: string;
   promo: Tv2DaytimePromo;
 }) {
-  const imageUrls = useMemo(() => getTv2PromoRotationUrls(promo), [promo]);
-  const [activeImage, setActiveImage] = useState(0);
-
-  useEffect(() => {
-    if (imageUrls.length <= 1) return;
-    const interval = window.setInterval(() => {
-      setActiveImage((current) =>
-        getNextTv2PromoIndex(current, imageUrls.length),
-      );
-    }, TV2_PROMO_INTERVAL_MS);
-    return () => window.clearInterval(interval);
-  }, [imageUrls]);
-
-  const src = imageUrls[activeImage] || promo.fallbackSrc;
-  if (!src) return null;
-
   return (
     <div
       className={styles.card}
@@ -186,17 +173,18 @@ function PromoCard({
       <div className={styles.promoMain}>
         <div className={styles.promoViewport}>
           <img
-            key={src}
-            className={[styles.promoImg, styles.promoActive].join(" ")}
-            src={src}
+            className={`${styles.promoImg} ${styles.promoActive}`}
+            src={promo.src}
             alt={promo.alt}
             referrerPolicy="no-referrer"
             onError={(event) => {
+              const target = event.currentTarget;
               if (
                 promo.fallbackSrc &&
-                event.currentTarget.getAttribute("src") !== promo.fallbackSrc
+                target.dataset.fallbackApplied !== "true"
               ) {
-                event.currentTarget.src = promo.fallbackSrc;
+                target.dataset.fallbackApplied = "true";
+                target.src = promo.fallbackSrc;
               }
             }}
           />
@@ -225,10 +213,24 @@ export default function TV2Page() {
   const [lastUpdate, setLastUpdate] = useState("");
   const [stockUpdated, setStockUpdated] = useState<string | null>(null);
   const [daytime, setDaytime] = useState(() => isTv2Daytime());
+  const [cigaretteOfferVisible, setCigaretteOfferVisible] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const iv = setInterval(() => setDaytime(isTv2Daytime()), 60_000);
+    const sync = () => setDaytime(isTv2Daytime());
+    sync();
+    const iv = setInterval(sync, 60_000);
+    return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => {
+    const startedAt = performance.now();
+    const updateOffer = () => {
+      setCigaretteOfferVisible(
+        isCigaretteOfferVisible(isTv2Daytime(), performance.now() - startedAt),
+      );
+    };
+    const iv = setInterval(updateOffer, 250);
     return () => clearInterval(iv);
   }, []);
 
@@ -352,7 +354,8 @@ export default function TV2Page() {
 
               return (
                 <ItemCard key={card.id} title={card.title} accent={card.accent}
-                  items={filtered} hiIdx={highlights[card.id]||0} preset={card.preset} />
+                  items={filtered} hiIdx={highlights[card.id]||0} preset={card.preset}
+                  offerOverlay={card.id === "CIGARETTES" && cigaretteOfferVisible} />
               );
             })}
           </div>
