@@ -2,9 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  getNextTv2PromoIndex,
   getTv2DaytimePromo,
-  getTv2PromoRotationUrls,
+  isCigaretteOfferVisible,
   isTv2Daytime,
 } from "../app/tv2/tv2Promos.ts";
 import {
@@ -26,37 +25,36 @@ test("TV2 daytime uses the local device hour from 10:00 through 16:59", () => {
   assert.equal(isTv2Daytime(new Date(2026, 6, 29, 17, 0, 0)), false);
 });
 
-test("daytime promos use existing NMG cigarette and vape assets", () => {
+test("daytime promos match the After Dark vapes and cigarettes creatives", () => {
+  const cigarettes = getTv2DaytimePromo("CIGARETTES", true);
+  assert.equal(cigarettes?.src, "/banners/cig-poster-1.png");
+  assert.equal(cigarettes?.alt, "Cigarettes Promo");
+
+  const vapes = getTv2DaytimePromo("VAPES", true);
   assert.equal(
-    getTv2DaytimePromo("CIGARETTES", true)?.imageUrls[0],
-    "/banners/06_Cigarettes.webp",
+    vapes?.src,
+    "https://pub-eb3e1fe18a43477eabc885cfb791d97c.r2.dev/products/cannabis_banner_mashup_variation_01_600x600.webp",
   );
   assert.equal(
-    getTv2DaytimePromo("VAPES", true)?.imageUrls[0],
-    "/banners/cig-poster-1.png",
+    vapes?.fallbackSrc,
+    "/banners/cannabis_banner_mashup_variation_01_600x600.webp",
   );
+  assert.equal(vapes?.alt, "Ultimate Cannabis Collection Promo");
   assert.equal(getTv2DaytimePromo("VAPES", false), undefined);
+  assert.equal(getTv2DaytimePromo("CIGARETTES", false), undefined);
   assert.equal(getTv2DaytimePromo("EDIBLES", true), undefined);
 });
 
-test("promo rotation advances only configured creatives", () => {
-  const multiple = getTv2PromoRotationUrls({
-    imageUrls: ["/one.webp", "", "/two.webp", "/one.webp"],
-    fallbackSrc: "/fallback.webp",
-    alt: "Test",
-  });
-  assert.deepEqual(multiple, ["/one.webp", "/two.webp"]);
-  assert.equal(getNextTv2PromoIndex(0, multiple.length), 1);
-  assert.equal(getNextTv2PromoIndex(1, multiple.length), 0);
-
-  const single = getTv2PromoRotationUrls({
-    imageUrls: ["/single.webp"],
-    fallbackSrc: "/fallback.webp",
-    alt: "Test",
-  });
-  assert.deepEqual(single, ["/single.webp"]);
-  assert.equal(getNextTv2PromoIndex(0, single.length), 0);
-  assert.doesNotMatch(single.join(" "), /fallback/);
+test("evening cigarette offer covers the last 10 seconds of each 30 second cycle", () => {
+  assert.equal(isCigaretteOfferVisible(true, 25_000), false);
+  assert.equal(isCigaretteOfferVisible(false, 0), false);
+  assert.equal(isCigaretteOfferVisible(false, 19_999), false);
+  assert.equal(isCigaretteOfferVisible(false, 20_000), true);
+  assert.equal(isCigaretteOfferVisible(false, 29_999), true);
+  assert.equal(isCigaretteOfferVisible(false, 30_000), false);
+  assert.equal(isCigaretteOfferVisible(false, 50_000), true);
+  assert.equal(isCigaretteOfferVisible(false, -1), false);
+  assert.equal(isCigaretteOfferVisible(false, Number.NaN), false);
 });
 
 test("NMG TV2 removes only its top banner and retains display bands", () => {
@@ -69,7 +67,18 @@ test("NMG TV2 removes only its top banner and retains display bands", () => {
   assert.match(tv2Page, /data-promo-card=\{cardId\}/);
   assert.doesNotMatch(tv2Page, /Play Games|\/games/i);
   assert.doesNotMatch(tv2Page, /afterdarkcannabis/i);
-  assert.doesNotMatch(tv2Page, /2pack5cig|timedPromoOverlay/);
+});
+
+test("TV2 evening cigarette card uses the 2 Pack $5 overlay outside daytime promos", () => {
+  assert.match(tv2Page, /2pack5cig/);
+  assert.match(tv2Page, /timedPromoOverlay/);
+  assert.match(tv2Page, /isCigaretteOfferVisible/);
+  assert.match(tv2Page, /setInterval\(updateOffer, 250\)/);
+  assert.match(tv2Page, /setInterval\(sync, 60_000\)/);
+  assert.match(tv2Page, /offerOverlay=\{card\.id === "CIGARETTES" && cigaretteOfferVisible\}/);
+  assert.match(tv2Page, /alt="Mix and Match 2 Pack \$5 Cigarette Offer"/);
+  assert.match(tv2Page, /src=\{promo\.src\}/);
+  assert.match(tv2Page, /promo\.fallbackSrc/);
 });
 
 test("NMG TV2 uses the exact approved display timers", () => {
