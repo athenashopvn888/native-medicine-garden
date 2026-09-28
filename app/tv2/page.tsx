@@ -6,15 +6,12 @@ import {
   useLayoutEffect,
   useMemo,
   useRef,
-  useSyncExternalStore,
 } from "react";
 import styles from "./tv2.module.css";
-import { TV_TICKER_SLIDES } from "../tvTicker";
-import {
-  TV2_HIRING_REDUCED_MOTION_MESSAGE,
-  TV2_HIRING_SLIDES,
-  getNextTv2HiringSlide,
-} from "./tv2Hiring";
+import HiringRibbon from "../components/HiringRibbon";
+import TvStoreHeader from "../components/TvStoreHeader";
+import { tvHiring } from "../lib/tvHiring";
+import { formatBoardTime, readStockUpdatedAt } from "../lib/tvStockTime";
 import {
   type Tv2DaytimePromo,
   getNextTv2PromoIndex,
@@ -23,9 +20,7 @@ import {
   isTv2Daytime,
 } from "./tv2Promos";
 import {
-  TV2_HIRING_INTERVAL_MS,
   TV2_PROMO_INTERVAL_MS,
-  TV2_TICKER_INTERVAL_MS,
 } from "./tv2Timing";
 
 /* -- TYPES -- */
@@ -156,86 +151,6 @@ function ItemCard({ title, accent, items, hiIdx, preset }: {
   );
 }
 
-/* -- TICKER -- */
-function VerticalTicker() {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [exitIdx, setExitIdx] = useState(-1);
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setExitIdx(activeIdx);
-      setActiveIdx(prev => (prev + 1) % TV_TICKER_SLIDES.length);
-    }, TV2_TICKER_INTERVAL_MS);
-    return () => clearInterval(iv);
-  }, [activeIdx]);
-
-  return (
-    <div className={styles.ticker}>
-      <div className={styles.tickerInner}>
-        {TV_TICKER_SLIDES.map((text, i) => (
-          <div key={i} className={`${styles.tickerSlide} ${i===activeIdx?styles.tickerActive:""} ${i===exitIdx?styles.tickerExit:""}`}>
-            {text}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
-
-function subscribeToReducedMotion(onChange: () => void) {
-  const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
-  mediaQuery.addEventListener("change", onChange);
-  return () => mediaQuery.removeEventListener("change", onChange);
-}
-
-function getReducedMotionSnapshot() {
-  return window.matchMedia(REDUCED_MOTION_QUERY).matches;
-}
-
-function HiringRibbon() {
-  const [activeSlide, setActiveSlide] = useState(0);
-  const reducedMotion = useSyncExternalStore(
-    subscribeToReducedMotion,
-    getReducedMotionSnapshot,
-    () => false,
-  );
-
-  useEffect(() => {
-    if (reducedMotion) return;
-    const interval = window.setInterval(() => {
-      setActiveSlide((current) => getNextTv2HiringSlide(current));
-    }, TV2_HIRING_INTERVAL_MS);
-    return () => window.clearInterval(interval);
-  }, [reducedMotion]);
-
-  return (
-    <div
-      className={styles.hiringRibbon}
-      data-testid="tv2-hiring-ribbon"
-      aria-label="Native Medicine Garden hiring notice"
-    >
-      {reducedMotion ? (
-        <span className={styles.hiringStatic}>
-          {TV2_HIRING_REDUCED_MOTION_MESSAGE}
-        </span>
-      ) : (
-        TV2_HIRING_SLIDES.map((message, index) => (
-          <span
-            key={message}
-            className={`${styles.hiringMessage} ${
-              index === activeSlide ? styles.hiringMessageActive : ""
-            }`}
-            aria-hidden={index !== activeSlide}
-          >
-            {message}
-          </span>
-        ))
-      )}
-    </div>
-  );
-}
-
 function PromoCard({
   cardId,
   accent,
@@ -308,6 +223,7 @@ export default function TV2Page() {
   const [items, setItems] = useState<Item[]>([]);
   const [highlights, setHighlights] = useState<Record<string,number>>({});
   const [lastUpdate, setLastUpdate] = useState("");
+  const [stockUpdated, setStockUpdated] = useState<string | null>(null);
   const [daytime, setDaytime] = useState(() => isTv2Daytime());
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -320,11 +236,13 @@ export default function TV2Page() {
     try {
       const res = await fetch("/api/tv-data?type=items");
       const data: Item[] = res.ok ? await res.json() : [];
+      if (!Array.isArray(data)) throw new Error("Item stock payload is invalid");
       setItems(data);
+      setStockUpdated(readStockUpdatedAt(res, data));
       const hi: Record<string,number> = {};
       CARD_CONFIG.forEach(c => { hi[c.id] = 0; });
       setHighlights(hi);
-      setLastUpdate(new Date().toLocaleTimeString());
+      setLastUpdate(formatBoardTime(new Date()) || "");
     } catch (err) { console.warn("[TV2] Load failed:", err); }
   }, []);
 
@@ -411,10 +329,11 @@ export default function TV2Page() {
   return (
     <div className={styles.tvPage} style={bgUrl ? { backgroundImage: `url(${bgUrl})`, backgroundSize: "cover" } : undefined}>
       <div className={styles.wrap} ref={wrapRef}>
-        <HiringRibbon />
+        <TvStoreHeader eyebrow="Secondary Menu Board" stockUpdated={stockUpdated} />
 
         {/* GRID */}
         <div className={styles.stage}>
+          <HiringRibbon hiring={tvHiring} />
           <div className={styles.grid}>
             {CARD_CONFIG.map(card => {
               const filtered = items.filter(card.filter);
@@ -438,9 +357,8 @@ export default function TV2Page() {
             })}
           </div>
         </div>
-        <VerticalTicker />
       </div>
-      <div className={styles.lastUpdated}>Updated: {lastUpdate}</div>
+      {lastUpdate ? <div className={styles.lastUpdated}>Refreshed {lastUpdate}</div> : null}
     </div>
   );
 }

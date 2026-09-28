@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./tv.module.css";
-import { TV_TICKER_INTERVAL_MS, TV_TICKER_SLIDES } from "../tvTicker";
+import HiringRibbon from "../components/HiringRibbon";
+import TvStoreHeader from "../components/TvStoreHeader";
 import { TV_BUNDLE_LABELS } from "./tvPricing";
 import { getFlowerEffects } from "./flowerEffects";
-import { NMG_REGULAR_WINDOW_MS, regularWindowBucket, selectRegularWindow } from "../lib/nmgSmartMenuWindow.ts";
+import { tvHiring } from "../lib/tvHiring";
+import { formatBoardTime, readStockUpdatedAt } from "../lib/tvStockTime";
 
 /* -- Types -- */
 interface PricePoint { regular: number; sale: number | null; }
@@ -15,11 +17,6 @@ interface Flower {
   price3g: PricePoint|null; price5g: PricePoint|null;
   price14g: PricePoint|null; price28g: PricePoint|null;
   image: string; promoImage?: string|null;
-}
-interface SmartTierData { lockedProducts: Flower[]; regularProducts: Flower[]; regularCapacity: number; }
-interface SmartLineupResponse {
-  kind: "nmg-smart-lineup";
-  lineup: { version: string; sourceTimestamp: string; tiers: Record<string,SmartTierData> };
 }
 interface Item {
   sku: string; name: string; category: string; type: string;
@@ -108,12 +105,84 @@ function cleanName(name: string): string {
     .trim();
 }
 
-/* The server locks SALE > TOP PICK > MUST TRY and supplies a deterministic regular cycle. */
+/* ============================================================
+   SLOT RESERVATION SYSTEM
+   Each tier shows max 10 rows at a time with reserved slots:
+   SALE (max 2) → TOP PICK (max 1) → MUST TRY (max 1) → SATIVA (max 3) → INDICA (fills rest)
+   Products rotate through their bucket windows over time.
+   ============================================================ */
 const MAX_VIS = 10;
+const CAP_SALE = 2;
+const CAP_TOP  = 1;
+const CAP_MUST = 1;
+const CAP_SAT  = 3;
+const CAP_IND  = 3;
 
 function buildSlotWindow(flowers: Flower[], hiIdx: number): { vis: Flower[]; hiW: number; hi: Flower | undefined } {
   if (!flowers.length) return { vis: [], hiW: 0, hi: undefined };
-  const vis = flowers.slice(0, MAX_VIS);
+
+  const saleAll: Flower[] = [];
+  const topAll: Flower[] = [];
+  const mustAll: Flower[] = [];
+  const satAll: Flower[] = [];
+  const indAll: Flower[] = [];
+
+  for (const f of flowers) {
+    if (f.isSale) { saleAll.push(f); continue; }
+    if (f.isHot) { topAll.push(f); continue; }
+    if (f.isMustTry) { mustAll.push(f); continue; }
+    if (f.type === "sativa") satAll.push(f);
+    else indAll.push(f);
+  }
+
+  const topWin = topAll.slice(0, CAP_TOP);
+  for (const r of topAll.slice(CAP_TOP)) {
+    (r.type === "sativa" ? satAll : indAll).push(r);
+  }
+  const mustWin = mustAll.slice(0, CAP_MUST);
+  for (const r of mustAll.slice(CAP_MUST)) {
+    (r.type === "sativa" ? satAll : indAll).push(r);
+  }
+
+  const cycle = Math.floor(hiIdx / MAX_VIS);
+
+  const saleOff = saleAll.length > CAP_SALE
+    ? (cycle * CAP_SALE) % saleAll.length
+    : 0;
+  const saleWin: Flower[] = [];
+  const saleOverflow: Flower[] = [];
+  for (let i = 0; i < saleAll.length; i++) {
+    const inWindow = saleAll.length <= CAP_SALE ||
+      (i >= saleOff && i < saleOff + CAP_SALE) ||
+      (saleOff + CAP_SALE > saleAll.length && i < (saleOff + CAP_SALE) % saleAll.length);
+    if (inWindow && saleWin.length < CAP_SALE) {
+      saleWin.push(saleAll[i]);
+    } else {
+      saleOverflow.push(saleAll[i]);
+    }
+  }
+  for (const r of saleOverflow) {
+    (r.type === "sativa" ? satAll : indAll).push(r);
+  }
+
+  const satOff = satAll.length > CAP_SAT
+    ? (cycle * CAP_SAT) % satAll.length
+    : 0;
+  const satWin = satAll.length > CAP_SAT
+    ? Array.from({length: CAP_SAT}, (_, i) => satAll[(satOff + i) % satAll.length])
+    : satAll.slice(0, CAP_SAT);
+
+  const used = saleWin.length + topWin.length + mustWin.length + satWin.length;
+  const remaining = Math.max(0, MAX_VIS - used);
+  const indCap = Math.max(CAP_IND, remaining);
+  const indOff = indAll.length > indCap
+    ? (cycle * indCap) % indAll.length
+    : 0;
+  const indWin = indAll.length > indCap
+    ? Array.from({length: indCap}, (_, i) => indAll[(indOff + i) % indAll.length])
+    : indAll.slice(0, indCap);
+
+  const vis = [...saleWin, ...topWin, ...mustWin, ...satWin, ...indWin].slice(0, MAX_VIS);
   const hiW = vis.length ? hiIdx % vis.length : 0;
   const hi = vis[hiW] || flowers[0];
 
@@ -585,34 +654,6 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
 }
 
 /* ============================================================
-   VERTICAL TICKER
-   ============================================================ */
-function VerticalTicker() {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [exitIdx, setExitIdx] = useState(-1);
-
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setExitIdx(activeIdx);
-      setActiveIdx(prev => (prev + 1) % TV_TICKER_SLIDES.length);
-    }, TV_TICKER_INTERVAL_MS);
-    return () => clearInterval(iv);
-  }, [activeIdx]);
-
-  return (
-    <div className={styles.ticker}>
-      <div className={styles.tickerInner}>
-        {TV_TICKER_SLIDES.map((text, i) => (
-          <div key={i} className={`${styles.tickerSlide} ${i === activeIdx ? styles.tickerActive : ""} ${i === exitIdx ? styles.tickerExit : ""}`}>
-            {text}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
    MAIN TV PAGE
    ============================================================ */
 export default function TVMenuPage() {
@@ -628,23 +669,14 @@ export default function TVMenuPage() {
       })
       .catch(err => console.warn("[BG] Load failed:", err));
   }, []);
-  const [tierLineups, setTierLineups] = useState<Record<string,SmartTierData>>({});
-  const [regularBucket, setRegularBucket] = useState(() => regularWindowBucket(Date.now()));
+  const [flowers, setFlowers] = useState<Record<string,Flower[]>>({});
+  const [ozFlowers, setOzFlowers] = useState<Flower[]>([]);
   const [addOns, setAddOns] = useState<Item[]>([]);
   const [highlights, setHighlights] = useState<Record<string,number>>({});
   const [lastUpdate, setLastUpdate] = useState("");
+  const [stockUpdated, setStockUpdated] = useState<string | null>(null);
   const [particles, setParticles] = useState<Array<{size:number;left:string;color:string;shadow:string;dur:string;delay:string}>>([]);
   const wrapRef = useRef<HTMLDivElement>(null);
-
-  const flowers = useMemo(() => Object.fromEntries(SMART_TIERS.map((tier) => {
-    const lineup = tierLineups[tier];
-    if (!lineup) return [tier, []];
-    const regular = selectRegularWindow(lineup.regularProducts, lineup.regularCapacity, regularBucket).products;
-    return [tier, [...lineup.lockedProducts, ...regular]];
-  })) as Record<string,Flower[]>, [tierLineups, regularBucket]);
-  const ozFlowers = useMemo(() => SMART_TIERS.flatMap((tier) => flowers[tier]).filter((flower, index, values) =>
-    Boolean(flower.price28g) && values.findIndex((candidate) => candidate.sku === flower.sku) === index,
-  ), [flowers]);
 
   const loadData = useCallback(async () => {
     try {
@@ -652,35 +684,42 @@ export default function TVMenuPage() {
         fetch("/api/tv-data?type=flowers"),
         fetch("/api/tv-data?type=items"),
       ]);
-      if (!fRes.ok) throw new Error(`Smart flower lineup HTTP ${fRes.status}`);
-      const smartData = await fRes.json() as SmartLineupResponse;
-      if (smartData.kind !== "nmg-smart-lineup" || !smartData.lineup?.tiers) throw new Error("Smart flower lineup is invalid");
+      const fData: Flower[] = fRes.ok ? await fRes.json() : [];
       const iData: Item[] = iRes.ok ? await iRes.json() : [];
-      const lineups: Record<string,SmartTierData> = {};
-      for (const tier of SMART_TIERS) {
-        const source = smartData.lineup.tiers[tier];
-        if (!source || !Array.isArray(source.lockedProducts) || !Array.isArray(source.regularProducts)) throw new Error(`Smart ${tier} lineup is invalid`);
-        const cleanProducts = (products: Flower[]) => products.map((flower) => ({
-            ...flower,
-            isSale: flower.isSale || hasSalePrice(flower) || hasNameSale(flower.name),
-            name: cleanName(flower.name),
-          }));
-        lineups[tier] = {
-          lockedProducts: cleanProducts(source.lockedProducts),
-          regularProducts: cleanProducts(source.regularProducts),
-          regularCapacity: source.regularCapacity,
-        };
-      }
-      setTierLineups(lineups);
-      setRegularBucket(regularWindowBucket(Date.now()));
+      if (!Array.isArray(fData)) throw new Error("Flower stock payload is invalid");
+      setStockUpdated(readStockUpdatedAt(fRes, fData) || readStockUpdatedAt(iRes, iData));
 
-      setAddOns(iData.filter(it => it.category === "ADD ONS" || it.category === "PREROLLS").slice(0, 14));
+      for (const flower of fData) {
+        if (!flower.isSale && (hasSalePrice(flower) || hasNameSale(flower.name))) flower.isSale = true;
+        flower.name = cleanName(flower.name);
+      }
+
+      const grouped: Record<string,Flower[]> = {};
+      for (const flower of fData) {
+        const tier = String(flower.tier || "").toUpperCase();
+        if (!grouped[tier]) grouped[tier] = [];
+        grouped[tier].push(flower);
+      }
+
+      const oz: Flower[] = [];
+      const ozSeen = new Set<string>();
+      for (const flower of (grouped["OZ"] || [])) {
+        if (!ozSeen.has(flower.sku)) { oz.push(flower); ozSeen.add(flower.sku); }
+      }
+      for (const tier of SMART_TIERS) {
+        for (const flower of (grouped[tier] || [])) {
+          if (flower.price28g && !ozSeen.has(flower.sku)) { oz.push(flower); ozSeen.add(flower.sku); }
+        }
+      }
+      setOzFlowers(oz);
+      setFlowers(grouped);
+      setAddOns(Array.isArray(iData) ? iData.filter(it => it.category === "ADD ONS" || it.category === "PREROLLS").slice(0, 14) : []);
 
       const hi: Record<string,number> = {};
       for (const t of SMART_TIERS) hi[t] = 0;
       hi["OZ"] = 0; hi["ADDONS"] = 0;
       setHighlights(hi);
-      setLastUpdate(new Date().toLocaleTimeString());
+      setLastUpdate(formatBoardTime(new Date()) || "");
     } catch (err) { console.warn("[TV] Load failed:", err); }
   }, []);
 
@@ -714,13 +753,13 @@ export default function TVMenuPage() {
   }, [loadData, fitToScreen]);
 
   useEffect(() => {
-    if (!Object.keys(tierLineups).length) return;
+    if (!Object.keys(flowers).length) return;
     const interval = setInterval(() => {
       setHighlights(prev => {
         const next = {...prev};
         for (const t of SMART_TIERS) {
             const total = flowers[t]?.length || 1;
-            next[t] = ((prev[t]||0)+1) % total;
+            next[t] = ((prev[t]||0)+1) % Math.max(MAX_VIS, total * MAX_VIS);
           }
         next["OZ"] = ((prev["OZ"]||0)+1) % Math.max(1, ozFlowers.length);
         next["ADDONS"] = ((prev["ADDONS"]||0)+1) % Math.max(1, addOns.length);
@@ -728,32 +767,7 @@ export default function TVMenuPage() {
       });
     }, 5000);
     return () => clearInterval(interval);
-  }, [tierLineups, flowers, ozFlowers.length, addOns.length]);
-
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    const scheduleBoundary = () => {
-      const now = Date.now();
-      const nextBoundary = (regularWindowBucket(now) + 1) * NMG_REGULAR_WINDOW_MS;
-      timer = setTimeout(() => {
-        setRegularBucket(regularWindowBucket(Date.now()));
-        setHighlights((previous) => ({ ...previous, ...Object.fromEntries(SMART_TIERS.map((tier) => [tier, 0])) }));
-        scheduleBoundary();
-      }, Math.max(50, nextBoundary - now + 50));
-    };
-    scheduleBoundary();
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (window.location.hostname !== "127.0.0.1" && window.location.hostname !== "localhost") return;
-    const simulateBoundary = (event: Event) => {
-      const nowMs = Number((event as CustomEvent<number>).detail);
-      if (Number.isFinite(nowMs)) setRegularBucket(regularWindowBucket(nowMs));
-    };
-    window.addEventListener("nmg-smart-menu-qa-time", simulateBoundary);
-    return () => window.removeEventListener("nmg-smart-menu-qa-time", simulateBoundary);
-  }, []);
+  }, [flowers, ozFlowers, addOns]);
 
   const CM: Record<string,{c:string;t:string;b:string}> = {
     EXOTIC:{c:styles.cardExotic,t:styles.tierExotic,b:styles.tierBadgeExotic},
@@ -779,9 +793,11 @@ export default function TVMenuPage() {
         ))}
       </div>
       <div className={styles.wrap} ref={wrapRef}>
+        <TvStoreHeader eyebrow="Flower Menu Board" stockUpdated={stockUpdated} />
 
         {/* GRID */}
         <div className={styles.stage}>
+          <HiringRibbon hiring={tvHiring} />
           <div className={styles.grid}>
             {/* Row 1: EXOTIC, PREMIUM, AAA+ */}
             {SMART_TIERS.slice(0,3).map(tier => (
@@ -798,11 +814,8 @@ export default function TVMenuPage() {
             <OZCard flowers={ozFlowers} hiIdx={highlights["OZ"]||0} />
           </div>
         </div>
-
-        {/* TICKER */}
-        <VerticalTicker />
       </div>
-      <div className={styles.lastUpdated}>Updated: {lastUpdate}</div>
+      {lastUpdate ? <div className={styles.lastUpdated}>Refreshed {lastUpdate}</div> : null}
     </div>
   );
 }
