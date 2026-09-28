@@ -31,7 +31,7 @@ async function fetchJson<T>(url: string): Promise<T> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
-      const response = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(30_000) });
+      const response = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(120_000) });
       if (!response.ok) throw new Error(`NMG inventory endpoint returned HTTP ${response.status}.`);
       return response.json() as Promise<T>;
     } catch (error) {

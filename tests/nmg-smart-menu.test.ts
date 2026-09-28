@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { NMG_SMART_MENU_CONFIG } from "../app/lib/nmgSmartMenuConfig.ts";
 import {
   buildOrRetainSmartLineup,
   buildSmartLineup,
@@ -251,6 +253,19 @@ test("coverage manifest explains item and unknown stock exclusions without publi
   assert.equal(lineup.manifest.unexplainedExcludedSkus.length, 0);
   assert.equal(lineup.manifest.missingSkus.length, 0);
   assert.equal(lineup.manifest.duplicateSkus.length, 0);
+});
+
+test("walk-in sale flowers in flowers.json have explicit saleRanks so lineup cannot fall back to last-good", () => {
+  const flowers = JSON.parse(readFileSync(new URL("../app/lib/flowers.json", import.meta.url), "utf8")) as CatalogFlower[];
+  const missing = flowers.filter((flower) => {
+    const sale = Boolean(flower.isSale || [flower.price3g, flower.price5g, flower.price14g, flower.price28g].some((point) => {
+      if (!point || typeof point !== "object") return false;
+      return (point as { sale?: unknown }).sale !== null && Number.isFinite(Number((point as { sale?: unknown }).sale));
+    }));
+    return sale && !Number.isInteger(NMG_SMART_MENU_CONFIG.saleRanks[String(flower.sku)]);
+  });
+  assert.deepEqual(missing.map((flower) => flower.sku), []);
+  assert.equal(NMG_SMART_MENU_CONFIG.saleRanks["215"], 15);
 });
 
 test("engine is deterministic and contains no random, prediction, scoring, or pricing mutation path", async () => {

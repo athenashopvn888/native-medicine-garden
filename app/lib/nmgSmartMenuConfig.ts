@@ -31,5 +31,6 @@ export const NMG_SMART_MENU_CONFIG: SmartMenuConfig = {
     "550": 12,
     "595": 13,
     "596": 14,
+    "215": 15,
   },
 };
