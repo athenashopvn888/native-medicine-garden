@@ -51,7 +51,7 @@ function fmtTHC(v: string): string {
 /* -- Price cell with strikethrough for sale -- */
 function PriceCell({ pp, color }: { pp: PricePoint|null; color?: string }) {
   if (!pp) return <span>-</span>;
-  if (pp.sale !== null && pp.sale !== pp.regular) {
+  if (pp.sale !== null && pp.sale < pp.regular) {
     return (
       <span>
         <del className={styles.oldPrice}>${pp.regular}</del>
@@ -91,10 +91,9 @@ function VibeCard({ type }: { type: string }) {
 
 /* -- Helpers -- */
 function hasSalePrice(f: Flower): boolean {
-  return !!(f.price3g?.sale || f.price5g?.sale || f.price14g?.sale || f.price28g?.sale);
-}
-function hasNameSale(name: string): boolean {
-  return /\bSALE\b/i.test(name) || /ON\s*SALE/i.test(name);
+  return [f.price3g, f.price5g, f.price14g, f.price28g].some(
+    (price) => price?.sale !== null && price?.sale !== undefined && price.sale < price.regular,
+  );
 }
 function cleanName(name: string): string {
   return name
@@ -118,7 +117,7 @@ const CAP_MUST = 1;
 const CAP_SAT  = 3;
 const CAP_IND  = 3;
 
-function buildSlotWindow(flowers: Flower[], hiIdx: number): { vis: Flower[]; hiW: number; hi: Flower | undefined } {
+function buildSlotWindow(flowers: Flower[], hiIdx: number, preferBundlePrice = false): { vis: Flower[]; hiW: number; hi: Flower | undefined } {
   if (!flowers.length) return { vis: [], hiW: 0, hi: undefined };
 
   const saleAll: Flower[] = [];
@@ -183,7 +182,16 @@ function buildSlotWindow(flowers: Flower[], hiIdx: number): { vis: Flower[]; hiW
     : indAll.slice(0, indCap);
 
   const vis = [...saleWin, ...topWin, ...mustWin, ...satWin, ...indWin].slice(0, MAX_VIS);
-  const hiW = vis.length ? hiIdx % vis.length : 0;
+  const defaultHiW = vis.length ? hiIdx % vis.length : 0;
+  const eligibleHeroIndexes = preferBundlePrice
+    ? vis.reduce<number[]>((indexes, flower, index) => {
+        if (flower.price3g || flower.price5g) indexes.push(index);
+        return indexes;
+      }, [])
+    : [];
+  const hiW = eligibleHeroIndexes.length
+    ? eligibleHeroIndexes[hiIdx % eligibleHeroIndexes.length]
+    : defaultHiW;
   const hi = vis[hiW] || flowers[0];
 
   return { vis, hiW, hi };
@@ -200,7 +208,7 @@ function FlowerCard({
 }) {
   const accent = TIER_ACCENT[tier] || "#2563eb";
 
-  const { vis, hiW, hi } = buildSlotWindow(flowers, hiIdx);
+  const { vis, hiW, hi } = buildSlotWindow(flowers, hiIdx, ["EXOTIC", "PREMIUM", "AAA+"].includes(tier));
 
   const prevRef = useRef<string>("");
   const [fadeImg, setFadeImg] = useState("");
@@ -690,7 +698,7 @@ export default function TVMenuPage() {
       setStockUpdated(readStockUpdatedAt(fRes, fData) || readStockUpdatedAt(iRes, iData));
 
       for (const flower of fData) {
-        if (!flower.isSale && (hasSalePrice(flower) || hasNameSale(flower.name))) flower.isSale = true;
+        flower.isSale = hasSalePrice(flower);
         flower.name = cleanName(flower.name);
       }
 
