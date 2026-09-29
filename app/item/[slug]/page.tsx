@@ -9,6 +9,14 @@ import { getItemPriceDisplay } from "../../lib/itemPricing";
 import Magnifier from "../../components/Magnifier";
 import styles from "../../flower/[slug]/flower.module.css";
 
+const ITEM_METADATA_OVERRIDES: Record<string, { title: string; description: string }> = {
+  "gas-gang-dispo-vape-1g": {
+    title: "Gas Gang Vape 1g | Native Medicine Garden Toronto",
+    description:
+      "Gas Gang disposable vape 1g at Native Medicine Garden, 76 Gerrard St W in downtown Toronto near Gerrard and Bay. Open 24 hours; check the current menu.",
+  },
+};
+
 /* -- Pre-generate all item pages -- */
 export function generateStaticParams() {
   return allItems.map((i) => ({ slug: i.slug }));
@@ -25,10 +33,13 @@ export async function generateMetadata({
   if (!item) return {};
 
   const itemData = getItemData(item.category, item.name);
+  const metadataOverride = ITEM_METADATA_OVERRIDES[slug];
 
   return {
-    title: `${item.name} | ${item.category} | Native Medicine Garden Toronto`,
-    description: itemData.metaDescription,
+    title: metadataOverride
+      ? { absolute: metadataOverride.title }
+      : `${item.name} | ${item.category} | Native Medicine Garden Toronto`,
+    description: metadataOverride?.description ?? itemData.metaDescription,
     alternates: {
       canonical: `https://www.nativemedicinecannabis.com/item/${slug}`,
     },
