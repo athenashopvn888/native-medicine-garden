@@ -9,6 +9,9 @@ const navbarCss = fs.readFileSync("app/components/Navbar.module.css", "utf8");
 
 test("locked Cohort B title and paths", () => {
   assert.equal(HOME_TITLE, "Native Medicine Garden Cannabis Dispensary - Weed Delivery in Gerrard & Bay");
+  assert.equal(HOME_TITLE.match(/Dispensary/g)?.length, 1);
+  assert.match(HOME_TITLE, / - Weed Delivery in /);
+  assert.doesNotMatch(HOME_TITLE, /Cannabis Delivery/);
   assert.equal(HOME_MENU_HREF, "/exotic-weed");
   assert.equal(HOME_DELIVERY_HREF, "/delivery");
   assert.match(home, /\{HOME_TITLE\}/);
