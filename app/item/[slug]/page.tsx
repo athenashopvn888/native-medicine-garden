@@ -10,10 +10,10 @@ import Magnifier from "../../components/Magnifier";
 import styles from "../../flower/[slug]/flower.module.css";
 
 const ITEM_METADATA_OVERRIDES: Record<string, { title: string; description: string }> = {
-  "gas-gang-dispo-vape-1g": {
-    title: "Gas Gang Vape 1g | Native Medicine Garden Toronto",
+  "gas-gang-dispo-thcvape-1g": {
+    title: "Gas Gang Disposable Vape 1g | Native Medicine Garden",
     description:
-      "Gas Gang disposable vape 1g at Native Medicine Garden, 76 Gerrard St W in downtown Toronto near Gerrard and Bay. Open 24 hours; check the current menu.",
+      "Gas Gang disposable vape 1g product details from Native Medicine Garden, 76 Gerrard St W in downtown Toronto near Gerrard and Bay.",
   },
 };
 

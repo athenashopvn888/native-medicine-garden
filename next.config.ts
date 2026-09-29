@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
 
     return [
       ...caToCom,
+      {
+        source: "/item/gas-gang-dispo-vape-1g",
+        destination: "/item/gas-gang-dispo-thcvape-1g",
+        statusCode: 301,
+      },
       { source: "/exotic", destination: "/exotic-weed", permanent: true },
       { source: "/premium", destination: "/premium-weed", permanent: true },
       { source: "/aaa", destination: "/aaa-weed", permanent: true },
