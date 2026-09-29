@@ -1,4 +1,5 @@
 "use client";
+import CohortDeliveryActions from "./CohortDeliveryActions";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -83,6 +84,7 @@ export default function Navbar() {
         </div>
         {canAdvance && <button type="button" className={styles.scrollAdvance} aria-label="Show more navigation links" aria-controls="store-menu-scrollbar" onClick={advanceScrollBar}><span aria-hidden="true">›</span></button>}
       </div>
+      <CohortDeliveryActions />
     </nav>
   );
 }
