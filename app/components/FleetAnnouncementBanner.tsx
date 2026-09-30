@@ -27,11 +27,7 @@ function isThanksgivingNoticeActive(date: Date) {
   return dateKey >= 20260930 && dateKey <= 20261012;
 }
 
-export default function FleetAnnouncementBanner({
-  holidayOnly = false,
-}: {
-  holidayOnly?: boolean;
-}) {
+export default function FleetAnnouncementBanner() {
   const [showThanksgivingNotice, setShowThanksgivingNotice] = useState(false);
 
   useEffect(() => {
@@ -42,8 +38,6 @@ export default function FleetAnnouncementBanner({
     const timer = window.setInterval(updateVisibility, 60_000);
     return () => window.clearInterval(timer);
   }, []);
-
-  if (holidayOnly && !showThanksgivingNotice) return null;
 
   return (
     <aside
@@ -60,16 +54,12 @@ export default function FleetAnnouncementBanner({
           today&apos;s hours on this page before you visit.
         </p>
       ) : null}
-      {!holidayOnly ? (
-        <>
-          <p style={{ ...lineStyle, background: "#b91c1c" }}>
-            CIGARETTE DEAL ! 2 PACK $5 MIX AND MATCH
-          </p>
-          <p style={{ ...lineStyle, background: "#c2410c" }}>
-            EXCLUSIVE SPECIAL PREMIUM GRADE BB FULL &amp; BB LIGHT!
-          </p>
-        </>
-      ) : null}
+      <p style={{ ...lineStyle, background: "#b91c1c" }}>
+        CIGARETTE DEAL ! 2 PACK $5 MIX AND MATCH
+      </p>
+      <p style={{ ...lineStyle, background: "#c2410c" }}>
+        EXCLUSIVE SPECIAL PREMIUM GRADE BB FULL &amp; BB LIGHT!
+      </p>
     </aside>
   );
 }

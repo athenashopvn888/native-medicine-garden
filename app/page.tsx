@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { JsonLd } from "./components/JsonLd";
 import HomePageClient from "./HomePageClient";
-import FleetAnnouncementBanner from "./components/FleetAnnouncementBanner";
 import { HOME_TITLE } from "./lib/homeDelivery";
 import { HOME_FAQS, PRIMARY_ORIGIN, faqPageJsonLd } from "./lib/store";
 
@@ -15,7 +14,6 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={faqPageJsonLd(HOME_FAQS, PRIMARY_ORIGIN)} />
-      <FleetAnnouncementBanner holidayOnly />
       <HomePageClient />
     </>
   );
