@@ -43,15 +43,22 @@ export default function FleetAnnouncementBanner() {
     <aside
       data-fleet-homepage-announcement=""
       aria-label="Store announcements"
-      style={{ width: "100%", position: "relative", zIndex: 50 }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "auto",
+        minHeight: 0,
+        position: "relative",
+        zIndex: 50,
+      }}
     >
       {showThanksgivingNotice ? (
         <p
           data-thanksgiving-hours-notice=""
           style={{ ...lineStyle, background: "#166534" }}
         >
-          Thanksgiving Monday (Oct 12): We are open regular hours. Confirm
-          today&apos;s hours on this page before you visit.
+          Thanksgiving Monday (Oct 12): We are open regular hours.
         </p>
       ) : null}
       <p style={{ ...lineStyle, background: "#b91c1c" }}>
