@@ -24,7 +24,7 @@ function isThanksgivingNoticeActive(date: Date) {
   const value = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
   const dateKey = Number(`${value.year}${value.month}${value.day}`);
 
-  return dateKey >= 20261001 && dateKey <= 20261012;
+  return dateKey >= 20260930 && dateKey <= 20261012;
 }
 
 export default function FleetAnnouncementBanner({
