@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import AgeGate from "./components/AgeGate";
 import {
   cannabisStoreJsonLd,
   OG_IMAGE_URL,
@@ -104,7 +103,6 @@ export default function RootLayout({
           EXPLORE WEED DELIVERY
         </Link>
         {children}
-        <AgeGate />
       </body>
     </html>
   );
