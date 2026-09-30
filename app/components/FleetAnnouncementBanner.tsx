@@ -58,8 +58,7 @@ export default function FleetAnnouncementBanner() {
           data-thanksgiving-hours-notice=""
           style={{ ...lineStyle, background: "#166534" }}
         >
-          Thanksgiving Monday (Oct 12): We are open regular hours. Confirm
-          today&apos;s hours on this page before you visit.
+          Thanksgiving Monday (Oct 12): We are open regular hours.
         </p>
       ) : null}
       <p style={{ ...lineStyle, background: "#b91c1c" }}>
