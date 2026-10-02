@@ -17,6 +17,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/weed-delivery-toronto`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/weed-dispensary-gerrard-bay`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/24-hour-gerrard-bay-dispensary`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/native-cigarettes-gerrard-bay`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${BASE}/nicotine-vape-gerrard-bay`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
   ];
 
   /* Tier pages */

@@ -12,7 +12,11 @@ import {
 import { TIER_SEO } from "../lib/tierSeoContent";
 import { TIER_EDUCATION } from "../lib/tierEducation";
 import { getTierGuideLinks } from "../lib/guideRegistry";
+import { formatAsLowAsAfterPromos, formatPerGram, isBogoDeal, type BoardDeal } from "../lib/flowerDeals";
 import styles from "./tier.module.css";
+
+const SITE_URL = "https://www.nativemedicinecannabis.com";
+const CORRIDOR = "Gerrard & Bay, Downtown Toronto";
 
 /* -- Generate all tier pages at build -- */
 export function generateStaticParams() {
@@ -32,13 +36,13 @@ export async function generateMetadata({
   const seo = TIER_SEO[tierInfo.key];
 
   return {
-    title: seo?.seoTitle || `${tierInfo.config.name} Cannabis Flower — ${flowers.length} Strains`,
+    title: { absolute: `${tierInfo.config.name} & Cannabis Flower | ${CORRIDOR} | Native Medicine Garden` },
     description: seo?.seoIntro || `Shop ${flowers.length} ${tierInfo.config.name.toLowerCase()} cannabis strains at Native Medicine Garden.`,
     alternates: {
       canonical: `https://www.nativemedicinecannabis.com/${tierSlug}`,
     },
     openGraph: {
-      title: `${tierInfo.config.name} Flower | Native Medicine Garden`,
+      title: `${tierInfo.config.name} & Cannabis Flower | ${CORRIDOR} | Native Medicine Garden`,
       description: `Browse the current ${tierInfo.config.name.toLowerCase()} flower menu. Listed prices start from $${tierInfo.config.unitPrice}/g.`,
     },
   };
@@ -60,12 +64,47 @@ export default async function TierPage({
   const education = TIER_EDUCATION[tierInfo.key];
   const guideLinks = getTierGuideLinks(`/${tierSlug}`);
 
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${SITE_URL}/${tierSlug}#webpage`,
+        url: `${SITE_URL}/${tierSlug}`,
+        name: `${config.name} & Cannabis Flower | ${CORRIDOR} | Native Medicine Garden`,
+        description: seo?.seoIntro || `Browse the current ${config.name.toLowerCase()} flower category at Native Medicine Garden.`,
+        isPartOf: { "@type": "WebSite", "@id": `${SITE_URL}/#website` },
+        about: { "@id": `${SITE_URL}/#store` },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: flowers.length,
+          itemListElement: flowers.map((flower, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: flower.name,
+            url: `${SITE_URL}/flower/${flower.slug}`,
+          })),
+        },
+      },
+      ...(seo?.faqs.length ? [{
+        "@type": "FAQPage",
+        "@id": `${SITE_URL}/${tierSlug}#faq`,
+        mainEntity: seo.faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.q,
+          acceptedAnswer: { "@type": "Answer", text: faq.a },
+        })),
+      }] : []),
+    ],
+  };
+
   const saleFlowers = flowers.filter((f) => f.isSale);
   const regularFlowers = flowers.filter((f) => !f.isSale);
   const hotFlowers = flowers.filter((f) => f.isHot);
 
   return (
     <main className={styles.main}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd).replace(/</g, "\\u003c") }} />
       <Navbar />
 
       {/* ── Banner Image (standalone, no overlay text) ── */}
@@ -87,7 +126,7 @@ export default async function TierPage({
             <div className={styles.heroTitleRow}>
               <span className={styles.heroIcon}>{config.icon}</span>
               <h1 className={styles.heroTitle}>
-                <span style={{ color: config.color }}>{config.name} &amp; Cannabis Flower in Toronto</span>
+                <span style={{ color: config.color }}>{config.name} &amp; Cannabis Flower at Gerrard &amp; Bay</span>
               </h1>
             </div>
             <p className={styles.heroTagline}>{config.tagline}</p>
@@ -109,29 +148,11 @@ export default async function TierPage({
           </div>
 
           <div className={styles.heroRight}>
-            <div className={styles.unitPriceBox}>
-              <span className={styles.unitPriceLabel}>Starting at</span>
-              <span className={styles.unitPriceValue}>${config.unitPrice}/g</span>
-            </div>
+            {isBogoDeal(config.deal6g) ? <><p className={styles.asLowAsBanner}>{formatAsLowAsAfterPromos(config.deal6g.price, config.deal6g.grams)}</p><p className={styles.listAnchor}>List ${config.unitPrice}/g</p></> : <div className={styles.unitPriceBox}><span className={styles.unitPriceLabel}>Starting at</span><span className={styles.unitPriceValue}>${config.unitPrice}/g</span></div>}
 
             {(config.deal3g || config.deal6g) && (
             <div className={styles.dealRow}>
-              {config.deal3g && (
-              <div className={styles.dealBox}>
-                <div className={styles.dealLabel}>🎁 {config.deal3g.label}</div>
-                <div className={styles.dealPrice}>
-                  = <strong>${config.deal3g.price}</strong> / {config.deal3g.total}
-                </div>
-              </div>
-              )}
-              {config.deal6g && (
-                <div className={styles.dealBox}>
-                  <div className={styles.dealLabel}>🎁 {config.deal6g.label}</div>
-                  <div className={styles.dealPrice}>
-                    = <strong>${config.deal6g.price}</strong> / {config.deal6g.total}
-                  </div>
-                </div>
-              )}
+              {[config.deal3g, config.deal6g].filter((deal): deal is BoardDeal => deal !== null).map((deal) => <div className={styles.dealBox} key={deal.total}><div className={styles.dealLabel}>{isBogoDeal(deal) ? deal.label : `🎁 ${deal.label}`}</div><div className={styles.dealPrice}>{isBogoDeal(deal) ? <>Pay <strong>${deal.price}</strong> = {deal.grams}g</> : <>= <strong>${deal.price}</strong> / {deal.total}</>}</div>{isBogoDeal(deal) ? <div className={styles.dealMeta}>{formatPerGram(deal.price, deal.grams)} · {deal.equals}</div> : null}</div>)}
             </div>
             )}
           </div>
