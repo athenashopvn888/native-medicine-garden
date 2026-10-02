@@ -14,7 +14,6 @@ test("TOP WEED TIER announcement stack uses the approved order and exact offer",
     'data-cigarette-deal=""',
     'data-bb-light-deal=""',
     'data-cig-mix-banner=""',
-    'data-bb-premium-banner=""',
     'data-belmont-premium-banner=""',
   ];
   let offset = -1;
@@ -24,7 +23,7 @@ test("TOP WEED TIER announcement stack uses the approved order and exact offer",
     offset = next;
   }
   assert.ok(existsSync(new URL("../public/banners/top-weed-tier-nmg01.webp", import.meta.url)));
-  assert.ok(existsSync(new URL("../public/banners/bb-premium-grade-full-lights.webp", import.meta.url)));
+  assert.ok(!existsSync(new URL("../public/banners/bb-premium-grade-full-lights.webp", import.meta.url)));
   assert.ok(existsSync(new URL("../public/banners/BB_Belmont_Premium_Grade.webp", import.meta.url)));
   assert.ok(existsSync(new URL("../public/banners/2pack5cig.webp", import.meta.url)));
 });

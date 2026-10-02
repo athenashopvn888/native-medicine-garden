@@ -54,10 +54,6 @@ export default function FleetAnnouncementBanner() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/banners/2pack5cig.webp" alt="Cigarette deal at Native Medicine Garden — 2 packs for $5 mix and match, cartons $25. Canadian Lights, Menthol, Classics, Goose, Rolled Gold and more." />
       </Link>
-      <Link href="/items/cigarettes" data-bb-premium-banner="" aria-label="Shop BB Premium Grade cigarettes">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/banners/bb-premium-grade-full-lights.webp" alt="Exclusive BB Premium Grade cigarettes — Full Flavor and Lights Canadian blend tobacco packs and cartons at Native Medicine Garden." />
-      </Link>
       <Link href="/items/cigarettes" data-belmont-premium-banner="" aria-label="Shop BB and Belmont Premium Grade cigarettes">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
