@@ -161,6 +161,10 @@
   color: var(--green-dark);
 }
 
+.asLowAsBanner { margin:0; font-size:clamp(18px,2.4vw,26px); font-weight:900; color:#1B4332; line-height:1.2; text-align:right; }
+.listAnchor { margin:0; font-size:14px; font-weight:700; color:var(--text-secondary); text-align:right; }
+.dealMeta { margin-top:4px; font-size:12px; font-weight:700; color:var(--text-secondary); line-height:1.35; }
+
 /* ── Product grid ── */
 .products {
   padding: 40px 24px 60px;
@@ -293,6 +297,8 @@
   .unitPriceBox {
     text-align: left;
   }
+
+  .asLowAsBanner, .listAnchor { text-align:left; }
 
   .dealRow {
     width: 100%;

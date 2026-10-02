@@ -469,25 +469,66 @@ button { cursor: pointer; font-family: inherit; }
   border: 1px solid var(--border-subtle);
 }
 
-/* Fleet homepage announcements: reserve their full height above the fixed navigation. */
+/* Fleet TOP WEED TIER and cigarette announcement stack. */
 :root {
   --fleet-homepage-announcement-height: 144px;
+  --flower-bogo-strip-height: 44px;
 }
 
 [data-fleet-homepage-announcement] {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: var(--fleet-homepage-announcement-height);
+  max-width: 100vw;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 50;
 }
 
 [data-fleet-homepage-announcement] > p {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 0;
+  margin: 0;
+  padding: 14px 16px;
   box-sizing: border-box;
+  color: #fff;
+  font-size: clamp(18px, 3vw, 32px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: .02em;
+  text-align: center;
+  text-transform: uppercase;
 }
+
+[data-thanksgiving-hours-notice] { background: #166534; }
+[data-cigarette-deal] { background: #b91c1c; }
+[data-bb-light-deal] { background: #c2410c; }
+
+[data-flower-bogo-strip] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  background: #c5161d;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  text-wrap: balance;
+}
+
+[data-bogo-offer-gap] { white-space: pre; }
+[data-flower-bogo-strip="nav"] { min-height: 34px; padding: 6px 12px; font-size: clamp(12px,2.05vw,15px); font-weight: 800; line-height: 1.25; }
+[data-flower-bogo-strip="hero"] { padding: 18px 20px 16px; font-size: clamp(22px,3.1vw,36px); font-weight: 900; line-height: 1.08; letter-spacing: -.02em; }
+[data-flower-bogo-strip]:hover,[data-flower-bogo-strip]:focus-visible { color:#fff; background:#e11d2e; }
+[data-flower-bogo-strip]:focus-visible { outline:3px solid #fff; outline-offset:-3px; }
+
+[data-exotic-tier-banner],[data-cig-mix-banner],[data-bb-premium-banner],[data-belmont-premium-banner] { display:block; width:100%; line-height:0; }
+[data-exotic-tier-banner] img,[data-cig-mix-banner] img,[data-bb-premium-banner] img,[data-belmont-premium-banner] img { display:block; width:100%; height:auto; }
 
 main:has(> [data-fleet-homepage-announcement]) > #main-nav {
   top: 0 !important;
@@ -512,4 +553,14 @@ body:has(#home-delivery-heading) main > .deliveryHoursAnnouncement {
   position: static !important;
   inset: auto !important;
   display: flex !important;
+}
+
+@media (max-width:720px) {
+  [data-fleet-homepage-announcement] { width:100vw; }
+  [data-bogo-strip-copy] { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; }
+  [data-bogo-offer-lead],[data-bogo-offer-tail] { display:block; max-width:100%; white-space:normal; overflow-wrap:anywhere; text-wrap:balance; }
+  [data-bogo-offer-gap] { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:pre; }
+  [data-flower-bogo-strip="nav"] { min-height:0; padding:5px 10px; font-size:11.5px; line-height:1.28; letter-spacing:.015em; }
+  [data-flower-bogo-strip="hero"] { padding:8px 12px 7px; font-size:clamp(13px,3.6vw,16px); font-weight:800; line-height:1.28; letter-spacing:.018em; }
+  [data-fleet-homepage-announcement] > p { padding:9px 10px; font-size:clamp(14px,4vw,20px); }
 }

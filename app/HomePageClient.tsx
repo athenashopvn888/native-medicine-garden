@@ -83,6 +83,15 @@ const EXPLORE_CATEGORIES = [
   { name: "Magic Stuff", slug: "items/magic", banner: "/banners/09_Magic_Stuff.webp" },
 ];
 
+const LOCAL_HUB_LINKS = [
+  { href: "/weed-dispensary-gerrard-bay", label: "Weed dispensary at Gerrard & Bay" },
+  { href: "/24-hour-gerrard-bay-dispensary", label: "Open 24 hours, 7 days" },
+  { href: "/weed-delivery-toronto", label: "Delivery" },
+  { href: "/native-cigarettes-gerrard-bay", label: "Native cigarettes: cartons and packs" },
+  { href: "/nicotine-vape-gerrard-bay", label: "Nicotine vapes, pods and pouches" },
+  { href: "/visit", label: "How to get here: transit and parking" },
+] as const;
+
 interface Review {
   name: string;
   comment: string;
@@ -252,6 +261,16 @@ export default function HomePageClient() {
       </section>
 
       <HomeDeliverySection />
+
+      <section className={styles.localHubSection} aria-labelledby="local-hub-heading">
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle} id="local-hub-heading">Gerrard &amp; Bay store guides</h2>
+            <p className={styles.sectionSubtitle}>Plan a Downtown Toronto visit, delivery order or category browse.</p>
+          </div>
+          <div className={styles.localHubGrid}>{LOCAL_HUB_LINKS.map((card) => <Link key={card.href} href={card.href} className={styles.localHubCard}>{card.label}<span aria-hidden="true">→</span></Link>)}</div>
+        </div>
+      </section>
 
       {/* -- EXPLORE CATEGORIES -- */}
       <section className={styles.categoriesSection} id="menu">
