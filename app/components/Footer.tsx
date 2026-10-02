@@ -71,6 +71,7 @@ export default function Footer() {
               <Link href="/info/nicotine-vapes-gerrard-bay">Nicotine Vapes Gerrard & Bay</Link>
               <Link href="/contact">Contact Us</Link>
               <Link href="/weed-resources">Weed Resources</Link>
+              <Link href="/guides">Guides</Link>
             </nav>
           </div>
         </div>
