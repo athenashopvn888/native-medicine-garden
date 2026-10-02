@@ -11,6 +11,7 @@ import {
 } from "../lib/products";
 import { TIER_SEO } from "../lib/tierSeoContent";
 import { TIER_EDUCATION } from "../lib/tierEducation";
+import { getTierGuideLinks } from "../lib/guideRegistry";
 import styles from "./tier.module.css";
 
 /* -- Generate all tier pages at build -- */
@@ -57,6 +58,7 @@ export default async function TierPage({
   const { config } = tierInfo;
   const seo = TIER_SEO[tierInfo.key];
   const education = TIER_EDUCATION[tierInfo.key];
+  const guideLinks = getTierGuideLinks(`/${tierSlug}`);
 
   const saleFlowers = flowers.filter((f) => f.isSale);
   const regularFlowers = flowers.filter((f) => !f.isSale);
@@ -135,6 +137,8 @@ export default async function TierPage({
           </div>
         </div>
       </section>
+
+      {guideLinks.length > 0 && <section className="guideStrip" aria-label="Flower name guides"><h2>Flower name guides</h2><div className="guideLinks">{guideLinks.map((guide)=><Link key={guide.slug} href={`/guides/${guide.slug}`}>{guide.name}</Link>)}</div></section>}
 
       {/* ── Product grid ── */}
       <section className={styles.products}>
