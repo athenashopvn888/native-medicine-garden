@@ -527,8 +527,8 @@ button { cursor: pointer; font-family: inherit; }
 [data-flower-bogo-strip]:hover,[data-flower-bogo-strip]:focus-visible { color:#fff; background:#e11d2e; }
 [data-flower-bogo-strip]:focus-visible { outline:3px solid #fff; outline-offset:-3px; }
 
-[data-exotic-tier-banner],[data-cig-mix-banner],[data-bb-premium-banner] { display:block; width:100%; line-height:0; }
-[data-exotic-tier-banner] img,[data-cig-mix-banner] img,[data-bb-premium-banner] img { display:block; width:100%; height:auto; }
+[data-exotic-tier-banner],[data-cig-mix-banner],[data-bb-premium-banner],[data-belmont-premium-banner] { display:block; width:100%; line-height:0; }
+[data-exotic-tier-banner] img,[data-cig-mix-banner] img,[data-bb-premium-banner] img,[data-belmont-premium-banner] img { display:block; width:100%; height:auto; }
 
 main:has(> [data-fleet-homepage-announcement]) > #main-nav {
   top: 0 !important;
