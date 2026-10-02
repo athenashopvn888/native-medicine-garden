@@ -3,13 +3,98 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
-import { GUIDE_REGISTRY,getGuide,resolveGuideProduct,type GuideEntry } from "../../lib/guideRegistry";
-import { gbpLocation } from "../../lib/gbp-location";
+import { GUIDE_REGISTRY, GUIDE_STORE, getGuide, resolveGuideProduct, type GuideEntry } from "../../lib/guideRegistry";
+import GuideBody, { stripMarkdown } from "./GuideBody";
 import styles from "./guide.module.css";
 
-type Props={params:Promise<{slug:string}>};const SITE=`https://${gbpLocation.domain}`;const CORRIDOR="Gerrard & Bay";
-const copy={strain:{label:"Strain guide",noun:"cannabis flower name",menu:"flower board",note:"This flower-name guide is separate from tobacco, nicotine devices, and THC vape formats."},native_cig:{label:"Native Cigarettes",noun:"adult tobacco brand name",menu:"Native Cigarettes category",note:"This page covers adult tobacco, not cannabis or vapes. Tobacco products are for adults 19+."},nic_vape:{label:"Nicotine Vape",noun:"adult nicotine-vape name",menu:"Nicotine Vape category",note:"This is the Nicotine Vape shelf, not THC Vape. Nicotine is addictive and products are for adults 19+."},thc_vape:{label:"THC Vape",noun:"cannabis-menu vape name",menu:"THC Vape category",note:"This is cannabis-menu information, not a nicotine-device recommendation. Read the current item label because formats differ."}} as const;
-export const dynamicParams=false;export function generateStaticParams(){return GUIDE_REGISTRY.map((g)=>({slug:g.slug}))}
-export async function generateMetadata({params}:Props):Promise<Metadata>{const g=getGuide((await params).slug);if(!g)return{};const l=copy[g.lane];const description=`Adult 19+ guide to ${g.name}, a ${l.noun} connected to ${gbpLocation.storeName}'s current ${l.menu} near ${CORRIDOR}. Selection rotates; check today's menu.`;const canonical=`${SITE}/guides/${g.slug}`;return{title:{absolute:g.title},description,alternates:{canonical},openGraph:{title:g.title,description,url:canonical,type:"website"}}}
-function buildFaqs(g:GuideEntry,hasProduct:boolean){const l=copy[g.lane];return[{q:`Is ${g.name} on the ${gbpLocation.storeName} menu today?`,a:hasProduct?`A matching listing appears in the current site snapshot, but the shelf can change. Open the listing and today's ${l.menu} before travelling.`:`There is no matching product-detail page in the current snapshot. Use today's ${l.menu}; the category remains the current source when an item rotates out.`},{q:`Does every ${g.name} listing use the same format?`,a:g.lane==="native_cig"?"No. Read the package label to distinguish full, lights, silver, menthol, pack, or carton details.":g.lane==="nic_vape"?"No. Device names, formats, nicotine strengths, and package details differ. This guide does not estimate device life.":g.lane==="thc_vape"?"No. A name can appear in different cannabis vape formats; the current item page and package label control.":"No. This name guide does not guarantee one batch, potency, package size, or tier forever."},{q:`Where should I check before visiting for ${g.name}?`,a:`Open the linked item when available, then check today's ${l.menu}. Use the store page for directions to ${gbpLocation.address}.`},{q:`Who can shop this ${l.label} category?`,a:`${gbpLocation.storeName} serves adults 19+. Bring valid government-issued photo ID. This guide is informational and does not reserve an item.`}]}
-export default async function Page({params}:Props){const g=getGuide((await params).slug);if(!g)notFound();const l=copy[g.lane];const product=resolveGuideProduct(g);const productHref=product?`${g.lane==="strain"?"/flower":"/item"}/${product.slug}`:undefined;const related=g.relatedSlugs.map(getGuide).filter((x):x is GuideEntry=>Boolean(x));const faqs=buildFaqs(g,Boolean(productHref));const canonical=`${SITE}/guides/${g.slug}`;const categoryLabel=g.preferredCategoryPath.replace("/items/","").replace(/^\//,"").replace(/-/g," ").replace(/\b\w/g,(c)=>c.toUpperCase());const jsonLd={"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":`${canonical}#webpage`,url:canonical,name:g.title},{"@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"Home",item:SITE},{"@type":"ListItem",position:2,name:categoryLabel,item:`${SITE}${g.preferredCategoryPath}`},{"@type":"ListItem",position:3,name:g.name,item:canonical}]},{"@type":"FAQPage",mainEntity:faqs.map((f)=>({"@type":"Question",name:f.q,acceptedAnswer:{"@type":"Answer",text:f.a}}))}]};return <main className={styles.main}><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(jsonLd).replace(/</g,"\\u003c")}}/><Navbar/><article className={styles.article}><nav className={styles.breadcrumb} aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><Link href={g.preferredCategoryPath}>{categoryLabel}</Link><span>/</span><span>{g.name}</span></nav><header className={styles.hero}><span className={styles.lane}>{l.label}</span><h1>{g.title}</h1><p className={styles.lede}>A practical adult 19+ name guide for {gbpLocation.storeName} near {CORRIDOR}. Identify the correct menu lane, compare nearby names, and move to today&apos;s board without treating an older listing as a stock promise.</p><div className={styles.actions}><Link className={styles.primary} href={productHref??g.preferredCategoryPath}>{productHref?`Open the ${g.name} menu listing`:"Check today’s category board"}</Link><Link className={styles.secondary} href={g.preferredCategoryPath}>Browse {categoryLabel}</Link></div></header><section className={styles.tldr}><h2>The short version</h2><ul><li><strong>{g.name}</strong> is treated here as a {l.noun}, labelled {l.label}.</li><li>{l.note}</li><li>Selection rotates. Use the current item or category page and bring valid government photo ID showing 19+.</li></ul></section><section className={styles.section}><h2>What we show today for {g.name}</h2><p>This guide is connected to the stock-gated NMG01 shiplist and the current site snapshot. That connection is narrower than an availability guarantee. Menu files place a name on the correct shelf, but counter stock can rotate after a page is built. Prices, variants, quantities, and package options belong on the current menu listing, not this evergreen guide.</p>{productHref?<p>A matching entry appears in the current snapshot: <Link href={productHref}>{product?.name}</Link>. Open it for published item details, then check the <Link href={g.preferredCategoryPath}>{categoryLabel} board</Link>. A link is a navigation aid, not a reservation or shelf guarantee.</p>:<p>No matching product-detail page appears in the current snapshot, so this guide uses the <Link href={g.preferredCategoryPath}>{categoryLabel} board</Link> instead of inventing a product URL. Check the category or contact the store when the exact name matters.</p>}</section><section className={styles.section}><h2>How {g.name} appears on our menu</h2><p>{gbpLocation.storeName} organizes the menu by shopping lane. The stable parent is <Link href={g.preferredCategoryPath}>{categoryLabel}</Link>. This guide does not rename products or imply similarly named items are identical. If an item rotates out, the category is its soft destination.</p><p>Read the current label. Flower names can attach to a tier or format. Native Cigarettes may have full, lights, silver, menthol, pack, or carton variants. Nicotine Vape devices use model and strength labels. THC Vape names can refer to different cannabis formats. The item label is always more specific than the guide name.</p>{g.slug==="ovns-vape"?<p><strong>OVNS is the listed brand name.</strong> It is not OVI, and this site does not publish an OVI guide.</p>:null}</section><section className={styles.section}><h2>Compare {g.name} with names from the same lane</h2><p>These links stay inside the same lane. They do not claim products taste alike, perform alike, or are interchangeable. They provide nearby names to check while browsing {l.label}. Nicotine Vape and THC Vape remain separate so an adult shopper does not need to infer the substance from a device-shaped product.</p><div className={styles.related}>{related.map((r)=><Link key={r.slug} href={`/guides/${r.slug}`}>{r.name}<span>{copy[r.lane].label}</span></Link>)}</div></section><section className={styles.section}><h2>Plan a {CORRIDOR} visit</h2><p>{gbpLocation.storeName} is at {gbpLocation.address}. Use the <Link href={`/${gbpLocation.slug}`}>store page</Link> for current directions and information. Adults must be 19 or older and should bring government-issued photo ID. If the trip depends on one exact listing, check immediately before travelling or call the store.</p><p>This page makes no medical, wellness, effect, or performance claims. It promises no price, potency, pack size, flavour, device life, or shelf quantity. Its purpose is to give the name a durable route and connect that route to the relevant menu area while keeping flower, Native Cigarettes, Nicotine Vape, and THC Vape labels distinct.</p></section><section className={styles.section}><h2>Frequently asked questions</h2><div className={styles.faqs}>{faqs.map((f)=><details key={f.q}><summary>{f.q}</summary><p>{f.a}</p></details>)}</div></section><aside className={styles.finalCta}><h2>Check today&apos;s {l.menu}</h2><p>Start with the exact listing when it exists, or use the stable parent category when {g.name} has rotated off the board.</p><div className={styles.actions}><Link className={styles.primary} href={productHref??g.preferredCategoryPath}>Open today&apos;s menu path</Link><Link className={styles.secondary} href={`/${gbpLocation.slug}`}>Visit {gbpLocation.storeName}</Link></div></aside></article><Footer/></main>}
+const BASE = `https://${GUIDE_STORE.domain}`;
+type GuidePageProps = { params: Promise<{ slug: string }> };
+const laneCopy = {
+  strain: { label: "Strain name", category: "Cannabis flower" },
+  native_cig: { label: "Native Cigarettes", category: "Native Cigarettes" },
+  nic_vape: { label: "Nicotine Vape", category: "Nicotine Vape" },
+  thc_vape: { label: "THC Vape", category: "THC Vape" },
+} as const;
+
+export const dynamicParams = false;
+export function generateStaticParams() { return GUIDE_REGISTRY.map((guide) => ({ slug: guide.slug })); }
+
+export async function generateMetadata({ params }: GuidePageProps): Promise<Metadata> {
+  const guide = getGuide((await params).slug);
+  if (!guide) return {};
+  const description = stripMarkdown(guide.description);
+  return {
+    title: { absolute: guide.title },
+    description,
+    keywords: guide.primaryKeywords,
+    alternates: { canonical: `${BASE}/guides/${guide.slug}` },
+    robots: { index: true, follow: true },
+    openGraph: { title: guide.title, description, url: `${BASE}/guides/${guide.slug}`, type: "website" },
+  };
+}
+
+const relatedEntries = (guide: GuideEntry) => guide.relatedSlugs.map(getGuide).filter((entry): entry is GuideEntry => Boolean(entry));
+
+export default async function GuidePage({ params }: GuidePageProps) {
+  const guide = getGuide((await params).slug);
+  if (!guide) notFound();
+  const product = resolveGuideProduct(guide);
+  const productHref = product ? `${guide.lane === "strain" ? "/flower" : "/item"}/${product.slug}` : undefined;
+  const canonical = `${BASE}/guides/${guide.slug}`;
+  const lane = laneCopy[guide.lane];
+  const graph: Record<string, unknown>[] = [{
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BASE },
+      { "@type": "ListItem", position: 2, name: "Guides", item: `${BASE}/guides` },
+      { "@type": "ListItem", position: 3, name: guide.name, item: canonical },
+    ],
+  }];
+  if (guide.schema.types.includes("WebPage")) graph.push({ "@type": "WebPage", "@id": `${canonical}#webpage`, url: canonical, name: guide.title, description: stripMarkdown(guide.description) });
+  if (guide.schema.types.includes("FAQPage")) graph.push({
+    "@type": "FAQPage",
+    mainEntity: guide.schema.faq_items.map((faq) => ({ "@type": "Question", name: stripMarkdown(faq.question), acceptedAnswer: { "@type": "Answer", text: stripMarkdown(faq.answer) } })),
+  });
+  if (guide.schema.types.includes("Product")) graph.push({
+    "@type": "Product",
+    name: guide.name,
+    brand: { "@type": "Brand", name: guide.name },
+    description: stripMarkdown(guide.description),
+    category: lane.category,
+    url: canonical,
+  });
+  const jsonLd = { "@context": "https://schema.org", "@graph": graph };
+
+  return (
+    <main className={styles.main}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <Navbar />
+      <article className={styles.article}>
+        <nav className={styles.breadcrumb} aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/guides">Guides</Link><span>/</span><span>{guide.name}</span></nav>
+        <header className={styles.hero}>
+          <span className={styles.lane}>{lane.label}</span>
+          <h1>{guide.title}</h1>
+          <p className={styles.lede}>{stripMarkdown(guide.description)}</p>
+          <div className={styles.actions}>
+            <Link className={styles.primary} href={productHref ?? guide.preferredCategoryPath}>{productHref ? `Open the ${guide.name} menu listing` : "Check today’s board"}</Link>
+            <Link className={styles.secondary} href={guide.preferredCategoryPath}>Browse {lane.category}</Link>
+          </div>
+        </header>
+        <section className={styles.section} aria-label={`${guide.name} guide`}><GuideBody markdown={guide.bodyMd} /></section>
+        <section className={styles.section} aria-labelledby="related-guides-heading">
+          <h2 id="related-guides-heading">Related {lane.label} guides</h2>
+          <div className={styles.related}>{relatedEntries(guide).map((entry) => <Link key={entry.slug} href={`/guides/${entry.slug}`}>{entry.name}<span>{laneCopy[entry.lane].label}</span></Link>)}</div>
+        </section>
+        <aside className={styles.finalCta}>
+          <h2>Check today&apos;s board</h2>
+          <p>Use the current menu path for the latest posted listing and format details.</p>
+          <div className={styles.actions}>
+            <Link className={styles.primary} href={productHref ?? guide.preferredCategoryPath}>Open today&apos;s menu path</Link>
+            <Link className={styles.secondary} href="/visit">Visit {GUIDE_STORE.brand}</Link>
+          </div>
+        </aside>
+      </article>
+      <Footer />
+    </main>
+  );
+}
