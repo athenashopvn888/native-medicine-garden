@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useEffect, useState } from "react";
 
 const lineStyle = {
@@ -65,8 +67,15 @@ export default function FleetAnnouncementBanner() {
         CIGARETTE DEAL ! 2 PACK $5 MIX AND MATCH
       </p>
       <p style={{ ...lineStyle, background: "#c2410c" }}>
-        EXCLUSIVE SPECIAL PREMIUM GRADE BB FULL &amp; BB LIGHT!
+        EXCLUSIVE SPECIAL PREMIUM GRADE BB FULL, BB LIGHT &amp; BELMONT KING SIZE!
       </p>
+      <Link href="/items/cigarettes" data-bb-premium-banner="" aria-label="Shop BB and Belmont Premium Grade cigarettes">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/banners/BB_Belmont_Premium_Grade.webp"
+          alt="Exclusive Premium Grade BB Full Flavor, BB Lights, and Belmont King Size cigarettes at Native Medicine Garden."
+        />
+      </Link>
     </aside>
   );
 }
