@@ -255,8 +255,10 @@ export default function TV2Page() {
     const H = viewport?.height ?? document.documentElement.clientHeight;
     const offsetLeft = viewport?.offsetLeft ?? 0;
     const offsetTop = viewport?.offsetTop ?? 0;
-    const scale = Math.max(0.01, Math.min(W / 3840, H / 2160));
-    const tx = Math.round(offsetLeft + (W - 3840 * scale) / 2);
+    const reviewQrSafeArea = Math.min(184, Math.max(112, Math.round(W * 0.1)));
+    const availableW = Math.max(1, W - reviewQrSafeArea);
+    const scale = Math.max(0.01, Math.min(availableW / 3840, H / 2160));
+    const tx = Math.round(offsetLeft + (availableW - 3840 * scale) / 2);
     const ty = Math.round(offsetTop + (H - 2160 * scale) / 2);
     const transform = `translate(${tx}px,${ty}px) scale(${scale})`;
     if (wrapRef.current.style.transform !== transform) {

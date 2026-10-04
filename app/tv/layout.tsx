@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import TvReviewQr from "../TvReviewQr";
 
 export const metadata: Metadata = {
   title: "Native Medicine Garden In-Store Flower Display",
@@ -23,6 +24,7 @@ export default function TvLayout({ children }: Readonly<{ children: React.ReactN
     <>
       <style dangerouslySetInnerHTML={{ __html: HIDE_SITE_CHROME }} />
       {children}
+      <TvReviewQr storeName="Native Medicine Garden Cannabis Dispensary" />
     </>
   );
 }
