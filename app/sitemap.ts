@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { DELIVERY_GUIDE_REGISTRY } from "./lib/deliveryGuideRegistry";
 import { TIER_CONFIG, CATEGORY_CONFIG, allFlowers, allItems } from "./lib/products";
 import { SEO_PAGES } from "./lib/seoPages";
 import { RESOURCE_PAGES } from "./resources/resourceData";
@@ -75,7 +76,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: page.slug ? 0.65 : 0.75,
   }));
 
-  const guidePages: MetadataRoute.Sitemap = GUIDE_REGISTRY.map((guide) => ({
+  const guidePages: MetadataRoute.Sitemap = [...GUIDE_REGISTRY, ...DELIVERY_GUIDE_REGISTRY].map((guide) => ({
     url: `${BASE}/guides/${guide.slug}`,
     lastModified: now,
     changeFrequency: "weekly" as const,
