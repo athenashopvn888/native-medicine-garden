@@ -236,7 +236,7 @@ export default function TV2Page() {
   const [lastUpdate, setLastUpdate] = useState("");
   const [stockUpdated, setStockUpdated] = useState<string | null>(null);
   const [daytime, setDaytime] = useState(() => isTv2Daytime());
-  const [cigaretteOfferPromo, setCigaretteOfferPromo] = useState<Tv2DaytimePromo | undefined>();
+  const [promoElapsedMs, setPromoElapsedMs] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -248,11 +248,9 @@ export default function TV2Page() {
 
   useEffect(() => {
     const startedAt = performance.now();
-    const updateOffer = () => {
-      setCigaretteOfferPromo(getCigaretteOfferPromo(performance.now() - startedAt));
-    };
-    updateOffer();
-    const iv = setInterval(updateOffer, 250);
+    const updatePromos = () => setPromoElapsedMs(performance.now() - startedAt);
+    updatePromos();
+    const iv = setInterval(updatePromos, 250);
     return () => clearInterval(iv);
   }, []);
 
@@ -366,7 +364,7 @@ export default function TV2Page() {
           <div className={styles.grid}>
             {CARD_CONFIG.map(card => {
               const filtered = items.filter(card.filter);
-              const promo = getTv2DaytimePromo(card.id, daytime);
+              const promo = getTv2DaytimePromo(card.id, daytime, promoElapsedMs);
 
               if (promo) {
                 return (
@@ -382,7 +380,7 @@ export default function TV2Page() {
               return (
                 <ItemCard key={card.id} title={card.title} accent={card.accent}
                   items={filtered} hiIdx={highlights[card.id]||0} preset={card.preset}
-                  offerPromo={card.id === "CIGARETTES" ? cigaretteOfferPromo : undefined} />
+                  offerPromo={card.id === "CIGARETTES" ? getCigaretteOfferPromo(daytime, promoElapsedMs) : undefined} />
               );
             })}
           </div>
