@@ -20,6 +20,7 @@ export const DEFAULT_APPS_SCRIPT_URL =
 
 export const TV_STORE = "NMG01";
 export const TV_STOCK_CACHE_MS = 300 * 1000;
+export const TV_STOCK_FAILURE_CACHE_MS = 60 * 1000;
 export const TV_STOCK_FETCH_TIMEOUT_MS = 25000;
 export const PARTIAL_STOCK_RATIO = 0.5;
 
@@ -30,10 +31,11 @@ export type TvFlower = FlowerProduct & { isMustTry?: boolean; promoImage?: strin
 export type TvItem = ItemProduct & { isSale?: boolean };
 
 type TvDataset = {
-  source: "live" | "static-fallback";
+  source: "live" | "last-good" | "static-fallback";
   flowers: TvFlower[];
   items: TvItem[];
   stockDate: string;
+  fallbackReason?: string;
 };
 
 type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
@@ -128,10 +130,16 @@ function rejectLiveStock(
 }
 
 let cached: { expiresAt: number; dataset: TvDataset } | null = null;
+let lastGood: TvDataset | null = null;
+let failureUntil = 0;
+let failureReason = "";
 let inflight: Promise<TvDataset> | null = null;
 
 export function resetTvStockCache() {
   cached = null;
+  lastGood = null;
+  failureUntil = 0;
+  failureReason = "";
   inflight = null;
 }
 
@@ -145,6 +153,7 @@ function selectTvPayload(dataset: TvDataset, type?: string | null) {
       "x-tv-data-store": TV_STORE,
       "x-tv-data-flower-count": String(dataset.flowers.length),
       "x-tv-data-item-count": String(dataset.items.length),
+      ...(dataset.fallbackReason ? { "x-tv-data-fallback-reason": dataset.fallbackReason } : {}),
       "Cache-Control": "no-store",
     },
   };
@@ -158,13 +167,12 @@ async function resolveDataset(options: TvStockOptions): Promise<TvDataset> {
   try {
     const res = await fetchImpl(endpoint, {
       signal: AbortSignal.timeout(timeoutMs),
-      next: { revalidate: 300 },
+      cache: "no-store",
     } as RequestInit);
 
     if (!res || !res.ok) {
       const status = res ? res.status : "no response";
-      console.warn(`[tv-data] Live stock HTTP ${status}; serving static snapshot`);
-      return staticDataset(options.staticFlowers, options.staticItems);
+      return fallbackDataset(options, `HTTP ${status}`);
     }
 
     let data: { flowers?: TvFlower[]; items?: TvItem[]; stockDate?: unknown };
@@ -172,14 +180,12 @@ async function resolveDataset(options: TvStockOptions): Promise<TvDataset> {
       data = await res.json();
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      console.warn(`[tv-data] Live stock JSON invalid (${message}); serving static snapshot`);
-      return staticDataset(options.staticFlowers, options.staticItems);
+      return fallbackDataset(options, `invalid JSON: ${message}`);
     }
 
     const reason = rejectLiveStock(data, options.staticFlowers, options.staticItems);
     if (reason) {
-      console.warn(`[tv-data] Live stock rejected (${reason}); serving static snapshot`);
-      return staticDataset(options.staticFlowers, options.staticItems);
+      return fallbackDataset(options, reason);
     }
 
     const flowers = postprocessFlowers(data.flowers || []);
@@ -192,12 +198,25 @@ async function resolveDataset(options: TvStockOptions): Promise<TvDataset> {
     };
     const now = options.now ?? Date.now();
     cached = { expiresAt: now + TV_STOCK_CACHE_MS, dataset };
+    lastGood = dataset;
+    failureUntil = 0;
+    failureReason = "";
     return dataset;
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.warn(`[tv-data] Live stock fetch failed (${message}); serving static snapshot`);
-    return staticDataset(options.staticFlowers, options.staticItems);
+    return fallbackDataset(options, `fetch failed: ${message}`);
   }
+}
+
+function fallbackDataset(options: TvStockOptions, reason: string): TvDataset {
+  const now = options.now ?? Date.now();
+  failureReason = reason;
+  failureUntil = now + TV_STOCK_FAILURE_CACHE_MS;
+  const dataset: TvDataset = lastGood
+    ? { ...lastGood, source: "last-good", fallbackReason: reason }
+    : { ...staticDataset(options.staticFlowers, options.staticItems), fallbackReason: reason };
+  console.warn(`[tv-data] Live stock failed (${reason}); serving ${dataset.source}`);
+  return dataset;
 }
 
 export async function getTvData(options: TvStockOptions) {
@@ -205,6 +224,10 @@ export async function getTvData(options: TvStockOptions) {
   let dataset: TvDataset;
   if (cached && now < cached.expiresAt) {
     dataset = cached.dataset;
+  } else if (now < failureUntil) {
+    dataset = lastGood
+      ? { ...lastGood, source: "last-good", fallbackReason: failureReason }
+      : { ...staticDataset(options.staticFlowers, options.staticItems), fallbackReason: failureReason };
   } else {
     if (!inflight) {
       inflight = resolveDataset(options).finally(() => {
