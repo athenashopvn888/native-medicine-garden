@@ -1,4 +1,6 @@
 export const HOME_TITLE = "Native Medicine Garden Dispensary Weed Delivery";
+// Document <title> / og:title / twitter:title only — H1 and schema keep HOME_TITLE.
+export const HOME_DOC_TITLE = "Native Medicine Garden Dispensary Weed Delivery | Gerrard & Bay";
 export const HOME_MENU_HREF = "/exotic-weed";
 export const HOME_DELIVERY_HREF = "/delivery";
 export const HOME_DELIVERY_H2 = "Cannabis Delivery in Gerrard & Bay";
