@@ -103,7 +103,7 @@ export const cannabisStoreJsonLd = {
     {
       "@type": "CannabisStore",
       "@id": `${PRIMARY_ORIGIN}/#store`,
-      name: STORE_NAME,
+      name: "Native Medicine Garden Dispensary Weed Delivery",
       description:
         "Walk-in cannabis dispensary at 76 Gerrard St W, Gerrard and Bay, downtown Toronto near College–Bay. Flower tiers, pre-rolls, edibles, vapes, concentrates, and accessories. Open 24 Hours.",
       url: PRIMARY_ORIGIN,
@@ -151,7 +151,7 @@ export const cannabisStoreJsonLd = {
       "@type": "WebSite",
       "@id": `${PRIMARY_ORIGIN}/#website`,
       url: `${PRIMARY_ORIGIN}/`,
-      name: STORE_NAME,
+      name: "Native Medicine Garden Dispensary Weed Delivery",
       publisher: { "@id": `${PRIMARY_ORIGIN}/#store` },
     },
   ],
