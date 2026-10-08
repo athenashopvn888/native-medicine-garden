@@ -202,7 +202,7 @@ export default function HomePageClient() {
         <div className={styles.welcomeBannerContainer}>
           <img
             src="/banners/welcome_banner.webp"
-            alt="Welcome to Native Medicine Garden at Gerrard and Bay, downtown Toronto"
+            alt="Native Medicine Garden Dispensary Weed Delivery"
             className={styles.welcomeBannerImg}
           />
         </div>
