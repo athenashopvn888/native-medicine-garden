@@ -13,7 +13,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FlowerCard from "./components/FlowerCard";
 import SmokePilotSpotlight from "./components/SmokePilotSpotlight";
-import { allFlowers, type FlowerProduct } from "./lib/products";
+import { type FlowerProduct } from "./lib/products";
 import {
   ADDRESS_LINE,
   DIRECTIONS_URL,
@@ -26,6 +26,7 @@ import {
   STREET_ADDRESS,
 } from "./lib/store";
 import Papa from "papaparse";
+import { useLiveFlowers } from "./lib/useLiveMenu";
 
 /* -- Bento Mosaic Config -- */
 const BENTO_TIERS = [
@@ -104,6 +105,7 @@ interface ReviewStats {
 }
 
 export default function HomePageClient() {
+    const __liveFlowers = useLiveFlowers();
   const [featuredStrains, setFeaturedStrains] = useState<FlowerProduct[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsStats, setReviewsStats] = useState<ReviewStats | null>(null);
@@ -166,7 +168,7 @@ export default function HomePageClient() {
 
   /* Featured strains after mount so SSR HTML stays stable. */
   useEffect(() => {
-    const pool = [...allFlowers].filter((f) => f.image);
+    const pool = [...__liveFlowers].filter((f) => f.image);
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -187,7 +189,7 @@ export default function HomePageClient() {
     // Featured sample is mount-only; empty initial state avoids SSR mismatch.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setFeaturedStrains(picked);
-  }, []);
+  }, [__liveFlowers]);
 
   return (
     <main className={styles.main}>
