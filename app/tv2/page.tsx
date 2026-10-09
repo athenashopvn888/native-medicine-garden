@@ -188,7 +188,7 @@ function PromoCard({
   return (
     <div
       className={styles.card}
-      data-promo-card={cardId}
+      data-promo-card={cardId === "CIGARETTES" ? "CATEGORY_COLLAGE" : cardId}
       style={{"--accent":accent} as React.CSSProperties}
     >
       <div className={styles.cardHeader}>PROMO</div>
