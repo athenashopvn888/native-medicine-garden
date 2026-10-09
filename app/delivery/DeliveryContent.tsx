@@ -110,7 +110,6 @@ export default function DeliveryContent() {
     </section>
     <section className={styles.deliveryDetails} aria-label="Native Medicine Garden delivery details">
       <strong>$60 PRODUCT MINIMUM</strong>
-      <a href="sms:+12899072789"><span>DELIVERY TEXT NUMBER</span> +1 (289) 907-2789</a>
     </section>
     <section className={styles.loyalty} aria-labelledby="loyalty-title">
       <div><p>SAVE ON A LATER ORDER</p><h2 id="loyalty-title">Member Loyalty Savings</h2></div>
