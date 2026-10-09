@@ -1,8 +1,17 @@
+import { getLiveMenu } from "../../lib/liveMenu";
 import type { Metadata } from "next";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { SMOKE_PILOT_HERO_DISCLOSURE, SmokePilotLanding } from "../../components/SmokePilot";
-import { getItemsByCategory } from "../../lib/products";
+// Products come from the same loader as /api/tv-data on every request.
+export const dynamic = "force-dynamic";
+
+// ONE product loader (same as /api/tv-data), filled per request by __loadMenuData(). Grok 2026-10-09.
+let __menu!: Awaited<ReturnType<typeof getLiveMenu>>;
+async function __loadMenuData(): Promise<void> {
+  __menu = await getLiveMenu();
+
+}
 
 export const metadata: Metadata = {
   title: { absolute: "Native Cigarettes Gerrard & Bay | Native Medicine Garden" },
@@ -19,8 +28,9 @@ const HERO_ITEMS = [
   { name: "Canadian Menthol", image: "/products/1013-CANADIAN-MENTHOL.webp" },
 ] as const;
 
-export default function NativeCigarettesPage() {
-  const items = getItemsByCategory("CIGARETTES");
+export default async function NativeCigarettesPage() {
+    await __loadMenuData();
+  const items = __menu.items.filter((i) => i.category.toUpperCase() === String("CIGARETTES").toUpperCase());
   return (
     <>
       <Navbar />

@@ -43,7 +43,8 @@ async function fetchJson<T>(url: string): Promise<T> {
 }
 
 async function fetchInputs() {
-  const endpoint = process.env.APPS_SCRIPT_URL;
+  // Shared fleet menu feed (no Gmail on requests). Read ONLY from MENU_FEED_URL; legacy APPS_SCRIPT_URL is ignored.
+  const endpoint = (process.env.MENU_FEED_URL || "").trim() || "https://script.google.com/macros/s/AKfycbx09_sDal1eMVF1r-hUck4e7oq_XBHEWhGvA79JuhZNQ6P4CdhCas0xE3FfexWQ3hq4/exec";
   if (!endpoint) throw new Error("NMG inventory endpoint is not configured.");
   const separator = endpoint.includes("?") ? "&" : "?";
   const base = `${endpoint}${separator}store=NMG01`;

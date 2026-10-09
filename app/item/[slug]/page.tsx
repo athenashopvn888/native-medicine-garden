@@ -1,13 +1,24 @@
+import { getLiveMenu } from "../../lib/liveMenu";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { allItems, CATEGORY_CONFIG, type ItemProduct } from "../../lib/products";
+import { CATEGORY_CONFIG, type ItemProduct } from "../../lib/products";
 import { getItemData } from "../../lib/itemData";
 import { getItemPriceDisplay } from "../../lib/itemPricing";
 import Magnifier from "../../components/Magnifier";
 import styles from "../../flower/[slug]/flower.module.css";
+
+// Products come from the same loader as /api/tv-data on every request.
+export const dynamic = "force-dynamic";
+
+// ONE product loader (same as /api/tv-data), filled per request by __loadMenuData(). Grok 2026-10-09.
+let __menu!: Awaited<ReturnType<typeof getLiveMenu>>;
+async function __loadMenuData(): Promise<void> {
+  __menu = await getLiveMenu();
+
+}
 
 const ITEM_METADATA_OVERRIDES: Record<string, { title: string; description: string }> = {
   "gas-gang-dispo-thcvape-1g": {
@@ -18,8 +29,9 @@ const ITEM_METADATA_OVERRIDES: Record<string, { title: string; description: stri
 };
 
 /* -- Pre-generate all item pages -- */
-export function generateStaticParams() {
-  return allItems.map((i) => ({ slug: i.slug }));
+export async function generateStaticParams() {
+    await __loadMenuData();
+  return __menu.items.map((i) => ({ slug: i.slug }));
 }
 
 /* -- SEO metadata per item -- */
@@ -28,8 +40,9 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+    await __loadMenuData();
   const { slug } = await params;
-  const item = allItems.find((i) => i.slug === slug);
+  const item = __menu.items.find((i) => i.slug === slug);
   if (!item) return {};
 
   const itemData = getItemData(item.category, item.name);
@@ -128,8 +141,9 @@ export default async function ItemPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+    await __loadMenuData();
   const { slug } = await params;
-  const item = allItems.find((i) => i.slug === slug);
+  const item = __menu.items.find((i) => i.slug === slug);
   if (!item) notFound();
 
   const catInfo = Object.values(CATEGORY_CONFIG).find(c => c.name.toUpperCase() === item.category.toUpperCase() || c.name === item.category);
