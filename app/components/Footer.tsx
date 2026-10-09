@@ -61,6 +61,8 @@ export default function Footer() {
               <Link href="/items/cigarettes">Cigarettes</Link>
 <Link href="/items/vapes">Nicotine Vapes</Link>
               <Link href="/faq">FAQ</Link>
+              <Link href="/hours">Store Hours</Link>
+              <Link href="/weed-dispensary-gerrard-bay">Gerrard &amp; Bay dispensary</Link>
               <Link href="/weed-delivery-toronto">WEED DELIVERY</Link>
               <Link href="/info/cheap-weed-gerrard-bay">
                 Cheap Weed Gerrard and Bay

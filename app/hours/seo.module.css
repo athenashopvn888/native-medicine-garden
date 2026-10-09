@@ -1,0 +1,139 @@
+.main {
+  min-height: 100vh;
+  background: #0b1220;
+  color: #f1f5f9;
+}
+
+.content {
+  width: min(880px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 120px 0 72px;
+}
+
+.crumbs {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 18px;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.crumbs a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.kicker {
+  margin: 0 0 10px;
+  color: #5eead4;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-size: clamp(1.9rem, 4.6vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.lead,
+.section p {
+  margin: 0 0 14px;
+  color: #cbd5e1;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.card {
+  margin: 24px 0;
+  padding: 20px 22px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.75);
+}
+
+.card p {
+  margin: 0 0 8px;
+  color: #e2e8f0;
+  line-height: 1.6;
+}
+
+.card a,
+.section a {
+  color: #93c5fd;
+}
+
+.section {
+  margin: 34px 0;
+}
+
+.section h2 {
+  margin: 0 0 14px;
+  font-size: 1.35rem;
+}
+
+.weekRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  color: #e2e8f0;
+}
+
+.list {
+  margin: 0 0 14px;
+  padding-left: 1.2rem;
+  color: #cbd5e1;
+  line-height: 1.8;
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.cta {
+  display: inline-block;
+  padding: 11px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  color: #f8fafc;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ctaPrimary {
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+.faqItem {
+  margin-bottom: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.faqItem summary {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.faqItem p {
+  margin: 0;
+  padding: 0 16px 14px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+.note {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
