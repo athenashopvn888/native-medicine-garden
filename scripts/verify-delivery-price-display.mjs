@@ -90,11 +90,8 @@ assert(source.includes("3g Craft coupon earned with a qualifying $120+ purchase"
 assert(source.includes("Make a $50+ purchase within 14 days"), "delivery page must explain the approved keep-active condition");
 assert(source.includes("Complimentary items apply only to regular-price Craft or Exotic ounces—not BC Premium."), "delivery page must preserve the approved complimentary-item condition");
 assert(source.includes("HOW TO ORDER") && source.includes("Select LIVE ORDER") && source.includes("private selfie-with-ID") && source.includes("dispatcher confirms availability"), "delivery page must show the four-step consent-first order flow");
-const smsMatch = source.match(/href="sms:(\+1[2-9]\d{9})"><span>DELIVERY TEXT NUMBER<\/span> (\+1 \([2-9]\d{2}\) \d{3}-\d{4})<\/a>/);
-assert(smsMatch, "delivery page must show one valid dedicated SMS number and sms action");
+assert(!source.includes("DELIVERY TEXT NUMBER") && !/sms:\+1\d{10}/.test(source), "no public delivery text number or sms: link may be listed (Master Lines number only)");
 assert(!source.includes("__DELIVERY_"), "delivery phone placeholders must never ship");
-const digits = smsMatch[2].replace(/\D/g, "");
-assert.equal(`+${digits}`, smsMatch[1], "visible delivery number must match the sms action");
 const deliveryStyles = fs.readFileSync(new URL("delivery.module.css", deliveryRoot), "utf8");
 if (/<Image src="\/banners\/.+Delivery/i.test(source)) {
   assert(/\.hero>img\{[^}]*width:100%;[^}]*height:auto;[^}]*object-fit:contain/s.test(deliveryStyles), "delivery artwork must render full-width at its intrinsic aspect ratio without cropping");
