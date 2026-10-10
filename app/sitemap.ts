@@ -35,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/24-hour-gerrard-bay-dispensary`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/native-cigarettes-gerrard-bay`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${BASE}/nicotine-vape-gerrard-bay`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${BASE}/vape-shop-gerrard-bay`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
   ];
 
   /* Tier pages */
