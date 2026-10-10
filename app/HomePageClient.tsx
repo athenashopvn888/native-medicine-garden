@@ -90,6 +90,7 @@ const LOCAL_HUB_LINKS = [
   { href: "/weed-delivery-toronto", label: "Delivery" },
   { href: "/native-cigarettes-gerrard-bay", label: "Native cigarettes: cartons and packs" },
   { href: "/nicotine-vape-gerrard-bay", label: "Nicotine vapes, pods and pouches" },
+  { href: "/vape-shop-gerrard-bay", label: "Current Gerrard & Bay vape listings" },
   { href: "/visit", label: "How to get here: transit and parking" },
 ] as const;
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { SmokePilotLanding } from "../../components/SmokePilot";
+import VapeActionPanel from "../../components/VapeActionPanel";
 
 export const metadata: Metadata = {
   title: { absolute: "Nicotine Vapes near Gerrard and Bay | Native Medicine Garden" },
@@ -43,5 +44,5 @@ export default function NicotineVapesPage() {
       { q: "Does this page include cannabis vapes?", a: "No. THC and cannabis vape products under /items/vape-disposables are excluded." },
     ]}
     theme="nicotine" warning="Adults 19+. Nicotine is addictive."
-  /><Footer /></>;
+  /><VapeActionPanel /><Footer /></>;
 }
