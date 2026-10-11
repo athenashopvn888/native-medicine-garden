@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import "./NativeMedicineWebChat.css";
@@ -324,7 +325,7 @@ export default function NativeMedicineWebChat() {
         {open ? "Close chat" : "LIVE ORDER"}
       </button>
       {open && <section className="sod-chat-panel" role="dialog" aria-modal="true" aria-label="Native Medicine Garden Web Chat">
-      <header><div><strong>Native Medicine Garden Web Chat</strong><small>Start your delivery order with a dispatcher</small></div><button type="button" onClick={() => setOpen(false)} aria-label="Minimize chat">×</button></header>
+        <header><div><strong>Native Medicine Garden Web Chat</strong><small>DELIVERY PRICES ONLY. Delivery orders are charged these prices, not in-store prices. <Link href="/faq#delivery-price-rule">See the FAQ</Link></small></div><button type="button" onClick={() => setOpen(false)} aria-label="Minimize chat">×</button></header>
       <div className={`sod-availability-banner ${paused ? "paused" : "unavailable"}`} role="status" hidden={!statusMessage}>
         <strong>{paused ? "New delivery chats are paused" : "Delivery status unavailable"}</strong>
         <span>{statusMessage}{token ? " Your existing chat remains open." : ""}</span>
