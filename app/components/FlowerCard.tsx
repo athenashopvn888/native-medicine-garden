@@ -114,6 +114,7 @@ export default function FlowerCard({
         <h3 className={styles.name}>{flower.name}</h3>
 
         {/* Price + $/g */}
+        <span className="price-scope-label">In-store price</span>
         <div className={styles.priceRow}>
           {active.price && active.price.sale !== null ? (
             <div className={styles.priceGroup}>
