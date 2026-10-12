@@ -44,27 +44,11 @@ export default function FleetAnnouncementBanner() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/banners/top-weed-tier-nmg01.webp" alt="TOP WEED TIER — Exotic, Premium, and AAA+ flower at Native Medicine Garden — Buy 2g Get 1g FREE and Buy 3g Get 3g FREE." />
       </Link>
-      <p data-cigarette-deal="">
-        CIGARETTE DEAL ! 2 PACK $5 MIX AND MATCH
-      </p>
-      <p data-bb-light-deal="">
-        EXCLUSIVE SPECIAL PREMIUM GRADE BB FULL, BB LIGHT &amp; BELMONT KING SIZE!
-      </p>
-      <Link href="/items/cigarettes" data-cig-mix-banner="" aria-label="Shop cigarette mix and match offers">
+<Link href="/items/cigarettes" data-cig-mix-banner="" aria-label="Shop cigarette mix and match offers">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/banners/2pack5cig.webp" alt="Cigarette deal at Native Medicine Garden — 2 packs for $5 mix and match, cartons $25. Canadian Lights, Menthol, Classics, Goose, Rolled Gold and more." />
+        <img src="/banners/2pack5cig.webp" alt="Cigarette deal at Native Medicine Garden — 2 packs for $5 mix and match, cartons $25. Canadian Lights, Menthol, Classics, Goose, Rolled Gold and more."
+          style={{ display: "block", width: "100%", height: "auto" }} />
       </Link>
-      <Link href="/items/cigarettes" data-belmont-premium-banner="" aria-label="Shop BB and Belmont Premium Grade cigarettes">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/banners/BB_Belmont_Premium_Grade.webp"
-          alt="Exclusive Premium Grade BB Full Flavor, BB Lights, and Belmont King Size cigarettes at Native Medicine Garden."
-        />
-      </Link>
-      <Link href="/items/cigarettes" data-belmont-mix-match-banner="" aria-label="BELMONT KING SIZE $10 - 2PACK BB $5 MIX & MATCH">
-        <span data-belmont-offer-lead="">BELMONT KING SIZE $10 -</span>
-        <span data-belmont-offer-tail=""> 2PACK BB $5 MIX &amp; MATCH</span>
-      </Link>
-    </aside>
+</aside>
   );
 }
