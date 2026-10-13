@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 import FleetAnnouncementBanner from "./components/FleetAnnouncementBanner";
-import HomeTitleBlock from "./components/HomeTitleBlock";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FlowerCard from "./components/FlowerCard";
@@ -202,9 +201,8 @@ export default function HomePageClient({ initialFlowers }: { initialFlowers: Par
   return (
     <main className={styles.main}>
       <Navbar />
+      <FleetAnnouncementBanner title={HOME_TITLE} />
       <HomepageTopNotices />
-      <HomeTitleBlock title={HOME_TITLE} />
-      <FleetAnnouncementBanner />
       {/* -- NAVBAR -- */}
 
 
