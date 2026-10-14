@@ -503,7 +503,7 @@ button { cursor: pointer; font-family: inherit; }
   text-transform: uppercase;
 }
 
-[data-thanksgiving-hours-notice] { background: #166534; }
+[data-thanksgiving-hours-notice],[data-halloween-hours-notice] { background: #166534; }
 [data-cigarette-deal] { background: #b91c1c; }
 [data-bb-light-deal] { background: #c2410c; }
 
