@@ -19,11 +19,11 @@ const imageObjects = [
   { name: `${STORE_NAME} premium cigarette offer`, description: `BB Full Flavor and Lights plus Marlboro and Belmont cigarette offer at ${STORE_NAME} in ${STORE_AREA}.`, contentUrl: `${STORE_ORIGIN}${PREMIUM_CIGARETTE_IMAGE}` },
 ].map((image) => ({ "@type": "ImageObject", ...image, caption: image.description }));
 
-function isThanksgivingNoticeActive(date: Date) {
+function isHalloweenNoticeActive(date: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Toronto", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(date);
   const value = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
   const dateKey = Number(`${value.year}${value.month}${value.day}`);
-  return dateKey >= 20260930 && dateKey <= 20261012;
+  return dateKey >= 20261014 && dateKey <= 20261031;
 }
 
 const figureStyle = { margin: 0, width: "100%" } as const;
@@ -34,10 +34,10 @@ const captionStyle = { margin: 0, padding: "10px 14px", background: "#111827", c
 export default function FleetAnnouncementBanner({ title }: { title: string }) {
   const announcementRef = useRef<HTMLElement>(null);
   const [navClearance, setNavClearance] = useState<number | null>(null);
-  const [showThanksgivingNotice, setShowThanksgivingNotice] = useState(false);
+  const [showHalloweenNotice, setShowHalloweenNotice] = useState(false);
 
   useEffect(() => {
-    const updateVisibility = () => setShowThanksgivingNotice(isThanksgivingNoticeActive(new Date()));
+    const updateVisibility = () => setShowHalloweenNotice(isHalloweenNoticeActive(new Date()));
     updateVisibility();
     const timer = window.setInterval(updateVisibility, 60_000);
     return () => window.clearInterval(timer);
@@ -72,7 +72,7 @@ export default function FleetAnnouncementBanner({ title }: { title: string }) {
       <figure data-core-banner="vapes" data-vape-banner="" style={figureStyle}><Link href="/items/vapes" aria-label={`Shop nicotine vapes and THC vapes at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={VAPE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — nicotine vapes and THC vapes`} title={`${STORE_NAME} nicotine vapes and THC vapes`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>Nicotine + THC vapes</figcaption></figure>
       <figure data-core-banner="cigarettes" data-cig-mix-banner="" style={figureStyle}><Link href="/items/cigarettes" aria-label={`Shop cigarette mix and match offers at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={CIGARETTE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — 2 packs for $5 mix and match and $25 carton cigarette offer`} title={`${STORE_NAME} cigarette offer — 2 packs $5 mix and match, $25 carton`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>2 PACKS $5 / $25 CARTON</figcaption></figure>
       <figure data-core-banner="premium-cigarettes" data-premium-cigarette-banner="" style={figureStyle}><Link href="/items/cigarettes" aria-label={`Shop BB, Marlboro and Belmont cigarette offers at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={PREMIUM_CIGARETTE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — BB Full Flavor and Lights, Marlboro and Belmont premium cigarettes`} title={`${STORE_NAME} premium cigarettes — BB, Marlboro and Belmont`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>BB Full Flavor + Lights 2 packs $5 · Marlboro &amp; Belmont $10/pack</figcaption></figure>
-      {showThanksgivingNotice ? <p data-thanksgiving-hours-notice="">Thanksgiving Monday (Oct 12): We are open regular hours.</p> : null}
+      {showHalloweenNotice ? <p data-halloween-hours-notice="">Happy Halloween! {STORE_NAME} is open regular hours on Saturday, October 31.</p> : null}
     </aside>
   );
 }
