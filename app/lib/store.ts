@@ -35,6 +35,10 @@ export type FaqItem = { q: string; a: string };
 /** Homepage FAQs — location, hours, products. Must match visible homepage copy. */
 export const HOME_FAQS: FaqItem[] = [
   {
+    q: "Need a weed dispensary near me downtown, around Gerrard and Bay?",
+    a: "Native Medicine Garden is at 76 Gerrard St W, Toronto, at Gerrard & Bay near College–Bay. The walk-in is open 24 hours for adults 19+ with valid photo ID.",
+  },
+  {
     q: "Where is Native Medicine Garden?",
     a: "Native Medicine Garden is a walk-in cannabis dispensary at 76 Gerrard St W, Toronto, ON M5G 1J5, on Gerrard Street West at Bay Street in downtown Toronto. Call +1 (437) 374-4544.",
   },
