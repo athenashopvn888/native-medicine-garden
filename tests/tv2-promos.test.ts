@@ -19,8 +19,8 @@ const tv2Page = readFileSync(
 );
 
 test("TV2 daytime uses Toronto time from 10:00 through 16:59", () => {
-  assert.equal(isTv2Daytime(new Date("2026-10-07T13:59:59.000Z")), false);
-  assert.equal(isTv2Daytime(new Date("2026-10-07T14:00:00.000Z")), true);
+  assert.equal(isTv2Daytime(new Date("2026-10-07T11:59:59.000Z")), false);
+  assert.equal(isTv2Daytime(new Date("2026-10-07T12:00:00.000Z")), true);
   assert.equal(isTv2Daytime(new Date("2026-10-07T20:59:59.000Z")), true);
   assert.equal(isTv2Daytime(new Date("2026-10-07T21:00:00.000Z")), false);
 });

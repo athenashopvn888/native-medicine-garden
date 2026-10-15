@@ -1,4 +1,5 @@
 "use client";
+import { isNicotineItem } from "../tv/flashMessages";
 import {
   useState,
   useEffect,
@@ -363,7 +364,7 @@ export default function TV2Page() {
           <HiringRibbon hiring={tvHiring} />
           <div className={styles.grid}>
             {CARD_CONFIG.map(card => {
-              const filtered = items.filter(card.filter);
+              const filtered = items.filter(card.filter).filter(it => !(daytime && isNicotineItem(it)));
               const promo = getTv2DaytimePromo(card.id, daytime, promoElapsedMs);
 
               if (promo) {

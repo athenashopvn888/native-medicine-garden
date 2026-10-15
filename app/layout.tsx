@@ -1,3 +1,4 @@
+import PinnedNavClearance from "./components/PinnedNavClearance";
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
@@ -103,6 +104,7 @@ export default function RootLayout({
           EXPLORE WEED DELIVERY
         </Link>
         {children}
+        <PinnedNavClearance />
       </body>
     </html>
   );
