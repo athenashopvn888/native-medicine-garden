@@ -584,3 +584,11 @@ body:has(#home-delivery-heading) main > .deliveryHoursAnnouncement {
 .tier-live-range{margin:12px 0;font-size:1rem;line-height:1.45}
 .delivery-tier-ranges{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:16px auto;padding:0 16px;max-width:1120px}
 .delivery-tier-ranges p{display:flex;flex-direction:column;gap:4px;margin:0;padding:12px;border:1px solid currentColor;border-radius:10px;line-height:1.45}
+
+/* Pinned nav: opaque (no content showing through) and above page content, in the store's own nav colour so nav text stays readable. */
+#main-nav {
+  z-index: 1000 !important;
+  background: rgb(0, 0, 0) !important;
+  background-color: rgb(0, 0, 0) !important;
+  backdrop-filter: none !important;
+}
