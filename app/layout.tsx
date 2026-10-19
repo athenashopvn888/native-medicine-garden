@@ -1,3 +1,4 @@
+import FullNameNap from "./components/FullNameNap";
 import PinnedNavClearance from "./components/PinnedNavClearance";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -104,6 +105,7 @@ export default function RootLayout({
           EXPLORE WEED DELIVERY
         </Link>
         {children}
+        <FullNameNap />
         <PinnedNavClearance />
       </body>
     </html>
