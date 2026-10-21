@@ -106,7 +106,7 @@ export const getTierGuideLinks = (categoryPath: string, limit = 6) => GUIDE_REGI
   .slice(0, limit);
 
 export function getCategoryGuideGroups(categoryPath: string) {
-  if (categoryPath === "/items/cigarettes") return [{ label: "Native Cigarettes brand guides", guides: GUIDE_REGISTRY.filter((guide) => guide.lane === "native_cig").slice(0, 9) }];
+  if (categoryPath === "/items/cigarettes") return [{ label: SHOW_CIGARETTES ? "Native Cigarettes brand guides" : "Backwoods", guides: GUIDE_REGISTRY.filter((guide) => guide.lane === "native_cig").slice(0, 9) }];
   if (categoryPath === "/items/vapes") return [
     { label: "Nicotine Vape brand guides", guides: GUIDE_REGISTRY.filter((guide) => guide.lane === "nic_vape").slice(0, 6) },
     { label: "Separate THC Vape guides", guides: GUIDE_REGISTRY.filter((guide) => guide.lane === "thc_vape").slice(0, 3) },

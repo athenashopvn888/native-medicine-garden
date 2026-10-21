@@ -1,6 +1,6 @@
 "use client";
 
-import { cigaretteSafeContent } from "./lib/siteConfig";
+import { SHOW_CIGARETTES, cigaretteSafeContent } from "./lib/siteConfig";
 
 
 import { HOME_TITLE } from "./lib/homeDelivery";
@@ -159,6 +159,7 @@ export default function HomePageClient({ initialFlowers }: { initialFlowers: Par
 
           const comment = row.Comment || "";
           if (!comment || comment.length < 10) return;
+          if (!SHOW_CIGARETTES && /grabba/i.test(comment)) return;
           const name = rn || "Customer";
           const dateStr = row.CreateTime || "";
           reviewsPool.push({ name, comment, date: dateStr });
@@ -291,7 +292,9 @@ export default function HomePageClient({ initialFlowers }: { initialFlowers: Par
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Explore Categories</h2>
             <p className={styles.sectionSubtitle}>
-              From custom disposable vapes and concentrates to accessories and cigarettes.
+              {SHOW_CIGARETTES
+                ? "From custom disposable vapes and concentrates to accessories and cigarettes."
+                : "From custom disposable vapes and concentrates to accessories."}
             </p>
           </div>
 
@@ -354,7 +357,9 @@ export default function HomePageClient({ initialFlowers }: { initialFlowers: Par
               <strong>Native Medicine Garden</strong> is the walk-in shop at 76 Gerrard St W, on Gerrard Street West at Bay Street. The door is a short walk from College–Bay and College Station, with Dundas Station, College Park, and Toronto Metropolitan University on the same downtown core blocks.
             </p>
             <p className={styles.seoPanelText}>
-              This homepage is the visit hub: address, listed hours ({HOURS_LABEL}), phone {PHONE_DISPLAY}, and directions. It is a neighbourhood walk-in near College–Bay — not a city-wide delivery landing. Adults 19+ can browse flower tiers, pre-rolls, edibles, vapes, concentrates, accessories, and cigarette category items, then ask staff about current jars and labels.
+              This homepage is the visit hub: address, listed hours ({HOURS_LABEL}), phone {PHONE_DISPLAY}, and directions. It is a neighbourhood walk-in near College–Bay — not a city-wide delivery landing. {SHOW_CIGARETTES
+                ? "Adults 19+ can browse flower tiers, pre-rolls, edibles, vapes, concentrates, accessories, and cigarette category items, then ask staff about current jars and labels."
+                : "Adults 19+ can browse flower tiers, pre-rolls, edibles, vapes, concentrates, and accessories, then ask staff about current jars and labels."}
             </p>
             <p className={styles.seoPanelText}>
               Street parking on Gerrard is easiest in the evening when posted rules allow free parking; daytime visitors should read the signs or use a nearby garage. {HOURS_LABEL}, 7 days a week. For TTC exits, walking cues, and parking detail, use the{" "}

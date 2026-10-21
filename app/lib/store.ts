@@ -1,3 +1,5 @@
+import { SHOW_CIGARETTES } from "./siteConfig";
+
 /** Single-store NAP and local SEO constants for Native Medicine Garden.
  *  GBP Website field must remain the homepage root
  *  `https://www.nativemedicinecannabis.com/` — never `/visit` or `/weed-dispensary-*`.
@@ -52,7 +54,9 @@ export const HOME_FAQS: FaqItem[] = [
   },
   {
     q: "What cannabis products can I browse?",
-    a: "Adults 19+ can browse five flower tiers: Exotic ($10-$12/g), Premium ($7-$10/g), AAA+ ($5-$6/g), AA ($4/g), and Budget ($3/g), plus edibles, pre-rolls, vapes, concentrates, accessories, and cigarette category items. Confirm current listings on the menu or in store.",
+    a: SHOW_CIGARETTES
+      ? "Adults 19+ can browse five flower tiers: Exotic ($10-$12/g), Premium ($7-$10/g), AAA+ ($5-$6/g), AA ($4/g), and Budget ($3/g), plus edibles, pre-rolls, vapes, concentrates, accessories, and cigarette category items. Confirm current listings on the menu or in store."
+      : "Adults 19+ can browse five flower tiers: Exotic ($10-$12/g), Premium ($7-$10/g), AAA+ ($5-$6/g), AA ($4/g), and Budget ($3/g), plus edibles, pre-rolls, vapes, concentrates, and accessories. Confirm current listings on the menu or in store.",
   },
   {
     q: "Do I need ID to walk in?",

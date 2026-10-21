@@ -1,6 +1,6 @@
 "use client";
 
-import { filterCigaretteEntries } from "../lib/siteConfig";
+import { SHOW_CIGARETTES, filterCigaretteEntries } from "../lib/siteConfig";
 
 import CohortDeliveryActions from "./CohortDeliveryActions";
 
@@ -73,7 +73,7 @@ export default function Navbar() {
       <div className={styles.scrollShell}>
         <div ref={scrollBarRef} id="store-menu-scrollbar" className={styles.scrollBar}>
           <div className={styles.scrollInner}>
-          {filterCigaretteEntries(ALL_LINKS).map((link) => {
+          {(SHOW_CIGARETTES ? ALL_LINKS : ALL_LINKS.flatMap((link) => link.href === "/items/cigarettes" ? [{ ...link, label: "Backwoods" }] : filterCigaretteEntries([link]))).map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link

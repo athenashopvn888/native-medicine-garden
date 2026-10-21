@@ -1,4 +1,4 @@
-import { SHOW_CIGARETTES, filterCigaretteItems, isCigaretteCategory } from "./siteConfig";
+import { filterCigaretteItems } from "./siteConfig";
 import { BOGO_BUY_2_GET_1, BOGO_BUY_3_GET_3, type BoardDeal } from "./flowerDeals";
 
 /* -- Product & Item Types -- */
@@ -41,9 +41,7 @@ import flowersJson from "./flowers.json";
 import itemsJson from "./items.json";
 
 export const allFlowers: FlowerProduct[] = flowersJson as FlowerProduct[];
-export const allItems: ItemProduct[] = SHOW_CIGARETTES
-  ? itemsJson as ItemProduct[]
-  : (itemsJson as ItemProduct[]).filter((item) => !isCigaretteCategory(item.category));
+export const allItems: ItemProduct[] = filterCigaretteItems(itemsJson as ItemProduct[]);
 
 /* Live stock fetch from Apps Script */
 // Shared fleet menu feed (no Gmail on requests). Read ONLY from MENU_FEED_URL; the legacy
@@ -372,7 +370,6 @@ export function getTierFromSlug(
 export function getCategoryFromSlug(
   slug: string,
 ): { key: string; config: (typeof CATEGORY_CONFIG)[string] } | undefined {
-  if (!SHOW_CIGARETTES && isCigaretteCategory(slug)) return undefined;
   const entry = Object.entries(CATEGORY_CONFIG).find(
     ([, v]) => v.slug === slug,
   );

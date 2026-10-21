@@ -1,4 +1,4 @@
-import { cigaretteSafeContent } from "../lib/siteConfig";
+import { SHOW_CIGARETTES, cigaretteSafeContent } from "../lib/siteConfig";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
@@ -50,7 +50,7 @@ export default function GuidesPage() {
       <div className={styles.wrap}>
         {groups.map(({ lane, guides }) => (
           <section className={styles.group} key={lane}>
-            <div className={styles.groupHeading}><h2>{laneLabels[lane]}</h2><span>{guides.length} guides</span></div>
+            <div className={styles.groupHeading}><h2>{SHOW_CIGARETTES || lane !== "native_cig" ? laneLabels[lane] : "Backwoods"}</h2><span>{guides.length} guides</span></div>
             <div className={styles.grid}>{guides.map((guide) => <Link className={styles.card} href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.name}</span><small>Read guide →</small></Link>)}</div>
           </section>
         ))}

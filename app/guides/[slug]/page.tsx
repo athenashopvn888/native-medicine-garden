@@ -1,3 +1,4 @@
+import { SHOW_CIGARETTES, hideNativeCigarettePhrase } from "../../lib/siteConfig";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -27,14 +28,15 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
   if (deliveryGuide) return { title: { absolute: deliveryGuide.title }, description: deliveryGuide.description, alternates: { canonical: `${BASE}/guides/${deliveryGuide.slug}` }, robots: { index: true, follow: true }, openGraph: { title: deliveryGuide.title, description: deliveryGuide.description, url: `${BASE}/guides/${deliveryGuide.slug}`, type: "website" } };
   const guide = getGuide(slug);
   if (!guide) return {};
-  const description = stripMarkdown(guide.description);
+  const description = stripMarkdown(hideNativeCigarettePhrase(guide.description));
+  const title = hideNativeCigarettePhrase(guide.title);
   return {
-    title: { absolute: guide.title },
+    title: { absolute: title },
     description,
-    keywords: guide.primaryKeywords,
+    keywords: guide.primaryKeywords.map(hideNativeCigarettePhrase).filter(Boolean),
     alternates: { canonical: `${BASE}/guides/${guide.slug}` },
     robots: { index: true, follow: true },
-    openGraph: { title: guide.title, description, url: `${BASE}/guides/${guide.slug}`, type: "website" },
+    openGraph: { title, description, url: `${BASE}/guides/${guide.slug}`, type: "website" },
   };
 }
 
@@ -49,25 +51,29 @@ export default async function GuidePage({ params }: GuidePageProps) {
   const product = resolveGuideProduct(guide);
   const productHref = product ? `${guide.lane === "strain" ? "/flower" : "/item"}/${product.slug}` : undefined;
   const canonical = `${BASE}/guides/${guide.slug}`;
-  const lane = laneCopy[guide.lane];
+  const lane = !SHOW_CIGARETTES && guide.lane === "native_cig"
+    ? { label: "Backwoods", category: "Cigarillos" }
+    : laneCopy[guide.lane];
+  const guideTitle = hideNativeCigarettePhrase(guide.title);
+  const guideDescription = hideNativeCigarettePhrase(guide.description);
   const graph: Record<string, unknown>[] = [{
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: BASE },
       { "@type": "ListItem", position: 2, name: "Guides", item: `${BASE}/guides` },
-      { "@type": "ListItem", position: 3, name: guide.name, item: canonical },
+      { "@type": "ListItem", position: 3, name: hideNativeCigarettePhrase(guide.name), item: canonical },
     ],
   }];
-  if (guide.schema.types.includes("WebPage")) graph.push({ "@type": "WebPage", "@id": `${canonical}#webpage`, url: canonical, name: guide.title, description: stripMarkdown(guide.description) });
+  if (guide.schema.types.includes("WebPage")) graph.push({ "@type": "WebPage", "@id": `${canonical}#webpage`, url: canonical, name: guideTitle, description: stripMarkdown(guideDescription) });
   if (guide.schema.types.includes("FAQPage")) graph.push({
     "@type": "FAQPage",
-    mainEntity: guide.schema.faq_items.map((faq) => ({ "@type": "Question", name: stripMarkdown(faq.question), acceptedAnswer: { "@type": "Answer", text: stripMarkdown(faq.answer) } })),
+    mainEntity: guide.schema.faq_items.filter((faq) => SHOW_CIGARETTES || !/grabba/i.test(`${faq.question} ${faq.answer}`)).map((faq) => ({ "@type": "Question", name: stripMarkdown(hideNativeCigarettePhrase(faq.question)), acceptedAnswer: { "@type": "Answer", text: stripMarkdown(hideNativeCigarettePhrase(faq.answer)) } })),
   });
   if (guide.schema.types.includes("Product")) graph.push({
     "@type": "Product",
     name: guide.name,
     brand: { "@type": "Brand", name: guide.name },
-    description: stripMarkdown(guide.description),
+    description: stripMarkdown(guideDescription),
     category: lane.category,
     url: canonical,
   });
@@ -81,8 +87,8 @@ export default async function GuidePage({ params }: GuidePageProps) {
         <nav className={styles.breadcrumb} aria-label="Breadcrumb"><Link href="/">Home</Link><span>/</span><Link href="/guides">Guides</Link><span>/</span><span>{guide.name}</span></nav>
         <header className={styles.hero}>
           <span className={styles.lane}>{lane.label}</span>
-          <h1>{guide.title}</h1>
-          <p className={styles.lede}>{stripMarkdown(guide.description)}</p>
+          <h1>{guideTitle}</h1>
+          <p className={styles.lede}>{stripMarkdown(guideDescription)}</p>
           <div className={styles.actions}>
             <Link className={styles.primary} href={productHref ?? guide.preferredCategoryPath}>{productHref ? `Open the ${guide.name} menu listing` : "Check today’s board"}</Link>
             <Link className={styles.secondary} href={guide.preferredCategoryPath}>Browse {lane.category}</Link>
