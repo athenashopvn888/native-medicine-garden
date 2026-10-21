@@ -39,9 +39,12 @@ const CARD_CONFIG_RAW = [
   { id:"CIGARETTES",      title:"🚬 CIGARETTES",         accent:"#78350f", filter:(it:Item)=>it.category==="CIGARETTES", preset:"" },
   { id:"MAGIC",           title:"🍄 MAGIC & OTHERS",     accent:"#9333ea", filter:(it:Item)=>it.category==="MAGIC & OTHERS", preset:"🍫 START SMALL · WAIT 45 MIN · THEN MORE" },
 ];
+const preservedSmokeName = (name: string) => /(?:backwoods|cigarillos?|rolling[- ]?papers?|raw[- ]?papers?)/i.test(name) && !/grabba/i.test(name);
 const CARD_CONFIG = SHOW_CIGARETTES
   ? CARD_CONFIG_RAW
-  : CARD_CONFIG_RAW.filter((card) => card.id !== "CIGARETTES");
+  : CARD_CONFIG_RAW.map((card) => card.id === "CIGARETTES"
+      ? { ...card, title: "BACKWOODS", filter: (it: Item) => preservedSmokeName(it.name) }
+      : card);
 
 /* -- HELPERS -- */
 const fmtPrice = (v?:string) => { const s=String(v||"").trim(); if(!s)return""; return /^\$/.test(s)?s:"$"+s; };

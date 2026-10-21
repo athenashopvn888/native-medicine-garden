@@ -59,7 +59,7 @@ export default function Footer() {
               <Link href="/aa-weed">AA Weed</Link>
               <Link href="/budget-weed">Budget Weed</Link>
               <Link href="/items/edibles">Edibles</Link>
-              {SHOW_CIGARETTES ? (<Link href="/items/cigarettes">Cigarettes</Link>) : null}
+              {SHOW_CIGARETTES ? (<Link href="/items/cigarettes">Cigarettes</Link>) : <Link href="/items/cigarettes">Backwoods</Link>}
 <Link href="/items/vapes">Nicotine Vapes</Link>
               <Link href="/faq">FAQ</Link>
               <Link href="/hours">Store Hours</Link>

@@ -1,6 +1,6 @@
 const SHOW_CIGARETTES = process.env.NEXT_PUBLIC_SHOW_CIGARETTES?.trim().toLowerCase() === "true";
 const cigaretteRedirects = SHOW_CIGARETTES ? [] : [
-  { source: "/items/cigarettes/:path*", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/items/cigarettes/:path+", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/cigarettes/:path*", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/cigarette/:path*", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/items/tobacco/:path*", destination: "/items/vapes", statusCode: 302 as const },
@@ -24,6 +24,11 @@ const cigaretteRedirects = SHOW_CIGARETTES ? [] : [
   { source: "/guides/time-cigarettes", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/guides/grabba", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/guides/grabba-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/item/grabba", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/item/grabba-redrose-redherring", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/item/grabba-shaker-redrose-red-herring", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/item/grabba-shaker-redrose-red-herring-x2-available", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/item/:slug(.*grabba.*)", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/guides/bb-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/guides/bb-full-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
   { source: "/guides/bb-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },

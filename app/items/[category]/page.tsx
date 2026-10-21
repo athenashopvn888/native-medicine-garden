@@ -1,3 +1,4 @@
+import { SHOW_CIGARETTES } from "../../lib/siteConfig";
 import CigaretteSeasonalNotice from "../../components/CigaretteSeasonalNotice";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -34,11 +35,12 @@ export async function generateMetadata({
   const { category: catSlug } = await params;
   const catInfo = getCategoryFromSlug(catSlug);
   if (!catInfo) return {};
+  const preservedShelf = catSlug === "cigarettes" && !SHOW_CIGARETTES;
   const items = (await liveItemsByCategory(catInfo.key));
 
   return {
-    title: catInfo.config.seoTitle || `${catInfo.config.name} — ${items.length} Products`,
-    description: catInfo.config.seoIntro || `Shop ${items.length} ${catInfo.config.name.toLowerCase()} at Native Medicine Garden.`,
+    title: preservedShelf ? "Backwoods, cigarillos and rolling papers" : (catInfo.config.seoTitle || `${catInfo.config.name} — ${items.length} Products`),
+    description: preservedShelf ? "Backwoods, cigarillos and rolling papers at Native Medicine Garden, 76 Gerrard St W. Open 24 Hours." : (catInfo.config.seoIntro || `Shop ${items.length} ${catInfo.config.name.toLowerCase()} at Native Medicine Garden.`),
     alternates: {
       canonical: `https://www.nativemedicinecannabis.com/items/${catSlug}`,
     },
@@ -53,6 +55,7 @@ export default async function ItemsCategoryPage({
   const { category: catSlug } = await params;
   const catInfo = getCategoryFromSlug(catSlug);
   if (!catInfo) notFound();
+  const preservedShelf = catSlug === "cigarettes" && !SHOW_CIGARETTES;
 
   /* Pre-Rolls also shows accessories (ADD ONS) */
   let items = (await liveItemsByCategory(catInfo.key));
@@ -72,7 +75,7 @@ export default async function ItemsCategoryPage({
 
       {/* Hero Banner */}
       <section style={{ width: "100%", overflow: "hidden", marginTop: "92px", marginBottom: "24px" }}>
-        {config.banner ? (
+        {config.banner && !preservedShelf ? (
           <img
             src={config.banner}
             alt={catSlug === "cigarettes" ? cigaretteCategoryImage.alt : config.name}
@@ -81,11 +84,11 @@ export default async function ItemsCategoryPage({
           />
         ) : (
           <div className={styles.heroContent} style={{ background: config.color, padding: "60px 24px", textAlign: "center" }}>
-            <span className={styles.heroIcon}>{config.icon}</span>
+            <span className={styles.heroIcon}>{preservedShelf ? "BW" : config.icon}</span>
             <h1 className={styles.heroTitle}>
-              <span style={{ color: "#fff" }}>{config.name}</span>
+              <span style={{ color: "#fff" }}>{preservedShelf ? "Backwoods" : config.name}</span>
             </h1>
-            <p className={styles.heroSub} style={{ color: "rgba(255,255,255,0.8)" }}>{items.length} products available</p>
+            <p className={styles.heroSub} style={{ color: "rgba(255,255,255,0.8)" }}>{preservedShelf ? "Cigarillos and rolling papers" : `${items.length} products available`}</p>
           </div>
         )}
       </section>
@@ -118,14 +121,14 @@ export default async function ItemsCategoryPage({
       {/* SEO Content */}
       <section className={styles.seoSection}>
         <div className={styles.container}>
-          <h2 className={styles.seoTitle}>{config.seoTitle}</h2>
-          <p className={styles.seoBody}>{config.seoDescription}</p>
+          <h2 className={styles.seoTitle}>{preservedShelf ? "Backwoods, cigarillos and rolling papers" : config.seoTitle}</h2>
+          <p className={styles.seoBody}>{preservedShelf ? "Backwoods, cigarillos and rolling papers stay on the shelf at Native Medicine Garden, 76 Gerrard St W." : config.seoDescription}</p>
 
           {/* FAQ */}
-          {config.faqs.length > 0 && (
+          {(preservedShelf ? [] : config.faqs).length > 0 && (
             <div className={styles.faqBlock}>
               <h3 className={styles.faqTitle}>Frequently Asked Questions</h3>
-              {config.faqs.map((faq, i) => (
+              {(preservedShelf ? [] : config.faqs).map((faq, i) => (
                 <details key={i} className={styles.faqItem}>
                   <summary className={styles.faqQuestion}>{faq.q}</summary>
                   <p className={styles.faqAnswer}>{faq.a}</p>
@@ -147,6 +150,15 @@ export default async function ItemsCategoryPage({
       <Footer />
     </main>
   );
+}
+
+function shelfLabel(item: ItemProduct) {
+  if (SHOW_CIGARETTES) return item.category;
+  const label = `${item.name} ${item.slug}`;
+  if (/grabba/i.test(label)) return item.category;
+  if (/backwoods|cigarillos?/i.test(label)) return "Backwoods";
+  if (/rolling[- ]?papers?|raw[- ]?papers?/i.test(label)) return "Rolling papers";
+  return item.category;
 }
 
 function ItemCard({ item, catColor }: { item: ItemProduct; catColor: string }) {
@@ -173,7 +185,7 @@ function ItemCard({ item, catColor }: { item: ItemProduct; catColor: string }) {
         </div>
       </div>
       <div className={styles.cardBody}>
-        <span className={styles.cardCategory}>{item.category}</span>
+        <span className={styles.cardCategory}>{shelfLabel(item)}</span>
         <h3 className={styles.cardName}>{item.name}</h3>
         {item.price && (
           <div className={styles.cardPrice}>
