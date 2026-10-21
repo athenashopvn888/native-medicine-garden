@@ -1,3 +1,56 @@
+const SHOW_CIGARETTES = process.env.NEXT_PUBLIC_SHOW_CIGARETTES?.trim().toLowerCase() === "true";
+const cigaretteRedirects = SHOW_CIGARETTES ? [] : [
+  { source: "/items/cigarettes/:path*", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/cigarettes/:path*", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/cigarette/:path*", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/items/tobacco/:path*", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/tobacco/:path*", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/native-cigarettes-:slug", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/native-cigarette-:slug", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/info/native-cigarettes-:slug", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/info/native-cigarette-:slug", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/resources/native-smokes/native-cigarettes-guide", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/resources/native-smokes/backwoods-grabba-guide", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/bb-cigarettes", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/belmont-king-size", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-cigarettes", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-classics", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-goose", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/dks-cigarettes", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/nexus-cigarettes", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/playfares", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/putters", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/rolled-gold", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/time-cigarettes", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/grabba", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/grabba-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/bb-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/bb-full-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/bb-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/belmont-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-classics-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-classics-original-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-classics-silver-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-full-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-goose-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-goose-full-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-goose-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/canadian-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/nexus-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/nexus-full-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/nexus-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/playfare-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/playfare-ultra-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/putters-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/rolled-gold-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/rolled-gold-full-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/rolled-gold-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/time-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/time-full-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+  { source: "/guides/time-light-delivery-gerrard-and-bay", destination: "/items/vapes", statusCode: 302 as const },
+];
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -28,6 +81,7 @@ const nextConfig: NextConfig = {
     ]);
 
     return [
+      ...cigaretteRedirects,
       ...caToCom,
       {
         source: "/item/gas-gang-dispo-vape-1g",

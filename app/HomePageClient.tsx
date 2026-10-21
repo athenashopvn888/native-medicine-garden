@@ -1,5 +1,8 @@
 "use client";
 
+import { cigaretteSafeContent } from "./lib/siteConfig";
+
+
 import { HOME_TITLE } from "./lib/homeDelivery";
 import CohortDeliveryActions from "./components/CohortDeliveryActions";
 import HomeDeliverySection from "./components/HomeDeliverySection";
@@ -90,7 +93,7 @@ const EXPLORE_CATEGORIES = [
   { name: "Magic Stuff", slug: "items/magic", banner: "/banners/09_Magic_Stuff.webp" },
 ];
 
-const LOCAL_HUB_LINKS = [
+const LOCAL_HUB_LINKS = cigaretteSafeContent([
   { href: "/weed-dispensary-gerrard-bay", label: "Weed dispensary at Gerrard & Bay" },
   { href: "/24-hour-gerrard-bay-dispensary", label: "Open 24 hours, 7 days" },
   { href: "/weed-delivery-toronto", label: "Delivery" },
@@ -98,7 +101,7 @@ const LOCAL_HUB_LINKS = [
   { href: "/nicotine-vape-gerrard-bay", label: "Nicotine vapes, pods and pouches" },
   { href: "/vape-shop-gerrard-bay", label: "Current Gerrard & Bay vape listings" },
   { href: "/visit", label: "How to get here: transit and parking" },
-] as const;
+] as const);
 
 interface Review {
   name: string;

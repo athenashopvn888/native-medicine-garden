@@ -1,3 +1,4 @@
+import { SHOW_CIGARETTES, cigaretteSafeContent, isCigarettePath } from "./siteConfig";
 export interface SeoPageData {
   slug: string;
   title: string;
@@ -10,7 +11,7 @@ export interface SeoPageData {
   faqs: { q: string; a: string }[];
 }
 
-export const SEO_PAGES: SeoPageData[] = [
+const SEO_PAGES_RAW: SeoPageData[] = [
   {
     slug: "gerrard-bay-weed-dispensary",
     title:
@@ -238,6 +239,12 @@ export const SEO_PAGES: SeoPageData[] = [
     ],
   },
 ];
+
+export const SEO_PAGES = SHOW_CIGARETTES
+  ? SEO_PAGES_RAW
+  : SEO_PAGES_RAW
+      .filter((page) => !isCigarettePath(page.slug))
+      .map((page) => cigaretteSafeContent(page));
 
 export function getSeoPageBySlug(slug: string): SeoPageData | undefined {
   return SEO_PAGES.find((p) => p.slug === slug);

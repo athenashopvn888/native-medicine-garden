@@ -1,3 +1,7 @@
+import { SHOW_CIGARETTES, isCigarettePath } from "./lib/siteConfig";
+const withoutCigaretteUrls = (entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap =>
+  SHOW_CIGARETTES ? entries : entries.filter((entry) => !isCigarettePath(new URL(entry.url).pathname));
+
 import { getLiveMenu } from "./lib/liveMenu";
 import type { MetadataRoute } from "next";
 import { DELIVERY_GUIDE_REGISTRY } from "./lib/deliveryGuideRegistry";
@@ -99,5 +103,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const guideIndex: MetadataRoute.Sitemap = [
     { url: `${BASE}/guides`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
   ];
-  return [...staticPages, ...tierPages, ...itemPages, ...flowerPages, ...itemDetailPages, ...seoPages, ...resourcePages, ...guideIndex, ...guidePages];
+  return withoutCigaretteUrls([...staticPages, ...tierPages, ...itemPages, ...flowerPages, ...itemDetailPages, ...seoPages, ...resourcePages, ...guideIndex, ...guidePages]);
 }

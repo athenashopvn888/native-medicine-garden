@@ -1,3 +1,4 @@
+import { cigaretteSafeContent } from "../lib/siteConfig";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
@@ -16,7 +17,7 @@ const laneLabels: Record<GuideLane, string> = {
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
-  description: "Browse every Native Medicine Garden strain, Native Cigarettes, Nicotine Vape, and THC Vape guide.",
+  description: cigaretteSafeContent("Browse every Native Medicine Garden strain, Native Cigarettes, Nicotine Vape, and THC Vape guide."),
   alternates: { canonical: `${BASE}/guides` },
   robots: { index: true, follow: true },
 };

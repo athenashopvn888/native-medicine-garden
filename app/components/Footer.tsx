@@ -1,3 +1,4 @@
+import { SHOW_CIGARETTES } from "../lib/siteConfig";
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
@@ -58,7 +59,7 @@ export default function Footer() {
               <Link href="/aa-weed">AA Weed</Link>
               <Link href="/budget-weed">Budget Weed</Link>
               <Link href="/items/edibles">Edibles</Link>
-              <Link href="/items/cigarettes">Cigarettes</Link>
+              {SHOW_CIGARETTES ? (<Link href="/items/cigarettes">Cigarettes</Link>) : null}
 <Link href="/items/vapes">Nicotine Vapes</Link>
               <Link href="/faq">FAQ</Link>
               <Link href="/hours">Store Hours</Link>
@@ -67,9 +68,9 @@ export default function Footer() {
               <Link href="/info/cheap-weed-gerrard-bay">
                 Cheap Weed Gerrard and Bay
               </Link>
-<Link href="/info/native-cigarettes-gerrard-bay">
+{SHOW_CIGARETTES ? (<Link href="/info/native-cigarettes-gerrard-bay">
                 Native Cigarettes
-              </Link>
+              </Link>) : null}
               <Link href="/info/nicotine-vapes-gerrard-bay">Nicotine Vapes Gerrard & Bay</Link>
               <Link href="/contact">Contact Us</Link>
               <Link href="/weed-resources">Weed Resources</Link>

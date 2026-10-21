@@ -1,3 +1,4 @@
+import { cigaretteSafeContent } from "./lib/siteConfig";
 import FullNameNap from "./components/FullNameNap";
 import PinnedNavClearance from "./components/PinnedNavClearance";
 import type { Metadata } from "next";
@@ -82,7 +83,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(cannabisStoreJsonLd).replace(/</g, "\\u003c"),
+            __html: JSON.stringify(cigaretteSafeContent(cannabisStoreJsonLd)).replace(/</g, "\\u003c"),
           }}
         />
         <script

@@ -1,3 +1,4 @@
+import { SHOW_CIGARETTES, cigaretteSafeContent, isCigarettePath } from "../lib/siteConfig";
 import knowledgeData from "./knowledgeData.json";
 
 export interface ResourceCard {
@@ -134,12 +135,18 @@ export const RESOURCE_HOME: ResourcePage = {
 };
 
 const PACKET_PAGES = knowledgeData as unknown as ResourcePage[];
-export const RESOURCE_PAGES: ResourcePage[] = [RESOURCE_HOME, ...PACKET_PAGES, ...SUPPORTING_PAGES];
+const RESOURCE_PAGES_RAW: ResourcePage[] = [RESOURCE_HOME, ...PACKET_PAGES, ...SUPPORTING_PAGES];
 
-RESOURCE_PAGES[0].cards = [
+RESOURCE_PAGES_RAW[0].cards = [
   { title: "Name Guides", href: "/guides", text: "Browse every Native Medicine Garden strain, Native Cigarettes, Nicotine Vape, and THC Vape guide." },
-  ...RESOURCE_PAGES[0].cards.filter((card) => card.href !== "/guides"),
+  ...RESOURCE_PAGES_RAW[0].cards.filter((card) => card.href !== "/guides"),
 ];
+
+export const RESOURCE_PAGES = SHOW_CIGARETTES
+  ? RESOURCE_PAGES_RAW
+  : RESOURCE_PAGES_RAW
+      .filter((page) => !isCigarettePath((page as { slug?: string; path?: string }).slug ?? (page as { path?: string }).path))
+      .map((page) => cigaretteSafeContent(page));
 
 export function getResourcePage(slug: string) {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
