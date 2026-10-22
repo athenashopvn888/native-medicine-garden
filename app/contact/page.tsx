@@ -6,6 +6,8 @@ import { getFleetContent } from "../lib/fleetContent";
 import { napMatchesCoded } from "../lib/fleet/resolve";
 import styles from "./contact.module.css";
 
+export const dynamic = "force-dynamic";
+
 const CONTACT_METADATA: Metadata = {
   title: "Contact Us — Native Medicine Garden | 76 Gerrard St W, Toronto",
   description:

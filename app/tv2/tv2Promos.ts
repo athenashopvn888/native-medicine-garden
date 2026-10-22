@@ -1,4 +1,4 @@
-import { SHOW_CIGARETTES } from "../lib/siteConfig";
+import { SHOW_CIGARETTES } from "../lib/siteConfig.ts";
 export const TV2_DAYTIME_START_HOUR = 8;
 export const TV2_DAYTIME_END_HOUR = 17;
 export const TV2_TIME_ZONE = "America/Toronto";

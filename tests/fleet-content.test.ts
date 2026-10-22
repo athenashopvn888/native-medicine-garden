@@ -14,6 +14,8 @@ import { revalidateAuthorized } from "../app/lib/fleet/secret.ts";
 import { FLEET_AFFECTED_PATHS } from "../app/lib/fleet/routes.ts";
 import { FLEET_MAX_BUNDLE_BYTES, type ContentBundle } from "../app/lib/fleet/types.ts";
 import { parseBundle, parseManifest, rejectHttp } from "../app/lib/fleet/validate.ts";
+import { TV2_CARDS, TV_FULLSCREEN_SPOTS, defaultManifestUrl } from "../app/lib/fleet/config.ts";
+import { inPromoWindow, pickTv2Sheet, resolveFullscreenPromos, resolveTvCards } from "../app/lib/fleet/tv.ts";
 
 const MANIFEST_URL = "https://fixture.test/NMG01/manifest.json";
 const BUNDLE_URL = "https://fixture.test/NMG01/content-v1.json";
@@ -225,6 +227,8 @@ test("the version marker, tv manifest 304, emergency coded flag, and revalidate 
   const manifestBody = tvManifestDecision(live, null).body;
   assert.equal(manifestBody?.bundleUrl, BUNDLE_URL);
   assert.equal(manifestBody?.contentVersion, 1);
+  assert.deepEqual(manifestBody?.tvCards, {});
+  assert.deepEqual(manifestBody?.fullscreenPromos, []);
   assert.equal((await readFleetContent({ manifestUrl: MANIFEST_URL, emergencyCoded: true, renderedAt: "2026-10-22T00:00:00.000Z" })).version, "NMG01:coded");
 
   assert.equal(revalidateAuthorized("right-secret", "right-secret"), true);
@@ -368,4 +372,63 @@ test("manifest identity failures and a wrong-store manifest do not publish", () 
   const httpImage = parseBundle(JSON.stringify({ ...bundle, slots: [{ ...bundle.slots![0], image: "http://insecure.example/weed.webp" }] }), null);
   assert.equal(httpImage.ok, false);
   if (!httpImage.ok) assert.equal(httpImage.reason, "bad-image");
+  const httpOff = parseBundle(JSON.stringify({ ...bundle, slots: [{ ...bundle.slots![0], offImage: "javascript:alert(1)" }] }), null);
+  assert.equal(httpOff.ok, false);
+  if (!httpOff.ok) assert.equal(httpOff.reason, "bad-image");
+});
+
+test("TV2 card slots and fullscreen promos stay empty unless a Custom row is inside its window", () => {
+  assert.deepEqual(resolveTvCards(bundle, new Date("2026-10-22T12:00:00.000Z")), {});
+  assert.deepEqual(resolveFullscreenPromos(bundle, new Date("2026-10-22T12:00:00.000Z")), []);
+  assert.equal(inPromoWindow("2026-10-22T12:00:00.000Z", "2026-10-22T13:00:00.000Z", new Date("2026-10-22T12:30:00.000Z")), true);
+  assert.equal(inPromoWindow("not-a-date", "2026-10-22T13:00:00.000Z", new Date("2026-10-22T12:30:00.000Z")), false);
+
+  const withTv = structuredClone(bundle);
+  withTv.slots!.push(
+    { page: "TV2", spot: "CIGARETTES", mode: "Custom", image: "/promo.webp", offImage: "/off.webp", alt: "Cig promo", promoStart: "2026-10-22T12:00:00.000Z", promoEnd: "2026-10-22T13:00:00.000Z" },
+    { page: "TV2", spot: "VAPES", mode: "Coded", image: "/should-not.webp", offImage: "/nope.webp", promoStart: "2026-10-22T12:00:00.000Z", promoEnd: "2026-10-22T13:00:00.000Z" },
+    { page: "TV", spot: "Fullscreen promo 1", mode: "Custom", image: "/full.webp", alt: "Full", promoStart: "2026-10-22T12:00:00.000Z", promoEnd: "2026-10-22T13:00:00.000Z", showSeconds: 8, everyMinutes: 2 },
+    { page: "TV", spot: "Fullscreen promo 2", mode: "Custom", image: "/late.webp", promoStart: "2026-10-22T18:00:00.000Z", promoEnd: "2026-10-22T19:00:00.000Z" },
+    { page: "TV", spot: "Fullscreen promo 3", mode: "Hidden", image: "/hidden.webp", promoStart: "2026-10-22T12:00:00.000Z", promoEnd: "2026-10-22T13:00:00.000Z" },
+  );
+  const now = new Date("2026-10-22T12:30:00.000Z");
+  const cards = resolveTvCards(withTv, now);
+  assert.equal(cards.CIGARETTES.promoImage, "/promo.webp");
+  assert.equal(cards.CIGARETTES.offImage, "/off.webp");
+  assert.equal(cards.VAPES, undefined);
+  assert.equal(resolveTvCards(withTv, new Date("2026-10-22T14:00:00.000Z")).CIGARETTES.promoImage, null);
+  assert.equal(resolveTvCards(withTv, new Date("2026-10-22T14:00:00.000Z")).CIGARETTES.offImage, "/off.webp");
+  const full = resolveFullscreenPromos(withTv, now);
+  assert.equal(full.length, 1);
+  assert.equal(full[0].spot, "Fullscreen promo 1");
+  assert.equal(full[0].showSeconds, 8);
+  assert.equal(full[0].everyMinutes, 2);
+  assert.deepEqual(resolveFullscreenPromos(withTv, new Date("2026-10-22T18:30:00.000Z")).map((promo) => promo.spot), ["Fullscreen promo 2"]);
+  assert.equal(resolveFullscreenPromos(withTv, new Date("2026-10-22T18:30:00.000Z"))[0].showSeconds, 5);
+  assert.equal(resolveFullscreenPromos(withTv, new Date("2026-10-22T18:30:00.000Z"))[0].everyMinutes, 1);
+
+  const cig = cards.CIGARETTES;
+  assert.equal(pickTv2Sheet(cig, { categoryOff: false, noItems: false, promoBroken: false, offBroken: false })?.kind, "promo");
+  assert.equal(pickTv2Sheet(cig, { categoryOff: true, noItems: false, promoBroken: false, offBroken: false })?.kind, "off");
+  assert.equal(pickTv2Sheet(cig, { categoryOff: false, noItems: true, promoBroken: true, offBroken: false })?.kind, "off");
+  assert.equal(pickTv2Sheet(cig, { categoryOff: false, noItems: false, promoBroken: true, offBroken: false }), null);
+  assert.deepEqual(TV2_CARDS, ["PREROLLS_ADDONS", "VAPES", "EDIBLES", "CONCENTRATES", "CIGARETTES", "MAGIC"]);
+  assert.deepEqual(TV_FULLSCREEN_SPOTS, ["Fullscreen promo 1", "Fullscreen promo 2", "Fullscreen promo 3"]);
+
+  const tv2 = readFileSync(new URL("../app/tv2/page.tsx", import.meta.url), "utf8");
+  const tv = readFileSync(new URL("../app/tv/page.tsx", import.meta.url), "utf8");
+  assert.match(tv2, /pickTv2Sheet/);
+  assert.match(tv2, /onError=\{markBroken\}/);
+  assert.match(tv2, /naturalWidth === 0/);
+  assert.match(tv2, /useFleetTvManifest/);
+  assert.match(tv, /FleetTvTakeover/);
+  assert.match(tv, /useFleetTvManifest/);
+  assert.match(readFileSync(new URL("../app/components/fleet/TvPromoTakeover.tsx", import.meta.url), "utf8"), /TV_PROMO_INITIAL_DELAY_MS/);
+  assert.match(readFileSync(new URL("../app/api/tv-manifest/route.ts", import.meta.url), "utf8"), /"Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300"/);
+  assert.match(readFileSync(new URL("../app/tv/layout.tsx", import.meta.url), "utf8"), /export const dynamic = "force-dynamic"/);
+  assert.match(readFileSync(new URL("../app/tv2/layout.tsx", import.meta.url), "utf8"), /export const dynamic = "force-dynamic"/);
+  assert.match(readFileSync(new URL("../app/contact/page.tsx", import.meta.url), "utf8"), /export const dynamic = "force-dynamic"/);
+  assert.equal(defaultManifestUrl(), "https://dhaah0upvlpukv56.public.blob.vercel-storage.com/NMG01/manifest.json");
+  assert.match(readFileSync(new URL("../app/sitemap.ts", import.meta.url), "utf8"), /loadFleetArticles/);
+  assert.match(readFileSync(new URL("../app/api/revalidate/route.ts", import.meta.url), "utf8"), /FLEET_DYNAMIC_PATHS/);
 });
