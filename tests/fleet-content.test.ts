@@ -63,7 +63,7 @@ test("a valid bundle is accepted and a missing manifest stays on coded content",
   assert.equal(live.contentVersion, 1);
   assert.equal(live.bundleUrl, BUNDLE_URL);
   assert.deepEqual(calls, [MANIFEST_URL, BUNDLE_URL]);
-  assert.equal(live.banners.map((banner) => banner.id).join(","), "weed,vapes,welcome");
+  assert.equal(live.banners.map((banner) => banner.id).join(","), "weed,promo1,vapes,welcome");
   assert.equal(live.banners[0].textBar, "Sheet weed text bar");
   assert.equal(live.banners[0].render, "image");
   assert.equal(live.nap.hours, "Open 24 Hours Daily");
@@ -114,12 +114,14 @@ test("invalid-200 responses are rejected before they replace the last good bundl
 
 test("a blank cell keeps coded copy and a missing image becomes the bold category banner", async () => {
   const { state: live } = await acceptFixture();
-  assert.equal(live.banners[1].textBar, CODED_BANNERS[1].textBar);
-  assert.equal(live.banners[1].alt, CODED_BANNERS[1].alt);
+  const vapes = live.banners.find((banner) => banner.id === "vapes");
+  const codedVapes = CODED_BANNERS.find((banner) => banner.id === "vapes");
+  assert.equal(vapes?.textBar, codedVapes?.textBar);
+  assert.equal(vapes?.alt, codedVapes?.alt);
   assert.equal(live.nap.street, CODED_NAP.street);
   assert.equal(live.nap.phoneDisplay, CODED_NAP.phoneDisplay);
   assert.equal(live.pages.Contact.metaDescription, CODED_PAGES.Contact.metaDescription);
-  assert.equal(live.banners[2].hidden, true);
+  assert.equal(live.banners.find((banner) => banner.id === "welcome")?.hidden, true);
 
   const broken = structuredClone(bundle);
   broken.slots![0].image = "";
@@ -256,6 +258,78 @@ test("the version marker, tv manifest 304, emergency coded flag, and revalidate 
     if (previousMode == null) delete process.env.contentMode;
     else process.env.contentMode = previousMode;
   }
+});
+
+const HOME_SPOTS = [
+  { spot: "Top banner", id: "weed" },
+  { spot: "Promo banner 1", id: "promo1" },
+  { spot: "Promo banner 2", id: "vapes" },
+  { spot: "Promo banner 3", id: "welcome" },
+  { spot: "welcome", id: "welcome" },
+] as const;
+
+function homeSpotBundle(spot: string, mode: ContentBundle["slots"] extends Array<infer T> | undefined ? T["mode"] : never): ContentBundle {
+  return {
+    ...bundle,
+    slots: [{
+      page: "Home",
+      spot,
+      mode,
+      image: "/banners/custom-home.webp",
+      textBar: `Text ${spot}`,
+      alt: `Alt ${spot}`,
+      title: `Title ${spot}`,
+      caption: `Caption ${spot}`,
+      categoryName: `Category ${spot}`,
+    }],
+  };
+}
+
+for (const { spot, id } of HOME_SPOTS) {
+  test(`Home ${spot} Hidden removes that banner and Custom overrides its fields`, () => {
+    const coded = CODED_BANNERS.find((banner) => banner.id === id);
+    assert.ok(coded);
+    const hidden = resolveBanners(homeSpotBundle(spot, "Hidden")).find((banner) => banner.id === id);
+    assert.equal(hidden?.hidden, true, spot);
+    const custom = resolveBanners(homeSpotBundle(spot, "Custom")).find((banner) => banner.id === id);
+    assert.equal(custom?.hidden, false, spot);
+    assert.equal(custom?.image, "/banners/custom-home.webp", spot);
+    assert.equal(custom?.textBar, `Text ${spot}`, spot);
+    assert.equal(custom?.alt, `Alt ${spot}`, spot);
+    assert.equal(custom?.title, `Title ${spot}`, spot);
+    assert.equal(custom?.caption, `Caption ${spot}`, spot);
+    const unchanged = resolveBanners(homeSpotBundle(spot, "Coded")).find((banner) => banner.id === id);
+    assert.equal(unchanged?.hidden, coded.hidden, spot);
+    assert.equal(unchanged?.image, coded.image, spot);
+    assert.equal(unchanged?.textBar, coded.textBar, spot);
+    assert.equal(unchanged?.alt, coded.alt, spot);
+    assert.equal(unchanged?.title, coded.title, spot);
+    assert.equal(unchanged?.caption, coded.caption, spot);
+    for (const other of CODED_BANNERS) {
+      if (other.id === id) continue;
+      const banner = resolveBanners(homeSpotBundle(spot, "Hidden")).find((entry) => entry.id === other.id);
+      assert.equal(banner?.hidden, other.hidden, `${spot} left ${other.id} hidden`);
+      assert.equal(banner?.image, other.image, `${spot} left ${other.id} image`);
+      assert.equal(banner?.textBar, other.textBar, `${spot} left ${other.id} text`);
+    }
+  });
+}
+
+test("a hidden Promo banner 3 drops the welcome section and a custom spot still renders its fields", () => {
+  const home = readFileSync(new URL("../app/HomePageClient.tsx", import.meta.url), "utf8");
+  const stack = readFileSync(new URL("../app/components/FleetAnnouncementBanner.tsx", import.meta.url), "utf8");
+  assert.match(home, /welcomeBanner\?\.hidden \? null/);
+  assert.match(home, /alt=\{banner\.alt\}/);
+  assert.match(home, /title=\{banner\.title\}/);
+  assert.match(home, /banner\.textBar/);
+  assert.match(home, /banner\.caption/);
+  assert.match(home, /src="\/banners\/welcome_banner\.webp"/);
+  assert.match(stack, /renderHomeSpot\(banners, "weed"/);
+  assert.match(stack, /renderHomeSpot\(banners, "promo1"/);
+  assert.match(stack, /renderHomeSpot\(banners, "vapes"/);
+  assert.match(stack, /banner\.hidden/);
+  assert.match(stack, /data-fleet-text-bar/);
+  assert.match(stack, /data-fleet-caption/);
 });
 
 test("manifest identity failures and a wrong-store manifest do not publish", () => {

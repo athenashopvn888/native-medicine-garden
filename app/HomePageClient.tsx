@@ -117,22 +117,31 @@ interface ReviewStats {
 
 function WelcomeOverride({ banner }: { banner: ResolvedBanner }) {
   const [src, setSrc] = useState(banner.render === "image" ? banner.image : "");
-  if (banner.hidden || banner.render === "text" || !src) {
-    return <div data-fleet-text-banner="" className={styles.welcomeBannerImg}>{banner.categoryName}</div>;
-  }
+  const [imageFailed, setImageFailed] = useState(false);
+  const showText = banner.render === "text" || imageFailed || !src;
+  const caption = banner.caption !== banner.textBar ? banner.caption : "";
   return (
-    <img
-      src={src}
-      alt={banner.alt}
-      className={styles.welcomeBannerImg}
-      onError={() => {
-        if (banner.codedImage && src !== banner.codedImage) {
-          setSrc(banner.codedImage);
-          return;
-        }
-        setSrc("");
-      }}
-    />
+    <>
+      {showText ? (
+        <div data-fleet-text-banner="" className={styles.welcomeBannerImg}>{banner.categoryName}</div>
+      ) : (
+        <img
+          src={src}
+          alt={banner.alt}
+          title={banner.title}
+          className={styles.welcomeBannerImg}
+          onError={() => {
+            if (banner.codedImage && src !== banner.codedImage) {
+              setSrc(banner.codedImage);
+              return;
+            }
+            setImageFailed(true);
+          }}
+        />
+      )}
+      {banner.textBar ? <p data-fleet-text-bar="">{banner.textBar}</p> : null}
+      {caption ? <p data-fleet-caption="">{caption}</p> : null}
+    </>
   );
 }
 
@@ -233,6 +242,7 @@ export default function HomePageClient({ initialFlowers, contentBanners, welcome
 
 
       {/* -- WELCOME BANNER -- */}
+      {welcomeBanner?.hidden ? null : (
       <section className={styles.welcomeBannerSection}>
         <div className={styles.welcomeBannerContainer}>
           {welcomeBanner ? <WelcomeOverride banner={welcomeBanner} /> : (
@@ -244,6 +254,7 @@ export default function HomePageClient({ initialFlowers, contentBanners, welcome
           )}
         </div>
       </section>
+      )}
 
       {/* -- BENTO MOSAIC HERO -- */}
 

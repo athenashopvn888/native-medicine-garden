@@ -37,6 +37,14 @@ export const CODED_NAP: Nap = {
   website: PRIMARY_ORIGIN,
 };
 
+/** Sheet spot names that drive each home banner. The first name is the one the publisher uses. */
+export const HOME_SPOT_ALIASES: Record<ResolvedBanner["id"], readonly string[]> = {
+  weed: ["Top banner"],
+  promo1: ["Promo banner 1"],
+  vapes: ["Promo banner 2"],
+  welcome: ["Promo banner 3", "welcome", "Welcome banner"],
+};
+
 export const CODED_BANNERS: ResolvedBanner[] = [
   {
     id: "weed",
@@ -52,6 +60,21 @@ export const CODED_BANNERS: ResolvedBanner[] = [
     title: `${STORE_NAME} top weed tiers — Exotic, Premium and AAA+`,
     textBar: "Top 3 tiers only (Exotic, Premium, AAA+): Buy 2g Get 1g FREE · Buy 3g Get 3g FREE (6g)",
     caption: "Top 3 tiers only (Exotic, Premium, AAA+): Buy 2g Get 1g FREE · Buy 3g Get 3g FREE (6g)",
+  },
+  {
+    id: "promo1",
+    page: "Home",
+    spot: "Promo banner 1",
+    href: "/",
+    categoryName: "Promo",
+    hidden: true,
+    render: "image",
+    image: "",
+    codedImage: "",
+    alt: "",
+    title: "",
+    textBar: "",
+    caption: "",
   },
   {
     id: "vapes",
@@ -71,7 +94,7 @@ export const CODED_BANNERS: ResolvedBanner[] = [
   {
     id: "welcome",
     page: "Home",
-    spot: "Welcome banner",
+    spot: "Promo banner 3",
     href: "/",
     categoryName: "Welcome",
     hidden: false,
