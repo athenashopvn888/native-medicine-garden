@@ -1,4 +1,4 @@
-import { CODED_BANNERS, CODED_NAP, CODED_PAGES } from "./coded.ts";
+import { CODED_BANNERS, CODED_NAP, CODED_PAGES, HOME_SPOT_ALIASES } from "./coded.ts";
 import type { ContentBundle, ContentField, ContentSlot, FieldMode, Nap, ResolvedBanner, ResolvedPage } from "./types.ts";
 
 const BLOCKED_COPY = /3\.5|farmers\s*link|telnyx/i;
@@ -73,10 +73,18 @@ function findSlot(bundle: ContentBundle, page: string, spot: string): ContentSlo
   return bundle.slots?.find((slot) => slot.page === page && slot.spot === spot);
 }
 
+function findBannerSlot(bundle: ContentBundle, banner: ResolvedBanner): ContentSlot | undefined {
+  for (const spot of HOME_SPOT_ALIASES[banner.id] ?? [banner.spot]) {
+    const slot = findSlot(bundle, banner.page, spot);
+    if (slot) return slot;
+  }
+  return undefined;
+}
+
 export function resolveBanners(bundle: ContentBundle | null): ResolvedBanner[] {
   return CODED_BANNERS.map((coded) => {
     if (!bundle) return coded;
-    const slot = findSlot(bundle, coded.page, coded.spot);
+    const slot = findBannerSlot(bundle, coded);
     if (!slot) return coded;
     const all = allSlot(bundle, slot);
     const mode = slot.mode;
@@ -110,7 +118,9 @@ export function resolveBanners(bundle: ContentBundle | null): ResolvedBanner[] {
 export function bannerMatchesCoded(banner: ResolvedBanner): boolean {
   const coded = CODED_BANNERS.find((entry) => entry.id === banner.id);
   if (!coded) return false;
+  if (banner.hidden && coded.hidden) return true;
   return !banner.hidden
+    && !coded.hidden
     && banner.render === coded.render
     && banner.image === coded.image
     && banner.textBar === coded.textBar
