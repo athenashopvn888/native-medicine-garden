@@ -1,8 +1,20 @@
-import { SHOW_CIGARETTES } from "../lib/siteConfig";
+"use client";
+
 import Link from "next/link";
+import { useCigaretteState } from "./CigaretteStateProvider";
+import { useFleetContent } from "./FleetContentProvider";
+import { napMatchesCoded } from "../lib/fleet/resolve";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
+  const showCigarettes = useCigaretteState().web;
+  const fleet = useFleetContent();
+  const custom = fleet.active && !napMatchesCoded(fleet.nap);
+  const street = custom ? fleet.nap.street : "76 Gerrard St W";
+  const cityLine = custom ? fleet.nap.cityLine : "Toronto, ON M5G 1J5";
+  const phoneDisplay = custom ? fleet.nap.phoneDisplay : "+1 (437) 374-4544";
+  const phoneTel = custom ? fleet.nap.phoneTel : "+14373744544";
+  const hours = custom ? fleet.nap.hours : "Open 24 Hours";
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
@@ -18,7 +30,7 @@ export default function Footer() {
               More. Open 24 Hours.
             </p>
             <div className={styles.buttons}>
-              <a href="tel:+14373744544" className={styles.btnPrimary}>
+              <a href={`tel:${phoneTel}`} className={styles.btnPrimary}>
                 Call Now
               </a>
             </div>
@@ -29,21 +41,21 @@ export default function Footer() {
             <h3 className={styles.colTitle}>Contact Info</h3>
             <div className={styles.infoBlock}>
               <span className={styles.infoLabel}>Address:</span>
-              <span>76 Gerrard St W</span>
-              <span>Toronto, ON M5G 1J5</span>
+              <span>{street}</span>
+              <span>{cityLine}</span>
               <span>Canada</span>
             </div>
             <div className={styles.infoBlock}>
               <span className={styles.infoLabel}>Phone:</span>
               <span>
-                <a href="tel:+14373744544" style={{ color: "inherit" }}>
-                  +1 (437) 374-4544
+                <a href={`tel:${phoneTel}`} style={{ color: "inherit" }}>
+                  {phoneDisplay}
                 </a>
               </span>
             </div>
             <div className={styles.infoBlock}>
               <span className={styles.infoLabel}>Hours:</span>
-              <span className={styles.highlight}>Open 24 Hours</span>
+              <span className={styles.highlight}>{hours}</span>
             </div>
           </div>
 
@@ -59,7 +71,7 @@ export default function Footer() {
               <Link href="/aa-weed">AA Weed</Link>
               <Link href="/budget-weed">Budget Weed</Link>
               <Link href="/items/edibles">Edibles</Link>
-              {SHOW_CIGARETTES ? (<Link href="/items/cigarettes">Cigarettes</Link>) : <Link href="/items/cigarettes">Backwoods</Link>}
+              {showCigarettes ? (<Link href="/items/cigarettes" data-cig-marker="">Cigarettes</Link>) : <Link href="/items/cigarettes">Backwoods</Link>}
 <Link href="/items/vapes">Nicotine Vapes</Link>
               <Link href="/faq">FAQ</Link>
               <Link href="/hours">Store Hours</Link>
@@ -68,7 +80,7 @@ export default function Footer() {
               <Link href="/info/cheap-weed-gerrard-bay">
                 Cheap Weed Gerrard and Bay
               </Link>
-{SHOW_CIGARETTES ? (<Link href="/info/native-cigarettes-gerrard-bay">
+{showCigarettes ? (<Link href="/info/native-cigarettes-gerrard-bay" data-cig-marker="">
                 Native Cigarettes
               </Link>) : null}
               <Link href="/info/nicotine-vapes-gerrard-bay">Nicotine Vapes Gerrard & Bay</Link>

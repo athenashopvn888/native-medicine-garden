@@ -1,9 +1,14 @@
 import { cigaretteSafeContent } from "./lib/siteConfig";
+import CigaretteStateProvider from "./components/CigaretteStateProvider";
+import FleetContentProvider from "./components/FleetContentProvider";
 import FullNameNap from "./components/FullNameNap";
 import PinnedNavClearance from "./components/PinnedNavClearance";
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { getCigaretteSnapshot, toPublicCigaretteState } from "./lib/cigaretteFeed";
+import { getFleetContent } from "./lib/fleetContent";
+import { napMatchesCoded } from "./lib/fleet/resolve";
 import {
   cannabisStoreJsonLd,
   OG_IMAGE_URL,
@@ -11,7 +16,9 @@ import {
   STORE_NAME,
 } from "./lib/store";
 
-export const metadata: Metadata = {
+export const revalidate = 60;
+
+const ROOT_METADATA: Metadata = {
   metadataBase: new URL(PRIMARY_ORIGIN),
   title: {
     default: "Native Medicine Garden | Gerrard & Bay Dispensary",
@@ -62,6 +69,76 @@ export const metadata: Metadata = {
   },
 };
 
+export async function generateMetadata(): Promise<Metadata> {
+  const fleet = await getFleetContent();
+  if (!fleet.active) return ROOT_METADATA;
+  const description = fleet.pages.Home?.metaDescription || "";
+  if (!description || description === ROOT_METADATA.description) return ROOT_METADATA;
+  return {
+    ...ROOT_METADATA,
+    description,
+    openGraph: { ...ROOT_METADATA.openGraph, description },
+    twitter: { ...ROOT_METADATA.twitter, description },
+  };
+}
+
+async function FleetHead() {
+  const fleet = await getFleetContent();
+  const baseJsonLd = cigaretteSafeContent(cannabisStoreJsonLd);
+  const storeJsonLd = fleet.active && !napMatchesCoded(fleet.nap)
+    ? {
+        ...baseJsonLd,
+        "@graph": Array.isArray(baseJsonLd["@graph"])
+          ? baseJsonLd["@graph"].map((node: { [key: string]: unknown }) => node["@type"] === "CannabisStore"
+            ? {
+                ...node,
+                name: fleet.nap.schemaName,
+                telephone: fleet.nap.phoneTel,
+                url: fleet.nap.website,
+                hasMap: fleet.nap.mapsSearchUrl,
+                address: {
+                  ...(typeof node.address === "object" && node.address ? node.address : {}),
+                  streetAddress: fleet.nap.street,
+                  addressLocality: fleet.nap.city,
+                  addressRegion: fleet.nap.province,
+                  postalCode: fleet.nap.postalCode,
+                },
+                geo: {
+                  "@type": "GeoCoordinates",
+                  latitude: Number(fleet.nap.lat),
+                  longitude: Number(fleet.nap.lng),
+                },
+              }
+            : node)
+          : baseJsonLd["@graph"],
+      }
+    : baseJsonLd;
+  return (
+    <>
+      <meta name="fleet-content-version" content={fleet.version} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(storeJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+    </>
+  );
+}
+
+async function FleetShell({ children }: { children: React.ReactNode }) {
+  const [cigaretteSnapshot, fleet] = await Promise.all([getCigaretteSnapshot(), getFleetContent()]);
+  return (
+    <FleetContentProvider value={{ active: fleet.active, version: fleet.version, nap: fleet.nap }}>
+      <CigaretteStateProvider value={toPublicCigaretteState(cigaretteSnapshot)}>
+        {children}
+        <FullNameNap />
+        <PinnedNavClearance />
+      </CigaretteStateProvider>
+    </FleetContentProvider>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -80,12 +157,7 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(cigaretteSafeContent(cannabisStoreJsonLd)).replace(/</g, "\\u003c"),
-          }}
-        />
+        <FleetHead />
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-R9L5VFEGH8"
@@ -105,9 +177,7 @@ export default function RootLayout({
         <Link className="deliveryAnnouncement" href="/weed-delivery-toronto">
           EXPLORE WEED DELIVERY
         </Link>
-        {children}
-        <FullNameNap />
-        <PinnedNavClearance />
+        <FleetShell>{children}</FleetShell>
       </body>
     </html>
   );

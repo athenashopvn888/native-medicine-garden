@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./tv.module.css";
 import HiringRibbon from "../components/HiringRibbon";
+import { useCigaretteState } from "../components/CigaretteStateProvider";
+import { isRealCigaretteItem } from "../lib/cigMarkers";
 import TvStoreHeader from "../components/TvStoreHeader";
 import { TV_BUNDLE_LABELS } from "./tvPricing";
 import { getFlowerEffects } from "./flowerEffects";
@@ -586,6 +588,7 @@ function OZCard({ flowers, hiIdx }: { flowers: Flower[]; hiIdx: number }) {
    ADDONS CARD
    ============================================================ */
 function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
+  const tvOn = useCigaretteState().tv;
   const hi = items[hiIdx] || items[0];
 
   const prevRef = useRef<string>("");
@@ -641,6 +644,7 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
         <div className={styles.addonsList}>
           {items.map((it,i) => (
             <div key={it.sku+i} className={`${styles.addonRow} ${i===hiIdx?styles.addonRowHi:""}`}
+              {...(tvOn && isRealCigaretteItem(it) ? { "data-cig-marker": "" } : {})}
               style={i===hiIdx ? {borderColor:"rgba(34,197,94,.55)", boxShadow:"0 0 0 2px rgba(34,197,94,.35), 0 6px 16px rgba(2,6,23,.15)"} : undefined}>
               {it.image && <img src={it.image} alt={it.name} className={styles.addonImg} referrerPolicy="no-referrer" 
             onError={(e) => {
@@ -668,6 +672,7 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
    MAIN TV PAGE
    ============================================================ */
 export default function TVMenuPage() {
+  const tvCig = useCigaretteState();
   const theme = getTvTheme(tvHiring?.store);
   const [bgUrl, setBgUrl] = useState("");
   useEffect(() => {
@@ -814,7 +819,7 @@ export default function TVMenuPage() {
 
         {/* GRID */}
         <div className={styles.stage}>
-          <HiringRibbon hiring={tvHiring} />
+          <HiringRibbon hiring={tvHiring} cigaretteNotice={tvCig.tv ? tvCig.wording.tickerLine1 : ""} />
           <div className={styles.grid}>
             {/* Row 1: EXOTIC, PREMIUM, AAA+ */}
             {SMART_TIERS.slice(0,3).map(tier => (

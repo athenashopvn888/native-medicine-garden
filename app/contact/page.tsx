@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { FULL_NAME_NAP } from "../lib/fullNameNap";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { getFleetContent } from "../lib/fleetContent";
+import { napMatchesCoded } from "../lib/fleet/resolve";
 import styles from "./contact.module.css";
 
-export const metadata: Metadata = {
+const CONTACT_METADATA: Metadata = {
   title: "Contact Us — Native Medicine Garden | 76 Gerrard St W, Toronto",
   description:
     "Visit Native Medicine Garden at 76 Gerrard St W, Toronto, ON M5G 1J5. Open 24 hours, 7 days a week. Walk-ins welcome.",
@@ -18,7 +20,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const fleet = await getFleetContent();
+  if (!fleet.active) return CONTACT_METADATA;
+  const page = fleet.pages.Contact;
+  const description = page?.metaDescription || "";
+  const title = page?.metaTitle || "";
+  const sameDescription = !description || description === CONTACT_METADATA.description;
+  const sameTitle = !title || title === CONTACT_METADATA.title;
+  if (sameDescription && sameTitle) return CONTACT_METADATA;
+  return {
+    ...CONTACT_METADATA,
+    ...(sameDescription ? {} : { description }),
+    ...(sameTitle ? {} : { title: { absolute: title } }),
+  };
+}
+
+export default async function ContactPage() {
+  const fleet = await getFleetContent();
+  const custom = fleet.active && !napMatchesCoded(fleet.nap);
+  const street = custom ? fleet.nap.street : "76 Gerrard St W";
+  const cityLine = custom ? fleet.nap.cityLine : "Toronto, ON M5G 1J5";
+  const intersection = custom ? fleet.nap.intersection : "Gerrard St W & Bay St";
   return (
     <main className={styles.main}>
       <Navbar />
@@ -40,11 +63,11 @@ export default function ContactPage() {
               <div className={styles.infoIcon}>📍</div>
               <h2 className={styles.infoTitle}>Location</h2>
               <p className={styles.infoText}>
-                76 Gerrard St W
+                {street}
                 <br />
-                Toronto, ON M5G 1J5
+                {cityLine}
                 <br />
-                <span className={styles.infoMuted}>Gerrard St W & Bay St</span>
+                <span className={styles.infoMuted}>{intersection}</span>
               </p>
             </div>
 

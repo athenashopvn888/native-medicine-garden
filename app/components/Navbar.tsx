@@ -1,6 +1,7 @@
 "use client";
 
-import { SHOW_CIGARETTES, filterCigaretteEntries } from "../lib/siteConfig";
+import { filterCigaretteEntries } from "../lib/siteConfig";
+import { useCigaretteState } from "./CigaretteStateProvider";
 
 import CohortDeliveryActions from "./CohortDeliveryActions";
 
@@ -35,6 +36,7 @@ const ALL_LINKS: { href: string; label: string; featured?: boolean }[] = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const showCigarettes = useCigaretteState().web;
   const scrollBarRef = useRef<HTMLDivElement>(null);
   const [canAdvance, setCanAdvance] = useState(false);
   const updateScrollState = useCallback(() => { const scrollBar = scrollBarRef.current; if (!scrollBar) return; setCanAdvance(scrollBar.scrollWidth - scrollBar.clientWidth - scrollBar.scrollLeft > 2); }, []);
@@ -73,13 +75,15 @@ export default function Navbar() {
       <div className={styles.scrollShell}>
         <div ref={scrollBarRef} id="store-menu-scrollbar" className={styles.scrollBar}>
           <div className={styles.scrollInner}>
-          {(SHOW_CIGARETTES ? ALL_LINKS : ALL_LINKS.flatMap((link) => link.href === "/items/cigarettes" ? [{ ...link, label: "Backwoods" }] : filterCigaretteEntries([link]))).map((link) => {
+          {(showCigarettes ? ALL_LINKS : ALL_LINKS.flatMap((link) => link.href === "/items/cigarettes" ? [{ ...link, label: "Backwoods" }] : filterCigaretteEntries([link]))).map((link) => {
             const isActive = pathname === link.href;
+            const cigaretteMarker = showCigarettes && link.href === "/items/cigarettes";
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`${styles.pill} ${link.featured ? styles.pillHiring : ""} ${isActive ? styles.pillActive : ""}`}
+                {...(cigaretteMarker ? { "data-cig-marker": "" } : {})}
               >
                 {link.label}
               </Link>

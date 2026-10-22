@@ -1,6 +1,7 @@
 "use client";
 
 import { SHOW_CIGARETTES, cigaretteSafeContent } from "./lib/siteConfig";
+import type { ResolvedBanner } from "./lib/fleet/types";
 
 
 import { HOME_TITLE } from "./lib/homeDelivery";
@@ -114,7 +115,28 @@ interface ReviewStats {
   avg: number;
 }
 
-export default function HomePageClient({ initialFlowers }: { initialFlowers: Parameters<typeof storeTierRange>[0] }) {
+function WelcomeOverride({ banner }: { banner: ResolvedBanner }) {
+  const [src, setSrc] = useState(banner.render === "image" ? banner.image : "");
+  if (banner.hidden || banner.render === "text" || !src) {
+    return <div data-fleet-text-banner="" className={styles.welcomeBannerImg}>{banner.categoryName}</div>;
+  }
+  return (
+    <img
+      src={src}
+      alt={banner.alt}
+      className={styles.welcomeBannerImg}
+      onError={() => {
+        if (banner.codedImage && src !== banner.codedImage) {
+          setSrc(banner.codedImage);
+          return;
+        }
+        setSrc("");
+      }}
+    />
+  );
+}
+
+export default function HomePageClient({ initialFlowers, contentBanners, welcomeBanner }: { initialFlowers: Parameters<typeof storeTierRange>[0]; contentBanners?: ResolvedBanner[]; welcomeBanner?: ResolvedBanner }) {
     const __liveFlowers = useLiveFlowers();
   const [featuredStrains, setFeaturedStrains] = useState<FlowerProduct[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -205,7 +227,7 @@ export default function HomePageClient({ initialFlowers }: { initialFlowers: Par
   return (
     <main className={styles.main}>
       <Navbar />
-      <FleetAnnouncementBanner title={HOME_TITLE} />
+      <FleetAnnouncementBanner title={HOME_TITLE} banners={contentBanners} />
       <HomepageTopNotices />
       {/* -- NAVBAR -- */}
 
@@ -213,11 +235,13 @@ export default function HomePageClient({ initialFlowers }: { initialFlowers: Par
       {/* -- WELCOME BANNER -- */}
       <section className={styles.welcomeBannerSection}>
         <div className={styles.welcomeBannerContainer}>
+          {welcomeBanner ? <WelcomeOverride banner={welcomeBanner} /> : (
           <img
             src="/banners/welcome_banner.webp"
             alt="Native Medicine Garden Dispensary Weed Delivery"
             className={styles.welcomeBannerImg}
           />
+          )}
         </div>
       </section>
 

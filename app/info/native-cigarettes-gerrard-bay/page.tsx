@@ -1,7 +1,10 @@
 import { getLiveMenu } from "../../lib/liveMenu";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import CigaretteUnavailable from "../../components/CigaretteUnavailable";
+import { cigarettePageUnavailable, getCigaretteSnapshot } from "../../lib/cigaretteFeed";
 import { SMOKE_PILOT_HERO_DISCLOSURE, SmokePilotLanding } from "../../components/SmokePilot";
 // Products come from the same loader as /api/tv-data on every request.
 export const dynamic = "force-dynamic";
@@ -29,6 +32,11 @@ const HERO_ITEMS = [
 ] as const;
 
 export default async function NativeCigarettesPage() {
+  const snap = await getCigaretteSnapshot();
+  if (cigarettePageUnavailable(snap.web)) {
+    return <><Navbar /><CigaretteUnavailable /><Footer /></>;
+  }
+  if (!snap.web.show) redirect("/items/vapes");
     await __loadMenuData();
   const items = __menu.items.filter((i) => i.category.toUpperCase() === String("CIGARETTES").toUpperCase());
   return (
