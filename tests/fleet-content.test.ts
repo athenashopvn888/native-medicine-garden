@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { CODED_BANNERS, CODED_NAP, CODED_PAGES, fleetVersion } from "../app/lib/fleet/coded.ts";
+import { nextFleetImageSrc } from "../app/lib/fleet/imageFallback.ts";
 import {
   readEmergencyCoded,
   readFleetContent,
@@ -330,6 +331,32 @@ test("a hidden Promo banner 3 drops the welcome section and a custom spot still 
   assert.match(stack, /banner\.hidden/);
   assert.match(stack, /data-fleet-text-bar/);
   assert.match(stack, /data-fleet-caption/);
+});
+
+test("a broken sheet image uses the coded image, then a category-name banner", () => {
+  const coded = "/banners/top-weed-tier-nmg01.webp";
+  assert.equal(nextFleetImageSrc("https://example.blob.vercel-storage.com/sheet.webp", coded), coded);
+  assert.equal(nextFleetImageSrc(coded, coded), null);
+  assert.equal(nextFleetImageSrc("https://example.blob.vercel-storage.com/sheet.webp", ""), null);
+  assert.equal(nextFleetImageSrc("https://example.blob.vercel-storage.com/sheet.webp", "   "), null);
+  assert.equal(nextFleetImageSrc("https://example.blob.vercel-storage.com/sheet.webp", undefined), null);
+
+  const banner = readFileSync(new URL("../app/components/FleetAnnouncementBanner.tsx", import.meta.url), "utf8");
+  const welcome = readFileSync(new URL("../app/HomePageClient.tsx", import.meta.url), "utf8");
+  const style = readFileSync(new URL("../app/lib/fleet/imageFallback.ts", import.meta.url), "utf8");
+  for (const source of [banner, welcome]) {
+    assert.match(source, /nextFleetImageSrc\(src, banner\.codedImage\)/);
+    assert.match(source, /data-fleet-text-banner/);
+    assert.match(source, /aria-label=\{banner\.alt\}/);
+    assert.match(source, /title=\{banner\.title\}/);
+    assert.match(source, /banner\.categoryName/);
+    assert.match(source, /data-fleet-text-bar/);
+    assert.match(source, /banner\.caption|data-fleet-caption/);
+  }
+  assert.match(style, /--green-deep/);
+  assert.doesNotMatch(style, /backgroundImage|background-image/);
+  assert.doesNotMatch(banner, /backgroundImage|background-image/);
+  assert.doesNotMatch(welcome, /setSrc\([^)]*athena|setSrc\([^)]*r2\.dev/);
 });
 
 test("manifest identity failures and a wrong-store manifest do not publish", () => {

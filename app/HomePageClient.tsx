@@ -1,6 +1,7 @@
 "use client";
 
 import { SHOW_CIGARETTES, cigaretteSafeContent } from "./lib/siteConfig";
+import { FLEET_CATEGORY_BANNER_STYLE, nextFleetImageSrc } from "./lib/fleet/imageFallback";
 import type { ResolvedBanner } from "./lib/fleet/types";
 
 
@@ -123,7 +124,7 @@ function WelcomeOverride({ banner }: { banner: ResolvedBanner }) {
   return (
     <>
       {showText ? (
-        <div data-fleet-text-banner="" className={styles.welcomeBannerImg}>{banner.categoryName}</div>
+        <div data-fleet-text-banner="" role="img" aria-label={banner.alt} title={banner.title} className={styles.welcomeBannerImg} style={FLEET_CATEGORY_BANNER_STYLE}>{banner.categoryName}</div>
       ) : (
         <img
           src={src}
@@ -131,8 +132,9 @@ function WelcomeOverride({ banner }: { banner: ResolvedBanner }) {
           title={banner.title}
           className={styles.welcomeBannerImg}
           onError={() => {
-            if (banner.codedImage && src !== banner.codedImage) {
-              setSrc(banner.codedImage);
+            const next = nextFleetImageSrc(src, banner.codedImage);
+            if (next) {
+              setSrc(next);
               return;
             }
             setImageFailed(true);
