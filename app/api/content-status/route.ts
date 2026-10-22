@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCigaretteSnapshot } from "../../lib/cigaretteFeed";
 import { currentManifestHealth, getFleetContent } from "../../lib/fleetContent";
+import { contentStatusPayload } from "../../lib/fleet/status";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,9 +10,8 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const [fleet, cig] = await Promise.all([getFleetContent(), getCigaretteSnapshot()]);
   return NextResponse.json({
-    version: fleet.version,
+    ...contentStatusPayload(fleet, { web: cig.web.show, tv: cig.tv.show, guides: cig.guides.show }),
     manifest: currentManifestHealth(),
     mode: fleet.active ? "bundle" : "coded",
-    cig: { web: cig.web.show, tv: cig.tv.show },
   }, { headers: { "Cache-Control": "no-store" } });
 }
