@@ -7,6 +7,7 @@ import CigaretteSeasonalNotice from "./CigaretteSeasonalNotice";
 import Link from "next/link";
 import HomeTitleBlock from "./HomeTitleBlock";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { FLEET_CATEGORY_BANNER_STYLE, nextFleetImageSrc } from "../lib/fleet/imageFallback";
 import { bannerMatchesCoded } from "../lib/fleet/resolve";
 import type { ResolvedBanner } from "../lib/fleet/types";
 
@@ -52,11 +53,12 @@ function SheetBanner({ banner }: { banner: ResolvedBanner }) {
   return (
     <figure data-core-banner={banner.id} style={figureStyle}>
       {showText ? (
-        <div data-fleet-text-banner="" style={{ ...imageStyle, minHeight: banner.imageHeight || 180, display: "flex", alignItems: "center", justifyContent: "center", background: "#111827", color: "#ffffff", fontWeight: 800, fontSize: "clamp(28px, 4vw, 48px)" }}>{banner.categoryName}</div>
+        <div data-fleet-text-banner="" role="img" aria-label={banner.alt} title={banner.title} style={{ ...FLEET_CATEGORY_BANNER_STYLE, minHeight: banner.imageHeight || FLEET_CATEGORY_BANNER_STYLE.minHeight }}>{banner.categoryName}</div>
       ) : (
         <Link href={banner.href} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={src} alt={banner.alt} title={banner.title} width={banner.imageWidth} height={banner.imageHeight} style={imageStyle} onError={() => {
-          if (banner.codedImage && src !== banner.codedImage) {
-            setSrc(banner.codedImage);
+          const next = nextFleetImageSrc(src, banner.codedImage);
+          if (next) {
+            setSrc(next);
             return;
           }
           setImageFailed(true);
