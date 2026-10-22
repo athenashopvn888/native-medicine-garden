@@ -53,18 +53,31 @@ function fitPolicyLine(node: HTMLSpanElement) {
   node.style.textOverflow = "";
 }
 
-export default function HiringRibbon({ hiring }: { hiring: TvHiringConfig | null }) {
-  const [showCigaretteFlash, setShowCigaretteFlash] = useState(() => isCigaretteFlashWindow());
+function cigaretteFlashHour(now: Date = new Date()): boolean {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Toronto",
+    hour: "2-digit",
+    hour12: false,
+  }).formatToParts(now);
+  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? "0");
+  return hour >= 17 || hour < 8;
+}
+
+export default function HiringRibbon({ hiring, cigaretteNotice }: { hiring: TvHiringConfig | null; cigaretteNotice?: string }) {
+  const noticeOverride = cigaretteNotice !== undefined;
+  const [showCigaretteFlash, setShowCigaretteFlash] = useState(() => noticeOverride ? Boolean(cigaretteNotice) && cigaretteFlashHour() : isCigaretteFlashWindow());
   const policy = trimmed(TV_POLICY_MESSAGE);
   const hiringOn = hiring !== null && trimmed(hiring.displayUrl).length > 0;
+  const flashMessage = noticeOverride ? (cigaretteNotice || "") : CIGARETTE_FLASH_MESSAGE;
+  const flashOn = showCigaretteFlash && Boolean(flashMessage);
   const messages = [
-    ...(showCigaretteFlash ? [CIGARETTE_FLASH_MESSAGE] : []),
+    ...(flashOn ? [flashMessage] : []),
     ...(hiringOn ? hiringLines(hiring) : []),
     ...(policy ? [policy] : []),
   ];
-  const flashIndex = showCigaretteFlash ? 0 : -1;
+  const flashIndex = flashOn ? 0 : -1;
   const policyIndex = policy ? messages.length - 1 : -1;
-  const hiringOffset = showCigaretteFlash ? 1 : 0;
+  const hiringOffset = flashOn ? 1 : 0;
   const rotating = messages.length > 1;
 
   const [phase, setPhase] = useState(0);
@@ -73,10 +86,11 @@ export default function HiringRibbon({ hiring }: { hiring: TvHiringConfig | null
   const policyRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const update = () => setShowCigaretteFlash(isCigaretteFlashWindow());
+    const update = () => setShowCigaretteFlash(noticeOverride ? Boolean(cigaretteNotice) && cigaretteFlashHour() : isCigaretteFlashWindow());
+    update();
     const timer = window.setInterval(update, 60_000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [cigaretteNotice, noticeOverride]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -124,6 +138,7 @@ export default function HiringRibbon({ hiring }: { hiring: TvHiringConfig | null
             <span
               key={isFlash ? "cigarette-flash" : isPolicy ? "policy" : phaseClass}
               data-phase={isFlash ? "flash" : isPolicy ? "policy" : "hiring"}
+              {...(isFlash ? { "data-cig-marker": "" } : {})}
               className={`${styles.hiringPhase} ${phaseClass} ${index === activeIndex ? styles.isActive : ""}`}
             >
               <span

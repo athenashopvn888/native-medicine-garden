@@ -1,5 +1,6 @@
-import { SHOW_CIGARETTES } from "../../lib/siteConfig";
 import CigaretteSeasonalNotice from "../../components/CigaretteSeasonalNotice";
+import { getCigaretteSnapshot } from "../../lib/cigaretteFeed";
+import { isRealCigaretteItem } from "../../lib/cigMarkers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -35,7 +36,8 @@ export async function generateMetadata({
   const { category: catSlug } = await params;
   const catInfo = getCategoryFromSlug(catSlug);
   if (!catInfo) return {};
-  const preservedShelf = catSlug === "cigarettes" && !SHOW_CIGARETTES;
+  const showCigarettes = (await getCigaretteSnapshot()).web.show;
+  const preservedShelf = catSlug === "cigarettes" && !showCigarettes;
   const items = (await liveItemsByCategory(catInfo.key));
 
   return {
@@ -55,7 +57,8 @@ export default async function ItemsCategoryPage({
   const { category: catSlug } = await params;
   const catInfo = getCategoryFromSlug(catSlug);
   if (!catInfo) notFound();
-  const preservedShelf = catSlug === "cigarettes" && !SHOW_CIGARETTES;
+  const showCigarettes = (await getCigaretteSnapshot()).web.show;
+  const preservedShelf = catSlug === "cigarettes" && !showCigarettes;
 
   /* Pre-Rolls also shows accessories (ADD ONS) */
   let items = (await liveItemsByCategory(catInfo.key));
@@ -94,7 +97,7 @@ export default async function ItemsCategoryPage({
       </section>
 
       {(catSlug === "vapes" || catSlug === "vape-disposables") && <CategoryCoreBanners kind="vapes" />}
-      {catSlug === "cigarettes" && <CategoryCoreBanners kind="cigarettes" />}
+      {catSlug === "cigarettes" && <CategoryCoreBanners kind="cigarettes" showCigarettes={showCigarettes} />}
 
       {guideGroups.map((group)=><section className="guideStrip" key={group.label} aria-label={group.label}><h2>{group.label}</h2><div className="guideLinks">{group.guides.map((guide)=><Link key={guide.slug} href={`/guides/${guide.slug}`}>{guide.name}</Link>)}</div></section>)}
 
@@ -104,7 +107,7 @@ export default async function ItemsCategoryPage({
           {items.length > 0 ? (
             <div className={styles.grid}>
               {items.map((item) => (
-                <ItemCard key={item.sku} item={item} catColor={config.color} />
+                <ItemCard key={item.sku} item={item} catColor={config.color} showCigarettes={showCigarettes} />
               ))}
             </div>
           ) : (
@@ -152,8 +155,8 @@ export default async function ItemsCategoryPage({
   );
 }
 
-function shelfLabel(item: ItemProduct) {
-  if (SHOW_CIGARETTES) return item.category;
+function shelfLabel(item: ItemProduct, showCigarettes: boolean) {
+  if (showCigarettes) return item.category;
   const label = `${item.name} ${item.slug}`;
   if (/grabba/i.test(label)) return item.category;
   if (/backwoods|cigarillos?/i.test(label)) return "Backwoods";
@@ -161,11 +164,12 @@ function shelfLabel(item: ItemProduct) {
   return item.category;
 }
 
-function ItemCard({ item, catColor }: { item: ItemProduct; catColor: string }) {
+function ItemCard({ item, catColor, showCigarettes }: { item: ItemProduct; catColor: string; showCigarettes: boolean }) {
   const itemPrice = getItemPriceDisplay(item.price, item.sku);
+  const cigaretteMarker = showCigarettes && isRealCigaretteItem(item);
 
   return (
-    <Link href={`/item/${item.slug}`} className={styles.card} style={{ "--cat-color": catColor } as React.CSSProperties}>
+    <Link href={`/item/${item.slug}`} className={styles.card} style={{ "--cat-color": catColor } as React.CSSProperties} {...(cigaretteMarker ? { "data-cig-marker": "" } : {})}>
       <div className={styles.cardMedia}>
         {item.image ? (
           <SafeImage 
@@ -185,7 +189,7 @@ function ItemCard({ item, catColor }: { item: ItemProduct; catColor: string }) {
         </div>
       </div>
       <div className={styles.cardBody}>
-        <span className={styles.cardCategory}>{shelfLabel(item)}</span>
+        <span className={styles.cardCategory}>{shelfLabel(item, showCigarettes)}</span>
         <h3 className={styles.cardName}>{item.name}</h3>
         {item.price && (
           <div className={styles.cardPrice}>

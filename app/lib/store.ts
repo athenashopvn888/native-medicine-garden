@@ -1,4 +1,4 @@
-import { SHOW_CIGARETTES } from "./siteConfig";
+import { SHOW_CIGARETTES } from "./siteConfig.ts";
 
 /** Single-store NAP and local SEO constants for Native Medicine Garden.
  *  GBP Website field must remain the homepage root
