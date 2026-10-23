@@ -3,12 +3,13 @@ import {
   cigarettePublicHeaders,
   decideCigaretteGuide,
   decideCigaretteSurface,
+  publicWebsiteCigaretteFlag,
   reconcileSurfaceItems,
   type CigaretteSurfaceDecision,
   type CigaretteWording,
 } from "./cigDecision";
 import { allItems, type ItemProduct } from "./products";
-import { cigaretteEnvHardOff } from "./siteConfig";
+import { cigaretteEnvHardOff, SHOW_CIGARETTES } from "./siteConfig";
 
 export type CigaretteSnapshot = {
   web: CigaretteSurfaceDecision;
@@ -60,6 +61,7 @@ async function loadCigaretteFeed(): Promise<CigaretteSnapshot> {
     if (cig && typeof cig === "object") lastGood = { cig, items };
     return snapshotFrom(cig, items, true, false);
   } catch {
+    // A saved block still follows its tvOn. A miss with nothing saved fails closed.
     if (lastGood) return snapshotFrom(lastGood.cig, lastGood.items, false, false);
     return snapshotFrom(null, allItems, false, true);
   }
@@ -75,11 +77,20 @@ export async function readCigaretteFeed(): Promise<CigaretteSnapshot> {
 export const getCigaretteSnapshot = cache(readCigaretteFeed);
 
 export function toPublicCigaretteState(snap: CigaretteSnapshot): PublicCigaretteState {
-  return { web: snap.web.show, tv: snap.tv.show, wording: snap.wording };
+  return {
+    web: publicWebsiteCigaretteFlag(snap.web, SHOW_CIGARETTES),
+    tv: snap.tv.show,
+    wording: snap.wording,
+  };
 }
 
 export function snapshotHeaders(snap: CigaretteSnapshot): Record<string, string> {
-  return cigarettePublicHeaders({ web: snap.web.show, tv: snap.tv.show, wording: snap.wording });
+  const state = toPublicCigaretteState(snap);
+  return cigarettePublicHeaders({
+    web: SHOW_CIGARETTES ? state.web : false,
+    tv: state.tv,
+    wording: state.wording,
+  });
 }
 
 /** Explicit feed off (or a live shelf with no real cigarettes) stays on the URL. */

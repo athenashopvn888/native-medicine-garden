@@ -3,6 +3,7 @@
 import { SHOW_CIGARETTES } from "../lib/siteConfig";
 
 import CigaretteSeasonalNotice from "./CigaretteSeasonalNotice";
+import { useCigaretteState } from "./CigaretteStateProvider";
 
 import Link from "next/link";
 import HomeTitleBlock from "./HomeTitleBlock";
@@ -71,6 +72,7 @@ function SheetBanner({ banner }: { banner: ResolvedBanner }) {
 }
 
 export default function FleetAnnouncementBanner({ title, banners }: { title: string; banners?: ResolvedBanner[] }) {
+  const showCigarettes = useCigaretteState().web;
   const announcementRef = useRef<HTMLElement>(null);
   const [navClearance, setNavClearance] = useState<number | null>(null);
   const [showHalloweenNotice, setShowHalloweenNotice] = useState(false);
@@ -115,9 +117,9 @@ export default function FleetAnnouncementBanner({ title, banners }: { title: str
       {renderHomeSpot(banners, "vapes", (
       <figure data-core-banner="vapes" data-vape-banner="" style={figureStyle}><Link href="/items/vapes" aria-label={`Shop nicotine vapes and THC vapes at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={VAPE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — nicotine vapes and THC vapes`} title={`${STORE_NAME} nicotine vapes and THC vapes`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>Nicotine + THC vapes</figcaption></figure>
       ))}
-      {SHOW_CIGARETTES ? <CigaretteSeasonalNotice /> : null}
-      {SHOW_CIGARETTES ? (<figure data-core-banner="cigarettes" data-cig-mix-banner="" style={figureStyle}><Link href="/items/cigarettes" aria-label={`Shop cigarette mix and match offers at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={CIGARETTE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — 2 packs for $5 mix and match and $25 carton cigarette offer`} title={`${STORE_NAME} cigarette offer — 2 packs $5 mix and match, $25 carton`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>2 PACKS $5 / $25 CARTON</figcaption></figure>) : null}
-      {SHOW_CIGARETTES ? (<figure data-core-banner="premium-cigarettes" data-premium-cigarette-banner="" style={figureStyle}><Link href="/items/cigarettes" aria-label={`Shop BB, Marlboro and Belmont cigarette offers at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={PREMIUM_CIGARETTE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — BB Full Flavor and Lights, Marlboro and Belmont premium cigarettes`} title={`${STORE_NAME} premium cigarettes — BB, Marlboro and Belmont`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>BB Full Flavor + Lights 2 packs $5 · Marlboro &amp; Belmont $10/pack</figcaption></figure>) : null}
+      {showCigarettes ? <CigaretteSeasonalNotice /> : null}
+      {showCigarettes ? (<figure data-core-banner="cigarettes" data-cig-mix-banner="" style={figureStyle}><Link href="/items/cigarettes" aria-label={`Shop cigarette mix and match offers at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={CIGARETTE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — 2 packs for $5 mix and match and $25 carton cigarette offer`} title={`${STORE_NAME} cigarette offer — 2 packs $5 mix and match, $25 carton`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>2 PACKS $5 / $25 CARTON</figcaption></figure>) : null}
+      {showCigarettes ? (<figure data-core-banner="premium-cigarettes" data-premium-cigarette-banner="" style={figureStyle}><Link href="/items/cigarettes" aria-label={`Shop BB, Marlboro and Belmont cigarette offers at ${STORE_NAME}`} style={linkStyle}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={PREMIUM_CIGARETTE_IMAGE} alt={`${STORE_NAME} in ${STORE_AREA} — BB Full Flavor and Lights, Marlboro and Belmont premium cigarettes`} title={`${STORE_NAME} premium cigarettes — BB, Marlboro and Belmont`} style={imageStyle} loading="lazy" /></Link><figcaption style={captionStyle}>BB Full Flavor + Lights 2 packs $5 · Marlboro &amp; Belmont $10/pack</figcaption></figure>) : null}
       {showHalloweenNotice ? <p data-halloween-hours-notice="">Happy Halloween! {STORE_NAME} is open regular hours on Saturday, October 31.</p> : null}
     </aside>
   );

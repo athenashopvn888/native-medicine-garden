@@ -86,7 +86,7 @@ export function decideCigaretteSurface(input: {
   surface: CigaretteSurface;
   envRaw?: string;
   errored?: boolean;
-  /** Fail-open target. Defaults to the coded SHOW_CIGARETTES switch. */
+  /** Ignored. A failed or missing feed stays hidden. */
   codedShow?: boolean;
 }): CigaretteSurfaceDecision & { wording: CigaretteWording } {
   const wording = resolveCigWording(
@@ -95,24 +95,27 @@ export function decideCigaretteSurface(input: {
       : undefined,
   );
   if (cigaretteEnvHardOff(input.envRaw)) return { show: false, reason: "env", wording };
-  const missing = !input.cig || typeof input.cig !== "object" || Array.isArray(input.cig);
-  // TV follows tvOn (then cig.on). The coded website switch does not apply.
-  // A missing feed or a feed error leaves the board up. Only an explicit false flag hides it.
-  if (input.surface === "tv") {
-    if (input.errored) return { show: true, reason: "error", wording };
-    if (missing) return { show: true, reason: "missing", wording };
-    if (!resolveSurfaceFlag(input.cig, "tv")) return { show: false, reason: "off", wording };
-    const items = Array.isArray(input.items) ? input.items : [];
-    if (!items.some((item) => isRealCigaretteItem(item))) return { show: false, reason: "no-items", wording };
-    return { show: true, reason: "on", wording };
+  // A feed error or a missing cig block hides this surface.
+  // A saved block still follows tvOn or webOn. The coded switch cannot open a failed feed.
+  if (input.errored) return { show: false, reason: "error", wording };
+  if (!input.cig || typeof input.cig !== "object" || Array.isArray(input.cig)) {
+    return { show: false, reason: "missing", wording };
   }
-  // Website surfaces keep the coded switch when the feed is missing or errors.
-  if (input.errored) return { show: codedShow(input.codedShow), reason: "error", wording };
-  if (missing) return { show: codedShow(input.codedShow), reason: "missing", wording };
   if (!resolveSurfaceFlag(input.cig, input.surface)) return { show: false, reason: "off", wording };
   const items = Array.isArray(input.items) ? input.items : [];
   if (!items.some((item) => isRealCigaretteItem(item))) return { show: false, reason: "no-items", wording };
   return { show: true, reason: "on", wording };
+}
+
+/**
+ * Website flag. The coded switch stays in front of the feed.
+ * A feed error or a missing block stays off, even when that switch is on.
+ * TV does not use this.
+ */
+export function publicWebsiteCigaretteFlag(decision: CigaretteSurfaceDecision, codedOn: boolean): boolean {
+  if (!codedOn) return false;
+  if (decision.reason === "error" || decision.reason === "missing") return false;
+  return decision.show;
 }
 
 /** Cigarette-shelf rows for a TV board. Off drops real cigarettes and keeps wraps and pouches. */
