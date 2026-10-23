@@ -1,6 +1,8 @@
 import CigaretteSeasonalNotice from "../../components/CigaretteSeasonalNotice";
+import { publicWebsiteCigaretteFlag } from "../../lib/cigDecision";
 import { getCigaretteSnapshot } from "../../lib/cigaretteFeed";
 import { isRealCigaretteItem } from "../../lib/cigMarkers";
+import { SHOW_CIGARETTES } from "../../lib/siteConfig";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -36,7 +38,7 @@ export async function generateMetadata({
   const { category: catSlug } = await params;
   const catInfo = getCategoryFromSlug(catSlug);
   if (!catInfo) return {};
-  const showCigarettes = (await getCigaretteSnapshot()).web.show;
+  const showCigarettes = publicWebsiteCigaretteFlag((await getCigaretteSnapshot()).web, SHOW_CIGARETTES);
   const preservedShelf = catSlug === "cigarettes" && !showCigarettes;
   const items = (await liveItemsByCategory(catInfo.key));
 
@@ -57,11 +59,14 @@ export default async function ItemsCategoryPage({
   const { category: catSlug } = await params;
   const catInfo = getCategoryFromSlug(catSlug);
   if (!catInfo) notFound();
-  const showCigarettes = (await getCigaretteSnapshot()).web.show;
+  const showCigarettes = publicWebsiteCigaretteFlag((await getCigaretteSnapshot()).web, SHOW_CIGARETTES);
   const preservedShelf = catSlug === "cigarettes" && !showCigarettes;
 
   /* Pre-Rolls also shows accessories (ADD ONS) */
   let items = (await liveItemsByCategory(catInfo.key));
+  if (catSlug === "cigarettes" && !showCigarettes) {
+    items = items.filter((item) => !isRealCigaretteItem(item));
+  }
   if (catInfo.key === "PREROLLS") {
     const accessories = (await liveItemsByCategory("ADD ONS"));
     const existingIds = new Set(items.map(i => i.sku));
