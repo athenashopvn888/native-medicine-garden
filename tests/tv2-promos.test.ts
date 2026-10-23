@@ -70,7 +70,10 @@ test("NMG TV2 removes only its top banner and retains display bands", () => {
 test("TV2 evening cigarette card uses the 2 Pack $5 overlay outside daytime promos", () => {
   assert.match(tv2Page, /timedPromoOverlay/);
   assert.match(tv2Page, /getCigaretteOfferPromo/);
-  assert.match(tv2Page, /offerPromo=\{card\.id === "CIGARETTES" \? getCigaretteOfferPromo\(daytime, promoElapsedMs\) : undefined\}/);
+  assert.match(tv2Page, /offerPromo=\{isCig && tvCig\.show \? getCigaretteOfferPromo\(daytime, promoElapsedMs\) : undefined\}/);
+  assert.match(tv2Page, /readCigaretteTvHeader\(res\.headers\)/);
+  assert.match(tv2Page, /fetch\("\/api\/tv-data\?type=items"\)/);
+  assert.match(tv2Page, /5\*60\*1000/);
   assert.match(tv2Page, /setInterval\(sync, 60_000\)/);
   assert.match(tv2Page, /src=\{promo\.src\}/);
   assert.match(tv2Page, /promo\.fallbackSrc/);
