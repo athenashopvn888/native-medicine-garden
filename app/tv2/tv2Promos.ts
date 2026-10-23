@@ -1,4 +1,3 @@
-import { SHOW_CIGARETTES } from "../lib/siteConfig.ts";
 export const TV2_DAYTIME_START_HOUR = 8;
 export const TV2_DAYTIME_END_HOUR = 17;
 export const TV2_TIME_ZONE = "America/Toronto";
@@ -12,7 +11,7 @@ export type Tv2DaytimePromo = {
   alt: string;
 };
 
-const CIGARETTE_PROMOS_RAW = [
+export const CIGARETTE_PROMOS = [
   {
     src: "/banners/luxury_mix_match_600_web.webp",
     alt: "Mix and Match 2 Packs for $5 and $25 Carton Offer",
@@ -22,7 +21,6 @@ const CIGARETTE_PROMOS_RAW = [
     alt: "Marlboro and Belmont $10 Pack Offer",
   },
 ] as const;
-export const CIGARETTE_PROMOS = SHOW_CIGARETTES ? CIGARETTE_PROMOS_RAW : [];
 
 export const TV2_DAYTIME_PROMOS: Readonly<
   Partial<Record<string, Tv2DaytimePromo>>

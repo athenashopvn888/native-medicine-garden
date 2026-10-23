@@ -95,15 +95,31 @@ export function decideCigaretteSurface(input: {
       : undefined,
   );
   if (cigaretteEnvHardOff(input.envRaw)) return { show: false, reason: "env", wording };
-  // A missing feed or a feed error keeps today's coded on/off. Only an explicit false flag hides a live feed.
-  if (input.errored) return { show: codedShow(input.codedShow), reason: "error", wording };
-  if (!input.cig || typeof input.cig !== "object" || Array.isArray(input.cig)) {
-    return { show: codedShow(input.codedShow), reason: "missing", wording };
+  const missing = !input.cig || typeof input.cig !== "object" || Array.isArray(input.cig);
+  // TV follows tvOn (then cig.on). The coded website switch does not apply.
+  // A missing feed or a feed error leaves the board up. Only an explicit false flag hides it.
+  if (input.surface === "tv") {
+    if (input.errored) return { show: true, reason: "error", wording };
+    if (missing) return { show: true, reason: "missing", wording };
+    if (!resolveSurfaceFlag(input.cig, "tv")) return { show: false, reason: "off", wording };
+    const items = Array.isArray(input.items) ? input.items : [];
+    if (!items.some((item) => isRealCigaretteItem(item))) return { show: false, reason: "no-items", wording };
+    return { show: true, reason: "on", wording };
   }
+  // Website surfaces keep the coded switch when the feed is missing or errors.
+  if (input.errored) return { show: codedShow(input.codedShow), reason: "error", wording };
+  if (missing) return { show: codedShow(input.codedShow), reason: "missing", wording };
   if (!resolveSurfaceFlag(input.cig, input.surface)) return { show: false, reason: "off", wording };
   const items = Array.isArray(input.items) ? input.items : [];
   if (!items.some((item) => isRealCigaretteItem(item))) return { show: false, reason: "no-items", wording };
   return { show: true, reason: "on", wording };
+}
+
+/** Cigarette-shelf rows for a TV board. Off drops real cigarettes and keeps wraps and pouches. */
+export function cigaretteBoardItems<T extends ShelfItem>(items: T[], show: boolean): T[] {
+  const shelf = items.filter((item) => (item.category || "").toUpperCase() === "CIGARETTES");
+  if (show) return shelf;
+  return shelf.filter((item) => !isRealCigaretteItem(item));
 }
 
 /** Guide pages follow the master switch (`master`, otherwise `on`), not the web/TV split. */

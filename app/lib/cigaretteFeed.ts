@@ -1,5 +1,6 @@
 import { cache } from "react";
 import {
+  cigarettePublicHeaders,
   decideCigaretteGuide,
   decideCigaretteSurface,
   reconcileSurfaceItems,
@@ -75,6 +76,10 @@ export const getCigaretteSnapshot = cache(readCigaretteFeed);
 
 export function toPublicCigaretteState(snap: CigaretteSnapshot): PublicCigaretteState {
   return { web: snap.web.show, tv: snap.tv.show, wording: snap.wording };
+}
+
+export function snapshotHeaders(snap: CigaretteSnapshot): Record<string, string> {
+  return cigarettePublicHeaders({ web: snap.web.show, tv: snap.tv.show, wording: snap.wording });
 }
 
 /** Explicit feed off (or a live shelf with no real cigarettes) stays on the URL. */

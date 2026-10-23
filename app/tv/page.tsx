@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import styles from "./tv.module.css";
 import HiringRibbon from "../components/HiringRibbon";
 import { useCigaretteState } from "../components/CigaretteStateProvider";
+import { readCigaretteTvHeader } from "../lib/cigDecision";
 import { isRealCigaretteItem } from "../lib/cigMarkers";
 import TvStoreHeader from "../components/TvStoreHeader";
 import { TV_BUNDLE_LABELS } from "./tvPricing";
@@ -589,8 +590,7 @@ function OZCard({ flowers, hiIdx }: { flowers: Flower[]; hiIdx: number }) {
 /* ============================================================
    ADDONS CARD
    ============================================================ */
-function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
-  const tvOn = useCigaretteState().tv;
+function AddOnsCard({ items, hiIdx, tvOn }: { items: Item[]; hiIdx: number; tvOn: boolean }) {
   const hi = items[hiIdx] || items[0];
 
   const prevRef = useRef<string>("");
@@ -674,7 +674,10 @@ function AddOnsCard({ items, hiIdx }: { items: Item[]; hiIdx: number }) {
    MAIN TV PAGE
    ============================================================ */
 export default function TVMenuPage() {
-  const tvCig = useCigaretteState();
+  const seeded = useCigaretteState();
+  const fallbackWording = useRef(seeded.wording);
+  fallbackWording.current = seeded.wording;
+  const [tvCig, setTvCig] = useState({ show: seeded.tv, wording: seeded.wording });
   const theme = getTvTheme(tvHiring?.store);
   const [bgUrl, setBgUrl] = useState("");
   useEffect(() => {
@@ -704,6 +707,7 @@ export default function TVMenuPage() {
         fetch("/api/tv-data?type=flowers"),
         fetch("/api/tv-data?type=items"),
       ]);
+      setTvCig(iRes.ok ? readCigaretteTvHeader(iRes.headers) : { show: false, wording: fallbackWording.current });
       const fData: Flower[] = fRes.ok ? await fRes.json() : [];
       const iData: Item[] = iRes.ok ? await iRes.json() : [];
       if (!Array.isArray(fData)) throw new Error("Flower stock payload is invalid");
@@ -822,7 +826,7 @@ export default function TVMenuPage() {
 
         {/* GRID */}
         <div className={styles.stage}>
-          <HiringRibbon hiring={tvHiring} cigaretteNotice={tvCig.tv ? tvCig.wording.tickerLine1 : ""} />
+          <HiringRibbon hiring={tvHiring} cigaretteNotice={tvCig.show ? tvCig.wording.tickerLine1 : ""} />
           <div className={styles.grid}>
             {/* Row 1: EXOTIC, PREMIUM, AAA+ */}
             {SMART_TIERS.slice(0,3).map(tier => (
@@ -830,7 +834,7 @@ export default function TVMenuPage() {
                 cardCls={CM[tier].c} tierCls={CM[tier].t} badgeCls={CM[tier].b} />
             ))}
             {/* ADDONS right rail */}
-            <AddOnsCard items={addOns} hiIdx={highlights["ADDONS"]||0} />
+            <AddOnsCard items={addOns} hiIdx={highlights["ADDONS"]||0} tvOn={tvCig.show} />
             {/* Row 2: AA, BUDGET, OZ */}
             {SMART_TIERS.slice(3).map(tier => (
               <FlowerCard key={tier} tier={tier} flowers={flowers[tier]||[]} hiIdx={highlights[tier]||0}
