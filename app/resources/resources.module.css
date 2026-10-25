@@ -28,4 +28,10 @@
 .faqItem { padding: 18px; border: 1px solid var(--border-subtle, rgba(0,0,0,0.1)); border-radius: var(--radius-md, 10px); background: var(--bg-primary, #fff); }
 .faqItem h3 { margin: 0 0 8px; font-size: 18px; line-height: 1.35; }
 .faqItem p { margin: 0; color: var(--text-secondary, #425047); font-size: 16px; line-height: 1.7; }
+.checked { font-weight: 800; }
+.lead a, .section a { color: var(--green-dark, #137a45); font-weight: 700; }
+.tableWrap { margin-top: 18px; overflow-x: auto; }
+.sizeTable { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; }
+.sizeTable th, .sizeTable td { padding: 10px 12px; border-bottom: 1px solid var(--border-subtle, rgba(0,0,0,0.1)); text-align: left; vertical-align: top; }
+.sizeTable th { color: var(--text-primary, #101815); font-size: 13px; letter-spacing: 0.02em; }
 @media (max-width: 700px) { .hero { padding-top: 116px; } .intro, .section p { font-size: 16px; } }
