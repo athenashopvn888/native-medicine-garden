@@ -1,4 +1,12 @@
 import { SHOW_CIGARETTES, cigaretteSafeContent, isCigarettePath } from "../lib/siteConfig";
+import {
+  CANNABIS_FLOWER_SIZES_ARTICLE,
+  CANNABIS_FLOWER_SIZES_BODY,
+  CANNABIS_FLOWER_SIZES_CARD,
+  CANNABIS_FLOWER_SIZES_DESCRIPTION,
+  CANNABIS_FLOWER_SIZES_SEO_TITLE,
+  CANNABIS_FLOWER_SIZES_TITLE,
+} from "./cannabisFlowerSizesExplained";
 import knowledgeData from "./knowledgeData.json";
 
 export interface ResourceCard {
@@ -32,6 +40,13 @@ export interface ResourcePage {
   }[];
   faqs?: { question: string; answer: string }[];
   schemaType?: "Article" | "WebPage" | "CollectionPage";
+  bodyMarkdown?: string;
+  articleMeta?: {
+    datePublished: string;
+    dateModified: string;
+    author: string;
+    publisher: string;
+  };
 }
 
 const SUPPORTING_PAGES: ResourcePage[] = [
@@ -95,6 +110,20 @@ const SUPPORTING_PAGES: ResourcePage[] = [
   },
 ];
 
+const CANNABIS_FLOWER_SIZES_PAGE: ResourcePage = {
+  slug: "cannabis-flower-sizes-explained",
+  title: CANNABIS_FLOWER_SIZES_TITLE,
+  seoTitle: CANNABIS_FLOWER_SIZES_SEO_TITLE,
+  description: CANNABIS_FLOWER_SIZES_DESCRIPTION,
+  eyebrow: "",
+  intro: "",
+  cards: [],
+  sections: [],
+  bodyMarkdown: CANNABIS_FLOWER_SIZES_BODY,
+  articleMeta: CANNABIS_FLOWER_SIZES_ARTICLE,
+  schemaType: "Article",
+};
+
 export const RESOURCE_HOME: ResourcePage = {
   slug: "",
   title: "Weed & Cannabis Resources",
@@ -126,6 +155,7 @@ export const RESOURCE_HOME: ResourcePage = {
     { title: "Pre-Roll Guide", href: "/resources/pre-roll-guide", text: "Keep prepared pre-rolls in their own product-format lane." },
     { title: "Native Smokes Guide", href: "/resources/native-smokes", text: "Read commercial-cigarette terminology without the guesswork." },
     { title: "Native Cigarettes in Ontario", href: "/resources/native-smokes/native-cigarettes-guide", text: "Understand terms, brands and legal context." },
+    CANNABIS_FLOWER_SIZES_CARD,
   ],
   sections: [
     { heading: "Current Menu vs Resource Guides", body: "Use these resource pages for stable explanations and visit planning. Use the current Native Medicine Garden category and product pages for changing product names, prices, package formats and availability." },
@@ -142,11 +172,15 @@ RESOURCE_PAGES_RAW[0].cards = [
   ...RESOURCE_PAGES_RAW[0].cards.filter((card) => card.href !== "/guides"),
 ];
 
-export const RESOURCE_PAGES = SHOW_CIGARETTES
+const RESOURCE_PAGES_BASE = SHOW_CIGARETTES
   ? RESOURCE_PAGES_RAW
   : RESOURCE_PAGES_RAW
       .filter((page) => !isCigarettePath((page as { slug?: string; path?: string }).slug ?? (page as { path?: string }).path))
       .map((page) => cigaretteSafeContent(page));
+
+// Append after cigaretteSafeContent. That pass collapses whitespace, which would
+// join this article's markdown lines. The body has no cigarette terms.
+export const RESOURCE_PAGES = [...RESOURCE_PAGES_BASE, CANNABIS_FLOWER_SIZES_PAGE];
 
 export function getResourcePage(slug: string) {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
