@@ -7,6 +7,13 @@ import {
   CANNABIS_FLOWER_SIZES_SEO_TITLE,
   CANNABIS_FLOWER_SIZES_TITLE,
 } from "./cannabisFlowerSizesExplained";
+import {
+  WHAT_IS_CRAFT_CANNABIS_ARTICLE,
+  WHAT_IS_CRAFT_CANNABIS_BODY,
+  WHAT_IS_CRAFT_CANNABIS_DESCRIPTION,
+  WHAT_IS_CRAFT_CANNABIS_SEO_TITLE,
+  WHAT_IS_CRAFT_CANNABIS_TITLE,
+} from "./whatIsCraftCannabis";
 import knowledgeData from "./knowledgeData.json";
 
 export interface ResourceCard {
@@ -40,6 +47,7 @@ export interface ResourcePage {
   }[];
   faqs?: { question: string; answer: string }[];
   schemaType?: "Article" | "WebPage" | "CollectionPage";
+  schemaBreadcrumb?: boolean;
   bodyMarkdown?: string;
   articleMeta?: {
     datePublished: string;
@@ -124,6 +132,21 @@ const CANNABIS_FLOWER_SIZES_PAGE: ResourcePage = {
   schemaType: "Article",
 };
 
+const WHAT_IS_CRAFT_CANNABIS_PAGE: ResourcePage = {
+  slug: "what-is-craft-cannabis",
+  title: WHAT_IS_CRAFT_CANNABIS_TITLE,
+  seoTitle: WHAT_IS_CRAFT_CANNABIS_SEO_TITLE,
+  description: WHAT_IS_CRAFT_CANNABIS_DESCRIPTION,
+  eyebrow: "",
+  intro: "",
+  cards: [],
+  sections: [],
+  bodyMarkdown: WHAT_IS_CRAFT_CANNABIS_BODY,
+  articleMeta: WHAT_IS_CRAFT_CANNABIS_ARTICLE,
+  schemaType: "Article",
+  schemaBreadcrumb: false,
+};
+
 export const RESOURCE_HOME: ResourcePage = {
   slug: "",
   title: "Weed & Cannabis Resources",
@@ -180,7 +203,7 @@ const RESOURCE_PAGES_BASE = SHOW_CIGARETTES
 
 // Append after cigaretteSafeContent. That pass collapses whitespace, which would
 // join this article's markdown lines. The body has no cigarette terms.
-export const RESOURCE_PAGES = [...RESOURCE_PAGES_BASE, CANNABIS_FLOWER_SIZES_PAGE];
+export const RESOURCE_PAGES = [...RESOURCE_PAGES_BASE, CANNABIS_FLOWER_SIZES_PAGE, WHAT_IS_CRAFT_CANNABIS_PAGE];
 
 export function getResourcePage(slug: string) {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "");

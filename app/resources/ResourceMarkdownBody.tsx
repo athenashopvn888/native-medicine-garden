@@ -23,7 +23,7 @@ function isSameSiteHref(href: string): boolean {
 
 function renderBlock(block: ResourceMarkdownBlock, key: string) {
   if (block.type === "p") {
-    const checked = block.text === "Last checked: October 21, 2026";
+    const checked = block.text.startsWith("Last checked:");
     return <p key={key} className={checked ? styles.checked : undefined}>{inlineText(block.text, key)}</p>;
   }
   if (block.type === "ul") {
