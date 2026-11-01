@@ -40,14 +40,14 @@ export default function ResourceView({ page, canonicalPath }: ResourceViewProps 
           mainEntityOfPage: canonicalUrl,
         } : {}),
       },
-      {
+      ...(page.schemaBreadcrumb === false ? [] : [{
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: "https://www.nativemedicinecannabis.com/" },
           { "@type": "ListItem", position: 2, name: "Weed & Cannabis Resources", item: "https://www.nativemedicinecannabis.com/weed-resources" },
           { "@type": "ListItem", position: 3, name: page.title, item: canonicalUrl },
         ],
-      },
+      }]),
       ...(page.faqs?.length ? [{ "@type": "FAQPage", mainEntity: page.faqs.map((faq) => ({ "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer } })) }] : []),
     ],
   };
