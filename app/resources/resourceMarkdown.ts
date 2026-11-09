@@ -1,5 +1,5 @@
 export type ResourceMarkdownBlock =
-  | { type: "h1" | "h2" | "p"; text: string }
+  | { type: "h1" | "h2" | "h3" | "p"; text: string }
   | { type: "ul" | "ol"; items: string[] }
   | { type: "table"; headers: string[]; rows: string[][] };
 
@@ -21,9 +21,10 @@ export function parseResourceMarkdown(markdown: string): ResourceMarkdownBlock[]
       index += 1;
       continue;
     }
-    const heading = /^(#{1,2})\s+(.+)$/.exec(line);
+    const heading = /^(#{1,3})\s+(.+)$/.exec(line);
     if (heading) {
-      blocks.push({ type: heading[1].length === 1 ? "h1" : "h2", text: heading[2] });
+      const level = heading[1].length;
+      blocks.push({ type: level === 1 ? "h1" : level === 2 ? "h2" : "h3", text: heading[2] });
       index += 1;
       continue;
     }
@@ -68,7 +69,7 @@ function stripInline(value: string): string {
 
 export function resourceMarkdownPlainText(markdown: string): string {
   return parseResourceMarkdown(markdown).map((block) => {
-    if (block.type === "h1" || block.type === "h2" || block.type === "p") return stripInline(block.text);
+    if (block.type === "h1" || block.type === "h2" || block.type === "h3" || block.type === "p") return stripInline(block.text);
     if (block.type === "ul" || block.type === "ol") return block.items.map(stripInline).join("\n");
     if (block.type === "table") return [block.headers, ...block.rows].map((row) => row.map(stripInline).join("\t")).join("\n");
     return "";

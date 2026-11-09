@@ -15,6 +15,7 @@
 .body { max-width: 900px; margin: 0 auto; padding: 24px 24px 72px; display: grid; gap: 28px; }
 .section { border-top: 1px solid var(--border-subtle, rgba(0,0,0,0.1)); padding-top: 28px; }
 .section h2 { margin: 0 0 12px; color: var(--text-primary, #101815); font-size: clamp(24px, 4vw, 34px); line-height: 1.18; letter-spacing: 0; }
+.section h3 { margin: 22px 0 10px; color: var(--text-primary, #101815); font-size: clamp(19px, 3vw, 24px); line-height: 1.25; }
 .section p { margin: 0; color: var(--text-secondary, #425047); font-size: 17px; line-height: 1.8; }
 .section p + p, .subsection p + p { margin-top: 14px; }
 .subsection { padding-top: 4px; }

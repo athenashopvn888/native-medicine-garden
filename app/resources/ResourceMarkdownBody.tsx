@@ -32,6 +32,9 @@ function renderBlock(block: ResourceMarkdownBlock, key: string) {
   if (block.type === "ol") {
     return <ol key={key}>{block.items.map((item, index) => <li key={`${key}-${index}`}>{inlineText(item, `${key}-${index}`)}</li>)}</ol>;
   }
+  if (block.type === "h3") {
+    return <h3 key={key}>{inlineText(block.text, key)}</h3>;
+  }
   if (block.type === "table") {
     return (
       <div key={key} className={styles.tableWrap}>
