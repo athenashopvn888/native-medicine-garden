@@ -8,6 +8,13 @@ import {
   CANNABIS_FLOWER_SIZES_TITLE,
 } from "./cannabisFlowerSizesExplained";
 import {
+  HASH_FORMATS_LEGAL_MENU_ARTICLE,
+  HASH_FORMATS_LEGAL_MENU_BODY,
+  HASH_FORMATS_LEGAL_MENU_DESCRIPTION,
+  HASH_FORMATS_LEGAL_MENU_SEO_TITLE,
+  HASH_FORMATS_LEGAL_MENU_TITLE,
+} from "./hashFormatsLegalMenu";
+import {
   WHAT_IS_CRAFT_CANNABIS_ARTICLE,
   WHAT_IS_CRAFT_CANNABIS_BODY,
   WHAT_IS_CRAFT_CANNABIS_DESCRIPTION,
@@ -147,6 +154,21 @@ const WHAT_IS_CRAFT_CANNABIS_PAGE: ResourcePage = {
   schemaBreadcrumb: false,
 };
 
+const HASH_FORMATS_LEGAL_MENU_PAGE: ResourcePage = {
+  slug: "hash-formats-legal-menu",
+  title: HASH_FORMATS_LEGAL_MENU_TITLE,
+  seoTitle: HASH_FORMATS_LEGAL_MENU_SEO_TITLE,
+  description: HASH_FORMATS_LEGAL_MENU_DESCRIPTION,
+  eyebrow: "",
+  intro: "",
+  cards: [],
+  sections: [],
+  bodyMarkdown: HASH_FORMATS_LEGAL_MENU_BODY,
+  articleMeta: HASH_FORMATS_LEGAL_MENU_ARTICLE,
+  schemaType: "Article",
+  schemaBreadcrumb: false,
+};
+
 export const RESOURCE_HOME: ResourcePage = {
   slug: "",
   title: "Weed & Cannabis Resources",
@@ -203,7 +225,7 @@ const RESOURCE_PAGES_BASE = SHOW_CIGARETTES
 
 // Append after cigaretteSafeContent. That pass collapses whitespace, which would
 // join this article's markdown lines. The body has no cigarette terms.
-export const RESOURCE_PAGES = [...RESOURCE_PAGES_BASE, CANNABIS_FLOWER_SIZES_PAGE, WHAT_IS_CRAFT_CANNABIS_PAGE];
+export const RESOURCE_PAGES = [...RESOURCE_PAGES_BASE, CANNABIS_FLOWER_SIZES_PAGE, WHAT_IS_CRAFT_CANNABIS_PAGE, HASH_FORMATS_LEGAL_MENU_PAGE];
 
 export function getResourcePage(slug: string) {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
