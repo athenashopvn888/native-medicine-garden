@@ -11,6 +11,7 @@ import {
   HASH_FORMATS_LEGAL_MENU_ARTICLE,
   HASH_FORMATS_LEGAL_MENU_BODY,
   HASH_FORMATS_LEGAL_MENU_DESCRIPTION,
+  HASH_FORMATS_LEGAL_MENU_PATH,
   HASH_FORMATS_LEGAL_MENU_SEO_TITLE,
   HASH_FORMATS_LEGAL_MENU_TITLE,
 } from "./hashFormatsLegalMenu";
@@ -18,6 +19,7 @@ import {
   SWEET_KUSH_STRAIN_ARTICLE,
   SWEET_KUSH_STRAIN_BODY,
   SWEET_KUSH_STRAIN_DESCRIPTION,
+  SWEET_KUSH_STRAIN_PATH,
   SWEET_KUSH_STRAIN_SEO_TITLE,
   SWEET_KUSH_STRAIN_TITLE,
 } from "./sweetKushStrain";
@@ -25,6 +27,7 @@ import {
   WHAT_IS_CRAFT_CANNABIS_ARTICLE,
   WHAT_IS_CRAFT_CANNABIS_BODY,
   WHAT_IS_CRAFT_CANNABIS_DESCRIPTION,
+  WHAT_IS_CRAFT_CANNABIS_PATH,
   WHAT_IS_CRAFT_CANNABIS_SEO_TITLE,
   WHAT_IS_CRAFT_CANNABIS_TITLE,
 } from "./whatIsCraftCannabis";
@@ -60,6 +63,7 @@ export interface ResourcePage {
     ordered: string[];
   }[];
   faqs?: { question: string; answer: string }[];
+  latestArticles?: ResourceCard[];
   schemaType?: "Article" | "WebPage" | "CollectionPage";
   schemaBreadcrumb?: boolean;
   bodyMarkdown?: string;
@@ -191,6 +195,24 @@ const SWEET_KUSH_STRAIN_PAGE: ResourcePage = {
   schemaBreadcrumb: false,
 };
 
+const WHAT_IS_CRAFT_CANNABIS_CARD: ResourceCard = {
+  title: WHAT_IS_CRAFT_CANNABIS_TITLE,
+  href: WHAT_IS_CRAFT_CANNABIS_PATH,
+  text: WHAT_IS_CRAFT_CANNABIS_DESCRIPTION,
+};
+
+const HASH_FORMATS_LEGAL_MENU_CARD: ResourceCard = {
+  title: HASH_FORMATS_LEGAL_MENU_TITLE,
+  href: HASH_FORMATS_LEGAL_MENU_PATH,
+  text: HASH_FORMATS_LEGAL_MENU_DESCRIPTION,
+};
+
+const SWEET_KUSH_STRAIN_CARD: ResourceCard = {
+  title: SWEET_KUSH_STRAIN_TITLE,
+  href: SWEET_KUSH_STRAIN_PATH,
+  text: SWEET_KUSH_STRAIN_DESCRIPTION,
+};
+
 export const RESOURCE_HOME: ResourcePage = {
   slug: "",
   title: "Weed & Cannabis Resources",
@@ -223,7 +245,11 @@ export const RESOURCE_HOME: ResourcePage = {
     { title: "Native Smokes Guide", href: "/resources/native-smokes", text: "Read commercial-cigarette terminology without the guesswork." },
     { title: "Native Cigarettes in Ontario", href: "/resources/native-smokes/native-cigarettes-guide", text: "Understand terms, brands and legal context." },
     CANNABIS_FLOWER_SIZES_CARD,
+    WHAT_IS_CRAFT_CANNABIS_CARD,
+    HASH_FORMATS_LEGAL_MENU_CARD,
+    SWEET_KUSH_STRAIN_CARD,
   ],
+  latestArticles: [WHAT_IS_CRAFT_CANNABIS_CARD, HASH_FORMATS_LEGAL_MENU_CARD, SWEET_KUSH_STRAIN_CARD],
   sections: [
     { heading: "Current Menu vs Resource Guides", body: "Use these resource pages for stable explanations and visit planning. Use the current Native Medicine Garden category and product pages for changing product names, prices, package formats and availability." },
     { heading: "Native Medicine Garden in Downtown Toronto", body: "Native Medicine Garden is at 76 Gerrard St W, Toronto, ON M5G 1J5. The local store page remains the source for current visit details. The resource hub helps adults understand the menu and the language around it." },
@@ -248,6 +274,15 @@ const RESOURCE_PAGES_BASE = SHOW_CIGARETTES
 // Append after cigaretteSafeContent. That pass collapses whitespace, which would
 // join this article's markdown lines. The body has no cigarette terms.
 export const RESOURCE_PAGES = [...RESOURCE_PAGES_BASE, CANNABIS_FLOWER_SIZES_PAGE, WHAT_IS_CRAFT_CANNABIS_PAGE, HASH_FORMATS_LEGAL_MENU_PAGE, SWEET_KUSH_STRAIN_PAGE];
+
+function appendResourceCard(slug: string, card: ResourceCard) {
+  const page = RESOURCE_PAGES.find((entry) => entry.slug === slug);
+  if (!page || page.cards.some((existing) => existing.href === card.href)) return;
+  page.cards = [...page.cards, card];
+}
+
+appendResourceCard("flower-guides/craft-vs-commercial-cannabis", WHAT_IS_CRAFT_CANNABIS_CARD);
+appendResourceCard("cannabis-101", HASH_FORMATS_LEGAL_MENU_CARD);
 
 export function getResourcePage(slug: string) {
   const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
