@@ -52,6 +52,10 @@ export default function ResourceView({ page, canonicalPath }: ResourceViewProps 
     ],
   };
 
+  const latestArticles = page.latestArticles ?? [];
+  const latestHrefs = new Set(latestArticles.map((card) => card.href));
+  const gridCards = latestHrefs.size > 0 ? page.cards.filter((card) => !latestHrefs.has(card.href)) : page.cards;
+
   return (
     <main className={styles.main}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
@@ -68,10 +72,19 @@ export default function ResourceView({ page, canonicalPath }: ResourceViewProps 
 
       {!page.bodyMarkdown && page.lead && page.lead.length > 0 && <section className={styles.lead}>{page.lead.map((paragraph, index) => <p key={index}>{inlineText(paragraph)}</p>)}</section>}
 
-      {!page.bodyMarkdown && page.cards.length > 0 && (
+      {!page.bodyMarkdown && latestArticles.length > 0 && (
+        <section className={styles.cardsSection} aria-labelledby="latest-articles">
+          <h2 id="latest-articles" className={styles.latestHeading}>Latest articles</h2>
+          <div className={styles.grid}>
+            {latestArticles.map((card) => <Link key={card.href} href={card.href} className={styles.card}><span>{card.title}</span><p>{card.text}</p></Link>)}
+          </div>
+        </section>
+      )}
+
+      {!page.bodyMarkdown && gridCards.length > 0 && (
         <section className={styles.cardsSection}>
           <div className={styles.grid}>
-            {page.cards.map((card) => <Link key={card.href} href={card.href} className={styles.card}><span>{card.title}</span><p>{card.text}</p></Link>)}
+            {gridCards.map((card) => <Link key={card.href} href={card.href} className={styles.card}><span>{card.title}</span><p>{card.text}</p></Link>)}
           </div>
         </section>
       )}
