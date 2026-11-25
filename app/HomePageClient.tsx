@@ -1,6 +1,7 @@
 "use client";
 
-import { SHOW_CIGARETTES, cigaretteSafeContent } from "./lib/siteConfig";
+import { SHOW_CIGARETTES, cigaretteSafeContent, isCigaretteEntry } from "./lib/siteConfig";
+import { useCigaretteState } from "./components/CigaretteStateProvider";
 import { FLEET_CATEGORY_BANNER_STYLE, nextFleetImageSrc } from "./lib/fleet/imageFallback";
 import type { ResolvedBanner } from "./lib/fleet/types";
 
@@ -148,7 +149,8 @@ function WelcomeOverride({ banner }: { banner: ResolvedBanner }) {
 }
 
 export default function HomePageClient({ initialFlowers, contentBanners, welcomeBanner }: { initialFlowers: Parameters<typeof storeTierRange>[0]; contentBanners?: ResolvedBanner[]; welcomeBanner?: ResolvedBanner }) {
-    const __liveFlowers = useLiveFlowers();
+  const showCigarettes = useCigaretteState().web;
+  const __liveFlowers = useLiveFlowers();
   const [featuredStrains, setFeaturedStrains] = useState<FlowerProduct[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewsStats, setReviewsStats] = useState<ReviewStats | null>(null);
@@ -319,7 +321,7 @@ export default function HomePageClient({ initialFlowers, contentBanners, welcome
             <h2 className={styles.sectionTitle} id="local-hub-heading">Gerrard &amp; Bay store guides</h2>
             <p className={styles.sectionSubtitle}>Plan a Downtown Toronto visit, delivery order or category browse.</p>
           </div>
-          <div className={styles.localHubGrid}>{LOCAL_HUB_LINKS.map((card) => <Link key={card.href} href={card.href} className={styles.localHubCard}>{card.label}<span aria-hidden="true">→</span></Link>)}</div>
+          <div className={styles.localHubGrid}>{LOCAL_HUB_LINKS.filter((link) => showCigarettes || !isCigaretteEntry(link)).map((card) => <Link key={card.href} href={card.href} className={styles.localHubCard}>{card.label}<span aria-hidden="true">→</span></Link>)}</div>
         </div>
       </section>
 
@@ -329,7 +331,7 @@ export default function HomePageClient({ initialFlowers, contentBanners, welcome
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Explore Categories</h2>
             <p className={styles.sectionSubtitle}>
-              {SHOW_CIGARETTES
+              {showCigarettes
                 ? "From custom disposable vapes and concentrates to accessories and cigarettes."
                 : "From custom disposable vapes and concentrates to accessories."}
             </p>
@@ -394,7 +396,7 @@ export default function HomePageClient({ initialFlowers, contentBanners, welcome
               <strong>Native Medicine Garden</strong> is the walk-in shop at 76 Gerrard St W, on Gerrard Street West at Bay Street. The door is a short walk from College–Bay and College Station, with Dundas Station, College Park, and Toronto Metropolitan University on the same downtown core blocks.
             </p>
             <p className={styles.seoPanelText}>
-              This homepage is the visit hub: address, listed hours ({HOURS_LABEL}), phone {PHONE_DISPLAY}, and directions. It is a neighbourhood walk-in near College–Bay — not a city-wide delivery landing. {SHOW_CIGARETTES
+              This homepage is the visit hub: address, listed hours ({HOURS_LABEL}), phone {PHONE_DISPLAY}, and directions. It is a neighbourhood walk-in near College–Bay — not a city-wide delivery landing. {showCigarettes
                 ? "Adults 19+ can browse flower tiers, pre-rolls, edibles, vapes, concentrates, accessories, and cigarette category items, then ask staff about current jars and labels."
                 : "Adults 19+ can browse flower tiers, pre-rolls, edibles, vapes, concentrates, and accessories, then ask staff about current jars and labels."}
             </p>
