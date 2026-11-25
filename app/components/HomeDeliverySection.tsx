@@ -1,9 +1,12 @@
-import { SHOW_CIGARETTES } from "../lib/siteConfig";
+"use client";
+
+import { useCigaretteState } from "./CigaretteStateProvider";
 import Link from "next/link";
 import { HOME_DELIVERY_CARDS, HOME_DELIVERY_FAQS, HOME_DELIVERY_H2, HOME_DELIVERY_PARAGRAPHS } from "../lib/homeDelivery";
 import styles from "./HomeDeliverySection.module.css";
 
 export default function HomeDeliverySection() {
+  const showCigarettes = useCigaretteState().web;
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -16,7 +19,7 @@ export default function HomeDeliverySection() {
         <h2 id="home-delivery-heading">{HOME_DELIVERY_H2}</h2>
         {HOME_DELIVERY_PARAGRAPHS.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         <div className={styles.cards}>
-          {(SHOW_CIGARETTES ? HOME_DELIVERY_CARDS : HOME_DELIVERY_CARDS.filter((card) => !card.href.includes("native-cigarette") && !/grabba/i.test(card.href))).map((card) => <Link key={card.href} href={card.href} className={styles.card}><strong>{card.title}</strong><span>{card.text}</span></Link>)}
+          {(showCigarettes ? HOME_DELIVERY_CARDS : HOME_DELIVERY_CARDS.filter((card) => !card.href.includes("native-cigarette") && !/grabba/i.test(card.href))).map((card) => <Link key={card.href} href={card.href} className={styles.card}><strong>{card.title}</strong><span>{card.text}</span></Link>)}
         </div>
         <h3>Gerrard & Bay delivery questions</h3>
         {HOME_DELIVERY_FAQS.map((faq) => <details key={faq.q}><summary>{faq.q}</summary><p>{faq.a}</p></details>)}
